@@ -56,57 +56,29 @@ namespace Skk {
             return false;
         }
 
-        public bool append_text (string text) {
+        public bool process_key_events (string text) {
             bool retval = false;
             int index = 0;
             unichar c;
             while (text.get_next_char (ref index, out c)) {
-                if (append (c) && !retval)
+                if (process_key_event (c) && !retval)
                     retval = true;
             }
             return retval;
         }
 
-        public bool append (unichar c) {
+        public bool process_key_event (unichar c) {
             var state = state_stack.data;
-            if (state.handler_type == typeof (NoneStateHandler)) {
-                if (c.isalpha () && c.isupper ())
-                    state.handler_type = typeof (StartStateHandler);
-            } else if (state.handler_type == typeof (StartStateHandler)) {
-                if (c == ' ') {
-                    state.handler_type = typeof (SelectStateHandler);
-                    return true;
-                }
-            } else if (state.handler_type == typeof (SelectStateHandler)) {
-                return commit ();
-            }
-
-            var handler = handlers.get (state.handler_type);
-            return handler.append (state, c);
-        }
-
-        public bool commit () {
-            if (dict_edit_level () > 0)
-                return leave_dict_edit ();
-            var state = state_stack.data;
-            var handler = handlers.get (state.handler_type);
-            bool retval = handler.commit (state);
-            state.handler_type = typeof (NoneStateHandler);
+            bool retval = false;
+            var handler_type = state.handler_type;
+            do {
+                handler_type = state.handler_type;
+                var handler = handlers.get (handler_type);
+                retval = handler.process_key_event (state, c);
+                if (retval)
+                    break;
+            } while (handler_type != state.handler_type);
             return retval;
-        }
-
-        public bool cancel () {
-            if (dict_edit_level () > 0)
-                return abort_dict_edit ();
-            var state = state_stack.data;
-            var handler = handlers.get (state.handler_type);
-            return handler.cancel (state);
-        }
-
-        public bool delete () {
-            var state = state_stack.data;
-            var handler = handlers.get (state.handler_type);
-            return handler.delete (state);
         }
 
         public void reset () {

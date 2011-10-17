@@ -9,7 +9,7 @@ context (void)
   gboolean retval;
   const gchar *output, *preedit;
 
-  retval = skk_context_append_text (context, "air");
+  retval = skk_context_process_key_events (context, "air");
   g_assert (retval);
 
   output = skk_context_get_output (context);
@@ -19,7 +19,7 @@ context (void)
   g_assert_cmpstr (preedit, ==, "r");
 
   skk_context_reset (context);
-  retval = skk_context_append_text (context, "Ai");
+  retval = skk_context_process_key_events (context, "Ai");
 
   output = skk_context_get_output (context);
   g_assert_cmpstr (output, ==, "");

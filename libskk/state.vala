@@ -57,10 +57,7 @@ namespace Skk {
     }
     
     abstract class StateHandler : Object {
-        internal abstract bool append (State state, unichar c);
-        internal abstract bool delete (State state);
-        internal abstract bool cancel (State state);
-        internal abstract bool commit (State state);
+        internal abstract bool process_key_event (State state, unichar c);
         internal abstract string get_preedit (State state);
         internal virtual string get_output (State state) {
             return state.output.str;
@@ -68,26 +65,15 @@ namespace Skk {
     }
 
     class NoneStateHandler : StateHandler {
-        internal override bool append (State state, unichar c) {
+        internal override bool process_key_event (State state, unichar c) {
+            if (c.isalpha () && c.isupper ()) {
+                state.handler_type = typeof (StartStateHandler);
+                return false;
+            }
             state.rom_kana_converter.append ((char)c);
             state.output.append (state.rom_kana_converter.output);
             state.rom_kana_converter.output = "";
             return true;
-        }
-
-        internal override bool delete (State state) {
-            if (state.rom_kana_converter.is_active ()) {
-                return state.rom_kana_converter.delete ();
-            }
-            return false;
-        }
-
-        internal override bool cancel (State state) {
-            return false;
-        }
-
-        internal override bool commit (State state) {
-            return false;
         }
 
         internal override string get_preedit (State state) {
@@ -100,29 +86,20 @@ namespace Skk {
     }
 
     class StartStateHandler : StateHandler {
-        internal override bool append (State state, unichar c) {
+        internal override bool process_key_event (State state, unichar c) {
             if (state.okuri_rom_kana_converter.is_active () ||
                 (state.rom_kana_converter.is_active () &&
-                 c.isalpha () && c.isupper ()))
+                 c.isalpha () && c.isupper ())) {
                 state.okuri_rom_kana_converter.append ((char)c.tolower ());
-            else
+                return true;
+            } else if (!state.rom_kana_converter.is_active () && c == ' ') {
+                state.handler_type = typeof (NoneStateHandler);
+                state.reset ();
+                return true;
+            } else {
                 state.rom_kana_converter.append ((char)c.tolower ());
-            return true;
-        }
-
-        internal override bool delete (State state) {
-            if (state.okuri_rom_kana_converter.is_active ())
-                return state.okuri_rom_kana_converter.delete ();
-            else
-                return state.rom_kana_converter.delete ();
-        }
-
-        internal override bool cancel (State state) {
-            return false;
-        }
-
-        internal override bool commit (State state) {
-            return false;
+                return true;
+            }
         }
 
         internal override string get_preedit (State state) {
@@ -141,19 +118,7 @@ namespace Skk {
     }
 
     class SelectStateHandler : StateHandler {
-        internal override bool append (State state, unichar c) {
-            return false;
-        }
-
-        internal override bool delete (State state) {
-            return false;
-        }
-
-        internal override bool cancel (State state) {
-            return false;
-        }
-
-        internal override bool commit (State state) {
+        internal override bool process_key_event (State state, unichar c) {
             return false;
         }
 
