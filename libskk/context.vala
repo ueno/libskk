@@ -109,17 +109,17 @@ namespace Skk {
             return handler.delete (state);
         }
 
-        public string output {
-            get {
-                return state_stack.data.output.str;
-            }
-        }
-        
         public void reset () {
             var state = state_stack.data;
             state_stack = null;
             state_stack.prepend (state);
             state.reset ();
+        }
+
+        public string get_output () {
+            var state = state_stack.data;
+            var handler = handlers.get (state.handler_type);
+            return handler.get_output (state);
         }
 
         public string get_preedit () {

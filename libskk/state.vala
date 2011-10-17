@@ -62,6 +62,9 @@ namespace Skk {
         internal abstract bool cancel (State state);
         internal abstract bool commit (State state);
         internal abstract string get_preedit (State state);
+        internal virtual string get_output (State state) {
+            return state.output.str;
+        }
     }
 
     class NoneStateHandler : StateHandler {
@@ -98,11 +101,20 @@ namespace Skk {
 
     class StartStateHandler : StateHandler {
         internal override bool append (State state, unichar c) {
-            return false;
+            if (state.okuri_rom_kana_converter.is_active () ||
+                (state.rom_kana_converter.is_active () &&
+                 c.isalpha () && c.isupper ()))
+                state.okuri_rom_kana_converter.append ((char)c.tolower ());
+            else
+                state.rom_kana_converter.append ((char)c.tolower ());
+            return true;
         }
 
         internal override bool delete (State state) {
-            return false;
+            if (state.okuri_rom_kana_converter.is_active ())
+                return state.okuri_rom_kana_converter.delete ();
+            else
+                return state.rom_kana_converter.delete ();
         }
 
         internal override bool cancel (State state) {
@@ -114,7 +126,17 @@ namespace Skk {
         }
 
         internal override string get_preedit (State state) {
-            return "";
+            StringBuilder builder = new StringBuilder ("▽");
+            if (state.okuri_rom_kana_converter.is_active ()) {
+                builder.append (state.rom_kana_converter.output);
+                builder.append ("*");
+                builder.append (state.okuri_rom_kana_converter.output);
+                builder.append (state.okuri_rom_kana_converter.preedit);
+            } else {
+                builder.append (state.rom_kana_converter.output);
+                builder.append (state.rom_kana_converter.preedit);
+            }
+            return builder.str;
         }
     }
 
@@ -136,7 +158,17 @@ namespace Skk {
         }
 
         internal override string get_preedit (State state) {
-            return "";
+            StringBuilder builder = new StringBuilder ("▼");
+            if (state.candidate_index >= 0) {
+                var c = state.candidates.get (state.candidate_index);
+                builder.append (c.text);
+            } else {
+                builder.append (state.rom_kana_converter.output);
+            }                    
+            if (state.okuri_rom_kana_converter.is_active ()) {
+                builder.append (state.okuri_rom_kana_converter.output);
+            }
+            return builder.str;
         }
     }
 }

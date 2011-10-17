@@ -23,6 +23,9 @@ context (void)
 
   output = skk_context_get_output (context);
   g_assert_cmpstr (output, ==, "");
+
+  preedit = skk_context_get_preedit (context);
+  g_assert_cmpstr (preedit, ==, "▽あい");
 }
 
 int
