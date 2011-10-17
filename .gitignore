@@ -14,7 +14,7 @@ Makefile
 Makefile.in
 missing
 stamp-h1
-libskk/*.c
+libskk/*.[ch]
 libskk/.deps
 libskk/.libs
 libskk/*.la

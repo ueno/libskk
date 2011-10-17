@@ -346,6 +346,9 @@ namespace Skk {
             get {
                 return _output.str;
             }
+            set {
+                _output.assign (value);
+            }
         }
         public string preedit {
             get {
@@ -365,7 +368,7 @@ namespace Skk {
 
         /**
          * skk_rom_kana_converter_output_nn_if_any:
-         * @converter: an #SkkRomKanaConverter
+         * @self: an #SkkRomKanaConverter
          *
          * Process "nn" if preedit ends with "n".
          */
@@ -377,31 +380,33 @@ namespace Skk {
         }
 
         /**
-         * skk_rom_kana_converter_append:
-         * @converter: an #SkkRomKanaConverter
+         * skk_rom_kana_converter_append_text:
+         * @self: an #SkkRomKanaConverter
          * @text: a string
          *
          * Append @text to the internal buffer.
          */
-        public void append (string text) {
-            for (int i = 0; i < text.length; i++) {
-                append_char (text[i]);
+        public void append_text (string text) {
+            int index = 0;
+            unichar c;
+            while (text.get_next_char (ref index, out c)) {
+                append (c);
             }
         }
 
         /**
-         * skk_rom_kana_converter_append_char:
-         * @converter: an #SkkRomKanaConverter
+         * skk_rom_kana_converter_append:
+         * @self: an #SkkRomKanaConverter
          * @letter: an ASCII character
          *
          * Append @letter to the internal buffer.
          */
-        public void append_char (char letter) {
+        public void append (unichar letter) {
             var child_node = current_node.children[letter];
             if (child_node == null) {
                 output_nn_if_any ();
                 // no such transition path in trie
-                var index = ".,".index_of_char (letter);
+                var index = ".,".index_of_char ((char)letter);
                 if (index >= 0) {
                     index = PERIOD_RULE[period_style].index_of_nth_char (index);
                     unichar period = PERIOD_RULE[period_style].get_char (index);
@@ -418,26 +423,26 @@ namespace Skk {
                     // the root with letter
                     _preedit.erase ();
                     current_node = root_node;
-                    append_char (letter);
+                    append (letter);
                 }
             } else if (child_node.entry == null) {
                 // node is not a terminal
-                _preedit.append_c (letter);
+                _preedit.append_unichar (letter);
                 current_node = child_node;
             } else {
                 _output.append (child_node.entry.get_kana (kana_mode));
                 _preedit.erase ();
                 for (int i = 0; i < child_node.entry.carryover.length; i++) {
-                    append_char (child_node.entry.carryover[i]);
+                    append (child_node.entry.carryover[i]);
                 }
             }
         }
 
         /**
          * skk_rom_kana_converter_reset:
-         * @converter: an #SkkRomKanaConverter
+         * @self: an #SkkRomKanaConverter
          *
-         * Reset the internal state of @converter.
+         * Reset the internal state of @self.
          */
         public void reset () {
             _output.erase ();
@@ -447,7 +452,7 @@ namespace Skk {
 
         /**
          * skk_rom_kana_delete:
-         * @converter: an #SkkRomKanaConverter
+         * @self: an #SkkRomKanaConverter
          *
          * Delete the trailing character from the internal buffer.
          */
@@ -468,9 +473,9 @@ namespace Skk {
 
         /**
          * skk_rom_kana_is_active:
-         * @converter: an #SkkRomKanaConverter
+         * @self: an #SkkRomKanaConverter
          *
-         * Return %TRUE if @converter is active, otherwise %FALSE.
+         * Return %TRUE if @self is active, otherwise %FALSE.
          */
         public bool is_active () {
             return _output.len > 0 || _preedit.len > 0;

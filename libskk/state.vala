@@ -20,12 +20,6 @@
 using Gee;
 
 namespace Skk {
-    enum ConvState {
-        NONE,
-        START,
-        SELECT
-    }
-
     enum InputMode {
         HIRAGANA = KanaMode.HIRAGANA,
         KATAKANA = KanaMode.KATAKANA,
@@ -36,7 +30,7 @@ namespace Skk {
     }
 
     class State : Object {
-        internal ConvState conv_state;
+        internal Type handler_type;
         internal InputMode input_mode;
 
         internal ArrayList<Candidate> candidates = new ArrayList<Candidate> ();
@@ -45,7 +39,6 @@ namespace Skk {
         internal RomKanaConverter rom_kana_converter;
         internal RomKanaConverter okuri_rom_kana_converter;
 
-        internal StringBuilder preedit = new StringBuilder ();
         internal StringBuilder output = new StringBuilder ();
 
         internal State () {
@@ -53,58 +46,97 @@ namespace Skk {
         }
 
         internal void reset () {
-            conv_state = ConvState.NONE;
+            handler_type = typeof (NoneStateHandler);
             input_mode = InputMode.DEFAULT;
-
             rom_kana_converter = new RomKanaConverter ();
             okuri_rom_kana_converter = new RomKanaConverter ();
+            candidates.clear ();
+            candidate_index = -1;
+            output.erase ();
+        }
+    }
+    
+    abstract class StateHandler : Object {
+        internal abstract bool append (State state, unichar c);
+        internal abstract bool delete (State state);
+        internal abstract bool cancel (State state);
+        internal abstract bool commit (State state);
+        internal abstract string get_preedit (State state);
+    }
+
+    class NoneStateHandler : StateHandler {
+        internal override bool append (State state, unichar c) {
+            state.rom_kana_converter.append ((char)c);
+            state.output.append (state.rom_kana_converter.output);
+            state.rom_kana_converter.output = "";
+            return true;
         }
 
-        internal bool delete () {
-            if (okuri_rom_kana_converter.is_active ()) {
-                return okuri_rom_kana_converter.delete ();
-            }
-            if (rom_kana_converter.is_active ()) {
-                return rom_kana_converter.delete ();
+        internal override bool delete (State state) {
+            if (state.rom_kana_converter.is_active ()) {
+                return state.rom_kana_converter.delete ();
             }
             return false;
         }
 
-        internal string to_string () {
+        internal override bool cancel (State state) {
+            return false;
+        }
+
+        internal override bool commit (State state) {
+            return false;
+        }
+
+        internal override string get_preedit (State state) {
             StringBuilder builder = new StringBuilder ();
-            switch (conv_state) {
-            case ConvState.NONE:
-                break;
-            case ConvState.START:
-                builder.append ("▽");
-                if (okuri_rom_kana_converter.is_active ()) {
-                    builder.append (rom_kana_converter.output);
-                    builder.append ("*");
-                    builder.append (okuri_rom_kana_converter.output);
-                    builder.append (okuri_rom_kana_converter.preedit);
-                } else {
-                    builder.append (rom_kana_converter.output);
-                    builder.append (rom_kana_converter.preedit);
-                }
-                break;
-            case ConvState.SELECT:
-                builder.append ("▼");
-                if (candidate_index >= 0) {
-                    builder.append (candidates.get (candidate_index).text);
-                } else {
-                    builder.append (rom_kana_converter.output);
-                }
-                if (okuri_rom_kana_converter.is_active ()) {
-                    builder.append (okuri_rom_kana_converter.output);
-                }
-                break;
+            if (state.rom_kana_converter.is_active ()) {
+                builder.append (state.rom_kana_converter.preedit);
             }
             return builder.str;
         }
+    }
 
-        internal bool append_c (unichar c) {
-            // FIXME not implemented
+    class StartStateHandler : StateHandler {
+        internal override bool append (State state, unichar c) {
             return false;
+        }
+
+        internal override bool delete (State state) {
+            return false;
+        }
+
+        internal override bool cancel (State state) {
+            return false;
+        }
+
+        internal override bool commit (State state) {
+            return false;
+        }
+
+        internal override string get_preedit (State state) {
+            return "";
+        }
+    }
+
+    class SelectStateHandler : StateHandler {
+        internal override bool append (State state, unichar c) {
+            return false;
+        }
+
+        internal override bool delete (State state) {
+            return false;
+        }
+
+        internal override bool cancel (State state) {
+            return false;
+        }
+
+        internal override bool commit (State state) {
+            return false;
+        }
+
+        internal override string get_preedit (State state) {
+            return "";
         }
     }
 }
