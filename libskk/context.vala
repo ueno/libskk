@@ -69,16 +69,17 @@ namespace Skk {
 
         public bool process_key_event (unichar c) {
             var state = state_stack.data;
-            bool retval = false;
-            var handler_type = state.handler_type;
-            do {
-                handler_type = state.handler_type;
+            while (true) {
+                var handler_type = state.handler_type;
                 var handler = handlers.get (handler_type);
-                retval = handler.process_key_event (state, c);
-                if (retval)
-                    break;
-            } while (handler_type != state.handler_type);
-            return retval;
+                if (handler.process_key_event (state, c))
+                    return true;
+                // state.handler_type may change if handler cannot
+                // handle the event.  In that case retry with the new
+                // handler.  Otherwise exit the loop.
+                if (handler_type == state.handler_type)
+                    return false;
+            }
         }
 
         public void reset () {
