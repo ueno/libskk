@@ -66,13 +66,25 @@ namespace Skk {
 
     class NoneStateHandler : StateHandler {
         internal override bool process_key_event (State state, unichar c) {
-            if (c.isalpha () && c.isupper ()) {
-                state.handler_type = typeof (StartStateHandler);
-                return false;
+            switch (state.input_mode) {
+            case InputMode.HIRAGANA:
+            case InputMode.KATAKANA:
+            case InputMode.HANKAKU_KATAKANA:
+                if (c.isalpha () && c.isupper ()) {
+                    state.handler_type = typeof (StartStateHandler);
+                    return false;
+                }
+                state.rom_kana_converter.append ((char)c);
+                state.output.append (state.rom_kana_converter.output);
+                state.rom_kana_converter.output = "";
+                break;
+            case InputMode.LATIN:
+                state.output.append_c ((char)c);
+                break;
+            case InputMode.WIDE_LATIN:
+                state.output.append_unichar (Util.get_wide_latin_char ((char)c));
+                break;
             }
-            state.rom_kana_converter.append ((char)c);
-            state.output.append (state.rom_kana_converter.output);
-            state.rom_kana_converter.output = "";
             return true;
         }
 

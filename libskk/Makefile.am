@@ -28,7 +28,8 @@ libskk_la_SOURCES = \
 	dict.vala \
 	file-dict.vala \
 	state.vala \
-	context.vala
+	context.vala \
+	util.vala
 
 if HAVE_INTROSPECTION
 girdir = $(datadir)/gir-1.0
