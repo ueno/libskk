@@ -18,21 +18,43 @@
  * 02110-1301 USA
  */
 namespace Skk {
+    /**
+     * SkkCandidate:
+     *
+     * Candidate word in dictionaries.
+     */
     public class Candidate : Object {
         string _text;
         string? _annotation;
 
+        /**
+         * SkkCandidate:text:
+         *
+         * Base string value of the candidate.
+         */
         public string text {
             get {
                 return _text;
             }
         }
+
+        /**
+         * SkkCandidate:annotation:
+         *
+         * Optional annotation text to the candidate.
+         */
         public string? annotation {
             get {
                 return _annotation;
             }
         }
 
+        /**
+         * skk_candidate_to_string:
+         * @self: an #SkkCandidate
+         *
+         * Returns a string representing the candidate.
+         */
         public string to_string () {
             if (_annotation != null) {
                 return _text + ";" + _annotation;
@@ -41,11 +63,25 @@ namespace Skk {
             }
         }
 
+        /**
+         * skk_candidate_new:
+         * @text: base string value of the candidate
+         * @annotation: optional annotation text to the candidate
+         *
+         * Create a new #SkkCandidate.
+         */
         public Candidate (string text, string? annotation) {
             _text = text;
             _annotation = annotation;
         }
 
+        /**
+         * skk_candidate_new_from_string:
+         * @str: a string representation of a candidate
+         *
+         * Create a new #SkkCandidate from a text representation
+         * (i.e. text and annotation are separated by ";").
+         */
         public Candidate.from_string (string str) {
             var strv = str.split (";", 2);
             string t, a;
@@ -60,6 +96,11 @@ namespace Skk {
         }
     }
 
+    /**
+     * SkkDict:
+     *
+     * Base abstract class of dictionaries.
+     */
     public abstract class Dict : Object {
         protected Candidate[] split_candidates (string line) {
             var strv = line.strip ().slice (1, -1).split ("/");
@@ -78,11 +119,32 @@ namespace Skk {
             return string.joinv ("/", strv);
         }
 
+        /**
+         * skk_dict_reload:
+         * @self: an #SkkDict
+         *
+         * Reload the dictionary.
+         */
         public abstract void reload ();
+
+        /**
+         * skk_dict_lookup:
+         * @self: an #SkkDict
+         * @midasi: a midasi (title) string to lookup
+         * @okuri: whether to search okuri-ari entries or okuri-nasi entries
+         *
+         * Lookup candidates in the dictionary.
+         * Returns: an array of #SkkCandidate
+         */
         public abstract Candidate[] lookup (string midasi, bool okuri = false);
         // public abstract CandidateCompleter get_completer (string midasi);
     }
 
+    /**
+     * SkkEmptyDict:
+     *
+     * Null implementation of #SkkDict.
+     */
     public class EmptyDict : Dict {
         public override void reload () {
         }

@@ -20,6 +20,11 @@
 using Gee;
 
 namespace Skk {
+    /**
+     * SkkFileDict:
+     *
+     * A file based implementation of #SkkDict.
+     */
     public class FileDict : Dict {
         unowned Posix.FILE get_fp () {
             if (file == null)
@@ -162,6 +167,13 @@ namespace Skk {
         ArrayList<long> okuri_ari = new ArrayList<long> ();
         ArrayList<long> okuri_nasi = new ArrayList<long> ();
 
+        /**
+         * skk_file_dict_new:
+         * @path: a path to the file
+         * @encoding: encoding of the file (default UTF-8)
+         *
+         * Create a new #SkkFileDict.
+         */
         public FileDict (string path, string encoding) throws GLib.Error {
             this.path = path;
             this.mtime = 0;

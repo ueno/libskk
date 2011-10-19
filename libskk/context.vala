@@ -20,12 +20,23 @@
 using Gee;
 
 namespace Skk {
+    /**
+     * SkkContext:
+     *
+     * The input context with support for SKK kana-kanji conversion method.
+     */
     public class Context {
         Dict[] dictionaries;
         SList<State> state_stack;
         HashMap<Type, StateHandler> handlers =
             new HashMap<Type, StateHandler> ();
 
+        /**
+         * skk_context_new:
+         * @dictionaries: an array of #SkkDict
+         *
+         * Create a new #SkkContext.
+         */
         public Context (Dict[] dictionaries) {
             this.dictionaries = dictionaries;
             handlers.set (typeof (NoneStateHandler),
@@ -61,7 +72,14 @@ namespace Skk {
             return false;
         }
 
-        // for testing purpose
+        /**
+         * skk_context_process_key_events:
+         * @self: an #SkkContext
+         * @keys: a string representing key events, seperated by " "
+         *
+         * Feed key events to the context.  This function is only used
+         * in unit tests.
+         */
         public bool process_key_events (string keys) {
             var _keys = keys.split (" ");
             bool retval = false;
@@ -74,6 +92,13 @@ namespace Skk {
             return retval;
         }
 
+        /**
+         * skk_context_process_key_event:
+         * @self: an #SkkContext
+         * @key: a string representing a key event
+         *
+         * Feed a key event to the context.
+         */
         public bool process_key_event (string key) {
             var state = state_stack.data;
             var ev = new KeyEvent (key);
@@ -90,6 +115,12 @@ namespace Skk {
             }
         }
 
+        /**
+         * skk_context_reset:
+         * @self: an #SkkContext
+         *
+         * Reset the context.
+         */
         public void reset () {
             var state = state_stack.data;
             state_stack = null;
@@ -97,6 +128,13 @@ namespace Skk {
             state.reset ();
         }
 
+        /**
+         * skk_context_get_output:
+         * @self: an #SkkContext
+         *
+         * Get the current output string.  This will clear the current
+         * output after calling.
+         */
         public string get_output () {
             var state = state_stack.data;
             var handler = handlers.get (state.handler_type);
@@ -105,6 +143,12 @@ namespace Skk {
             return output;
         }
 
+        /**
+         * skk_context_get_preedit:
+         * @self: an #SkkContext
+         *
+         * Get the current preedit string.
+         */
         public string get_preedit () {
             var state = state_stack.data;
             var handler = handlers.get (state.handler_type);
