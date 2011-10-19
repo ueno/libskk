@@ -24,6 +24,7 @@ libskkinclude_HEADERS = \
 
 libskk_la_SOURCES = \
 	rom-kana.vala \
+	kana-kan.vala \
 	encoding.vala \
 	dict.vala \
 	file-dict.vala \

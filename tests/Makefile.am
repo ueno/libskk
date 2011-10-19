@@ -1,10 +1,13 @@
 INCLUDES = -I$(top_srcdir) $(LIBSKK_CFLAGS)
 
-TESTS = rom-kana file-dict context
+TESTS = rom-kana kana-kan file-dict context
 noinst_PROGRAMS = $(TESTS)
 
 rom_kana_SOURCES = rom-kana.c
 rom_kana_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
+
+kana_kan_SOURCES = kana-kan.c
+kana_kan_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 
 file_dict_SOURCES = file-dict.c
 file_dict_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
