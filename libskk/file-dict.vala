@@ -162,7 +162,7 @@ namespace Skk {
 
         string path;
         time_t mtime;
-        Converter converter;
+        EncodingConverter converter;
         Posix.FILE? file;
         ArrayList<long> okuri_ari = new ArrayList<long> ();
         ArrayList<long> okuri_nasi = new ArrayList<long> ();
@@ -177,7 +177,7 @@ namespace Skk {
         public FileDict (string path, string encoding) throws GLib.Error {
             this.path = path;
             this.mtime = 0;
-            this.converter = new Converter (encoding);
+            this.converter = new EncodingConverter (encoding);
             this.file = null;
             reload ();
         }

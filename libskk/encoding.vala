@@ -20,14 +20,14 @@
 namespace Skk {
     // XXX: we use Vala string to represent byte array, assuming that
     // it does not contain null element
-    class Converter {
+    class EncodingConverter {
         static const int BUFSIZ = 4096;
         static const string INTERNAL_ENCODING = "UTF-8";
 
         CharsetConverter encoder;
         CharsetConverter decoder;
 
-        internal Converter (string encoding) throws GLib.Error {
+        internal EncodingConverter (string encoding) throws GLib.Error {
             encoder = new CharsetConverter (encoding, INTERNAL_ENCODING);
             decoder = new CharsetConverter (INTERNAL_ENCODING, encoding);
         }
