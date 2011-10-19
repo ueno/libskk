@@ -58,7 +58,10 @@ namespace Skk {
                     if (line.has_prefix (";; okuri-nasi entries.")) {
                         offsets = okuri_nasi;
                     } else {
-                        offsets.add (pos);
+                        if (offsets == okuri_nasi)
+                            offsets.add (pos);
+                        else
+                            offsets.insert (0, pos);
                     }
                 }
             }

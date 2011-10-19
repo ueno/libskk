@@ -339,9 +339,18 @@ namespace Skk {
         public KanaMode kana_mode { get; set; default = KanaMode.HIRAGANA; }
         public PeriodStyle period_style { get; set; default = PeriodStyle.JA_JA; }
 
+        StringBuilder _input = new StringBuilder ();
         StringBuilder _output = new StringBuilder ();
         StringBuilder _preedit = new StringBuilder ();
 
+        public string input {
+            get {
+                return _input.str;
+            }
+            set {
+                _input.assign (value);
+            }
+        }
         public string output {
             get {
                 return _output.str;
@@ -374,6 +383,7 @@ namespace Skk {
          */
         public void output_nn_if_any () {
             if (_preedit.str.has_suffix ("n")) {
+                _input.append ("n");
                 _output.append (NN[kana_mode]);
                 _preedit.truncate (_preedit.len - 1);
             }
@@ -410,10 +420,12 @@ namespace Skk {
                 if (index >= 0) {
                     index = PERIOD_RULE[period_style].index_of_nth_char (index);
                     unichar period = PERIOD_RULE[period_style].get_char (index);
+                    _input.append_unichar (letter);
                     _output.append_unichar (period);
                     _preedit.erase ();
                     current_node = root_node;
                 } else if (root_node.children[letter] == null) {
+                    _input.append_unichar (letter);
                     _output.append_unichar (letter);
                     _preedit.erase ();
                     current_node = root_node;
@@ -421,6 +433,7 @@ namespace Skk {
                 } else {
                     // abondon current preedit and restart lookup from
                     // the root with letter
+                    _input.erase ();
                     _preedit.erase ();
                     current_node = root_node;
                     append (letter);
@@ -428,8 +441,10 @@ namespace Skk {
             } else if (child_node.entry == null) {
                 // node is not a terminal
                 _preedit.append_unichar (letter);
+                _input.append_unichar (letter);
                 current_node = child_node;
             } else {
+                _input.append_unichar (letter);
                 _output.append (child_node.entry.get_kana (kana_mode));
                 _preedit.erase ();
                 for (int i = 0; i < child_node.entry.carryover.length; i++) {
@@ -445,6 +460,7 @@ namespace Skk {
          * Reset the internal state of @self.
          */
         public void reset () {
+            _input.erase ();
             _output.erase ();
             _preedit.erase ();
             current_node = root_node;

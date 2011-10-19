@@ -16,6 +16,12 @@ file_dict (void)
                                                &len);
   g_assert_cmpint (len, ==, 2);
 
+  candidates = skk_dict_lookup (SKK_DICT (dict),
+                                "あu",
+                                TRUE,
+                                &len);
+  g_assert_cmpint (len, ==, 4);
+
   g_object_unref (dict);
 }
 

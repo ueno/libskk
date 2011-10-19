@@ -34,7 +34,7 @@ namespace Skk {
                           new StartStateHandler ());
             handlers.set (typeof (SelectStateHandler),
                           new SelectStateHandler ());
-            this.state_stack.prepend (new State ());
+            this.state_stack.prepend (new State (dictionaries));
         }
 
         public bool complete () {
@@ -44,6 +44,11 @@ namespace Skk {
 
         uint dict_edit_level () {
             return state_stack.length () - 1;
+        }
+
+        bool enter_dict_edit () {
+            // FIXME not implemented
+            return false;
         }
 
         bool leave_dict_edit () {
@@ -56,23 +61,26 @@ namespace Skk {
             return false;
         }
 
-        public bool process_key_events (string text) {
+        // for testing purpose
+        public bool process_key_events (string keys) {
+            var _keys = keys.split (" ");
             bool retval = false;
-            int index = 0;
-            unichar c;
-            while (text.get_next_char (ref index, out c)) {
-                if (process_key_event (c) && !retval)
+            foreach (var key in _keys) {
+                if (key == "SPC")
+                    key = " ";
+                if (process_key_event (key) && !retval)
                     retval = true;
             }
             return retval;
         }
 
-        public bool process_key_event (unichar c) {
+        public bool process_key_event (string key) {
             var state = state_stack.data;
+            var ev = new KeyEvent (key);
             while (true) {
                 var handler_type = state.handler_type;
                 var handler = handlers.get (handler_type);
-                if (handler.process_key_event (state, c))
+                if (handler.process_key_event (state, ev))
                     return true;
                 // state.handler_type may change if handler cannot
                 // handle the event.  In that case retry with the new
@@ -92,7 +100,9 @@ namespace Skk {
         public string get_output () {
             var state = state_stack.data;
             var handler = handlers.get (state.handler_type);
-            return handler.get_output (state);
+            var output = handler.get_output (state);
+            state.output.erase ();
+            return output;
         }
 
         public string get_preedit () {
