@@ -180,7 +180,7 @@ namespace Skk {
             return builder.str;
         }
 
-        internal string[] viterbi (KanaKanGraph graph, KanaKanScoreMap map) {
+        static string[] viterbi (KanaKanGraph graph, KanaKanScoreMap map) {
             foreach (var nodes in graph.nodes) {
                 foreach (var node in nodes) {
                     if (node.is_bos ())
