@@ -7,7 +7,7 @@
 using Gee;
 
 namespace Skk {
-    public class KanaKanDict {
+    public class KanaKanDict : Object {
         HashMap<string,Set<string>> dict =
             new HashMap<string,Set<string>> ();
         public KanaKanDict (string path) {
@@ -38,7 +38,7 @@ namespace Skk {
         }
     }
 
-    public class KanaKanScoreMap {
+    public class KanaKanScoreMap : Object {
         Map<string,double?> map = new HashMap<string,double?> ();
         public KanaKanScoreMap (string path, KanaKanDict dict) {
             File file = File.new_for_path (path);
@@ -83,7 +83,7 @@ namespace Skk {
         }
     }
 
-    class KanaKanNode {
+    class KanaKanNode : Object {
         internal string word;
         internal string pron;
         internal int endpos;
@@ -111,7 +111,7 @@ namespace Skk {
         }
     }
 
-    class KanaKanGraph {
+    class KanaKanGraph : Object {
         KanaKanDict dict;
         internal ArrayList<KanaKanNode>[] nodes;
         internal KanaKanNode bos;
@@ -161,7 +161,7 @@ namespace Skk {
         }
     }
 
-    public class KanaKanConverter {
+    public class KanaKanConverter : Object {
         KanaKanDict dict;
         KanaKanScoreMap map;
 
