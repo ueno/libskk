@@ -10,8 +10,15 @@ kana_kan (void)
 
   output = skk_kana_kan_converter_convert (converter, "かなかんじへんかんのれい");
   printf ("%s\n", output);
+  g_free (output);
+
   output = skk_kana_kan_converter_convert (converter, "かなからかんじにへんかん");
   printf ("%s\n", output);
+  g_free (output);
+
+  g_object_unref (converter);
+  g_object_unref (map);
+  g_object_unref (dict);
 }
 
 int
