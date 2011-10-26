@@ -25,11 +25,19 @@ namespace Skk {
      *
      * The input context with support for SKK kana-kanji conversion method.
      */
-    public class Context {
+    public class Context : Object {
         Dict[] dictionaries;
         SList<State> state_stack;
         HashMap<Type, StateHandler> handlers =
             new HashMap<Type, StateHandler> ();
+        public InputMode input_mode {
+            get {
+                return state_stack.data.input_mode;
+            }
+            set {
+                state_stack.data.input_mode = value;
+            }
+        }
 
         /**
          * skk_context_new:

@@ -20,7 +20,7 @@
 using Gee;
 
 namespace Skk {
-    enum InputMode {
+    public enum InputMode {
         HIRAGANA = KanaMode.HIRAGANA,
         KATAKANA = KanaMode.KATAKANA,
         HANKAKU_KATAKANA = KanaMode.HANKAKU_KATAKANA,
@@ -31,7 +31,17 @@ namespace Skk {
 
     class State : Object {
         internal Type handler_type;
-        internal InputMode input_mode;
+        InputMode _input_mode;
+        internal InputMode input_mode {
+            get {
+                return _input_mode;
+            }
+            set {
+                output.append (rom_kana_converter.output);
+                reset ();
+                _input_mode = value;
+            }
+        }
 
         internal Dict[] dictionaries;
         internal ArrayList<Candidate> candidates = new ArrayList<Candidate> ();
@@ -51,7 +61,7 @@ namespace Skk {
 
         internal void reset () {
             handler_type = typeof (NoneStateHandler);
-            input_mode = InputMode.DEFAULT;
+            _input_mode = InputMode.DEFAULT;
             rom_kana_converter.reset ();
             okuri_rom_kana_converter.reset ();
             candidates.clear ();
@@ -69,7 +79,7 @@ namespace Skk {
             }
         }
     }
-    
+
     abstract class StateHandler : Object {
         internal abstract bool process_key_event (State state, KeyEvent key);
         internal abstract string get_preedit (State state);
@@ -80,6 +90,64 @@ namespace Skk {
 
     class NoneStateHandler : StateHandler {
         internal override bool process_key_event (State state, KeyEvent key) {
+            // check the mode switch first
+            switch (state.input_mode) {
+            case InputMode.HIRAGANA:
+                if (key.modifiers == 0 && key.code == 'q') {
+                    state.input_mode = InputMode.KATAKANA;
+                    return true;
+                } else if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                           key.code == 'q') {
+                    state.input_mode = InputMode.HANKAKU_KATAKANA;
+                    return true;
+                } else if (key.modifiers == 0 && key.code == 'l') {
+                    state.input_mode = InputMode.LATIN;
+                    return true;
+                } else if (key.modifiers == 0 && key.code == 'L') {
+                    state.input_mode = InputMode.WIDE_LATIN;
+                    return true;
+                }
+                break;
+            case InputMode.KATAKANA:
+                if (key.modifiers == 0 && key.code == 'q') {
+                    state.input_mode = InputMode.HIRAGANA;
+                    return true;
+                } else if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                           key.code == 'q') {
+                    state.input_mode = InputMode.HANKAKU_KATAKANA;
+                    return true;
+                } else if (key.modifiers == 0 && key.code == 'l') {
+                    state.input_mode = InputMode.LATIN;
+                    return true;
+                } else if (key.modifiers == 0 && key.code == 'L') {
+                    state.input_mode = InputMode.WIDE_LATIN;
+                    return true;
+                }
+                break;
+            case InputMode.HANKAKU_KATAKANA:
+                if ((key.modifiers == 0 ||
+                     (key.modifiers & ModifierType.CONTROL_MASK) != 0) &&
+                    key.code == 'q') {
+                    state.input_mode = InputMode.HIRAGANA;
+                    return true;
+                } else if (key.modifiers == 0 && key.code == 'l') {
+                    state.input_mode = InputMode.LATIN;
+                    return true;
+                } else if (key.modifiers == 0 && key.code == 'L') {
+                    state.input_mode = InputMode.WIDE_LATIN;
+                    return true;
+                }
+                break;
+            case InputMode.LATIN:
+            case InputMode.WIDE_LATIN:
+                if (((key.modifiers & ModifierType.CONTROL_MASK) != 0) &&
+                    key.code == 'j') {
+                    state.input_mode = InputMode.HIRAGANA;
+                    return true;
+                }
+                break;
+            }
+
             switch (state.input_mode) {
             case InputMode.HIRAGANA:
             case InputMode.KATAKANA:
