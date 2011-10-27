@@ -447,6 +447,7 @@ namespace Skk {
                 _input.append_unichar (letter);
                 _output.append (child_node.entry.get_kana (kana_mode));
                 _preedit.erase ();
+                current_node = root_node;
                 for (int i = 0; i < child_node.entry.carryover.length; i++) {
                     append (child_node.entry.carryover[i]);
                 }

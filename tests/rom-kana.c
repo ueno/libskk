@@ -22,13 +22,23 @@ rom_kana (void)
   skk_rom_kana_converter_set_kana_mode (converter, SKK_KANA_MODE_KATAKANA);
   skk_rom_kana_converter_append_text (converter, "min");
   skk_rom_kana_converter_output_nn_if_any (converter);
+  output = skk_rom_kana_converter_get_output (converter);
   g_assert_cmpstr (output, ==, "ミン");
 
   skk_rom_kana_converter_reset (converter);
   skk_rom_kana_converter_set_kana_mode (converter, SKK_KANA_MODE_HIRAGANA);
   skk_rom_kana_converter_append_text (converter, "desu.");
   skk_rom_kana_converter_output_nn_if_any (converter);
+  output = skk_rom_kana_converter_get_output (converter);
   g_assert_cmpstr (output, ==, "です。");
+
+  skk_rom_kana_converter_reset (converter);
+  skk_rom_kana_converter_set_kana_mode (converter, SKK_KANA_MODE_HIRAGANA);
+  skk_rom_kana_converter_append_text (converter, "ww");
+  preedit = skk_rom_kana_converter_get_preedit (converter);
+  g_assert_cmpstr (preedit, ==, "w");
+  output = skk_rom_kana_converter_get_output (converter);
+  g_assert_cmpstr (output, ==, "っ");
 
   g_object_unref (converter);
 }
