@@ -26,9 +26,9 @@ namespace Skk {
      * A file based implementation of #SkkDict.
      */
     public class FileDict : Dict {
-        unowned Posix.FILE get_fp () {
+        unowned Posix.FILE get_fp (string mode = "r") {
             if (file == null)
-                file = Posix.FILE.open (path, "r");
+                file = Posix.FILE.open (path, mode);
             return file;
         }
 
@@ -158,6 +158,12 @@ namespace Skk {
                 }
             }
             return new Candidate[0];
+        }
+
+        public override bool read_only {
+            get {
+                return true;
+            }
         }
 
         string path;

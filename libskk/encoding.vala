@@ -24,10 +24,13 @@ namespace Skk {
         static const int BUFSIZ = 4096;
         static const string INTERNAL_ENCODING = "UTF-8";
 
+        internal string encoding { get; private set; }
+
         CharsetConverter encoder;
         CharsetConverter decoder;
 
         internal EncodingConverter (string encoding) throws GLib.Error {
+            this.encoding = encoding;
             encoder = new CharsetConverter (encoding, INTERNAL_ENCODING);
             decoder = new CharsetConverter (INTERNAL_ENCODING, encoding);
         }

@@ -116,7 +116,7 @@ namespace Skk {
             for (int i = 0; i < candidates.length; i++) {
                 strv[i] = candidates[i].to_string ();
             }
-            return string.joinv ("/", strv);
+            return "/" + string.joinv ("/", strv) + "/";
         }
 
         /**
@@ -138,6 +138,54 @@ namespace Skk {
          */
         public abstract Candidate[] lookup (string midasi, bool okuri = false);
         // public abstract CandidateCompleter get_completer (string midasi);
+
+        public abstract bool read_only { get; }
+
+        /**
+         * skk_dict_select_candidate:
+         * @self: an #SkkDict
+         * @midasi: a midasi (title) string
+         * @candidate: an #SkkCandidate
+         * @okuri: whether to select okuri-ari entries or okuri-nasi entries
+         *
+         * Select a candidate in the dictionary.
+         * Returns: %TRUE if the dictionary is modified, %FALSE otherwise.
+         */
+        public virtual bool select_candidate (string midasi,
+                                              Candidate candidate,
+                                              bool okuri = false)
+        {
+            // FIXME: throw an error when the dictionary is read only
+            return false;
+        }
+
+        /**
+         * skk_dict_purge_candidate:
+         * @self: an #SkkDict
+         * @midasi: a midasi (title) string
+         * @candidate: an #SkkCandidate
+         * @okuri: whether to purge okuri-ari entries or okuri-nasi entries
+         *
+         * Purge a candidate in the dictionary.
+         * Returns: %TRUE if the dictionary is modified, %FALSE otherwise.
+         */
+        public virtual bool purge_candidate (string midasi,
+                                             Candidate candidate,
+                                             bool okuri = false)
+        {
+            // FIXME: throw an error when the dictionary is read only
+            return false;
+        }
+
+        /**
+         * skk_dict_save:
+         * @self: an #SkkDict
+         *
+         * Update the dictionary on disk.
+         */
+        public virtual void save () {
+            // FIXME: throw an error when the dictionary is read only
+        }
     }
 
     /**
@@ -151,6 +199,12 @@ namespace Skk {
 
         public override Candidate[] lookup (string midasi, bool okuri = false) {
             return new Candidate[0];
+        }
+
+        public override bool read_only {
+            get {
+                return true;
+            }
         }
     }
 }

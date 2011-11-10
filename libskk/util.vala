@@ -20,6 +20,11 @@
 using Gee;
 
 namespace Skk {
+    struct Entry<K,V> {
+        K key;
+        V value;
+    }
+        
     class Util {
         static const string[] WideLatinTable = {
             "　", "！", "”", "＃", "＄", "％", "＆", "’", 
@@ -36,12 +41,7 @@ namespace Skk {
             "ｘ", "ｙ", "ｚ", "｛", "｜", "｝", "〜"
         };
 
-        struct MapEntry {
-            string from;
-            string to;
-        }
-        
-        static const MapEntry[] ZenkakuToHankakuKatakanaTable = {
+        static const Entry<string,string>[] ZenkakuToHankakuKatakanaTable = {
             {"ア", "ｱ"}, {"イ", "ｲ"}, {"ウ", "ｳ"}, {"エ", "ｴ"}, {"オ", "ｵ"},
             {"カ", "ｶ"}, {"キ", "ｷ"}, {"ク", "ｸ"}, {"ケ", "ｹ"}, {"コ", "ｺ"},
             {"サ", "ｻ"}, {"シ", "ｼ"}, {"ス", "ｽ"}, {"セ", "ｾ"}, {"ソ", "ｿ"},
@@ -65,7 +65,7 @@ namespace Skk {
             {"ヴ", "ｳﾞ"}
         };
 
-        static const MapEntry[] HankakuToZenkakuAsciiTable = {
+        static const Entry<string,string>[] HankakuToZenkakuAsciiTable = {
             {" ", "　"},
             {":", "："}, {";", "；"}, {"?", "？"}, {"!", "！"},
             {"\'", "´"}, {"`", "｀"}, {"^", "＾"}, {"_", "＿"}, {"-", "ー"},
@@ -96,12 +96,12 @@ namespace Skk {
             {"z", "ｚ"}
         };
 
-        static const MapEntry[] HankakuKatakanaSubstitutes = {
+        static const Entry<string,string>[] HankakuKatakanaSubstitutes = {
             {"ヵ", "ｶ"},
             {"ヶ", "ｹ"}
         };
 
-        static const MapEntry[] HankakuKatakanaSonants = {
+        static const Entry<string,string>[] HankakuKatakanaSonants = {
             {"ﾞ", "゙"},
             {"ﾟ", "゚"}
         };
@@ -155,14 +155,14 @@ namespace Skk {
 
         static construct {
             foreach (var entry in ZenkakuToHankakuKatakanaTable) {
-                _ZenkakuToHankakuKatakanaTable.set (entry.from, entry.to);
-                _HankakuToZenkakuKatakanaTable.set (entry.to, entry.from);
+                _ZenkakuToHankakuKatakanaTable.set (entry.key, entry.value);
+                _HankakuToZenkakuKatakanaTable.set (entry.value, entry.key);
             }
             foreach (var entry in HankakuKatakanaSonants) {
-                _HankakuKatakanaSonants.set (entry.from, entry.to);
+                _HankakuKatakanaSonants.set (entry.key, entry.value);
             }
             foreach (var entry in HankakuKatakanaSubstitutes) {
-                _HankakuKatakanaSubstitutes.set (entry.from, entry.to);
+                _HankakuKatakanaSubstitutes.set (entry.key, entry.value);
             }
         }
     }

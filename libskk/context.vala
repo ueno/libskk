@@ -162,5 +162,13 @@ namespace Skk {
             var handler = handlers.get (state.handler_type);
             return handler.get_preedit (state);
         }
+
+        public void save_dictionaries () {
+            foreach (var dict in dictionaries) {
+                if (!dict.read_only) {
+                    dict.save ();
+                }
+            }
+        }
     }
 }
