@@ -40,6 +40,16 @@ namespace Skk {
                 output.append (rom_kana_converter.output);
                 reset ();
                 _input_mode = value;
+                switch (_input_mode) {
+                case InputMode.HIRAGANA:
+                case InputMode.KATAKANA:
+                case InputMode.HANKAKU_KATAKANA:
+                    rom_kana_converter.kana_mode = (KanaMode) value;
+                    okuri_rom_kana_converter.kana_mode = (KanaMode) value;
+                    break;
+                default:
+                    break;
+                }
             }
         }
 
@@ -90,50 +100,84 @@ namespace Skk {
 
     class NoneStateHandler : StateHandler {
         internal override bool process_key_event (State state, KeyEvent key) {
+            if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                key.code == 'g') {
+                bool handled = true;
+                if (state.rom_kana_converter.preedit == "") {
+                    handled = false;
+                }
+                var input_mode = state.input_mode;
+                state.reset ();
+                state.input_mode = input_mode;
+                return handled;
+            } else if (key.modifiers == 0 && key.code == 'Q') {
+                state.handler_type = typeof (StartStateHandler);
+                return true;
+            }
             // check the mode switch first
             switch (state.input_mode) {
             case InputMode.HIRAGANA:
-                if (key.modifiers == 0 && key.code == 'q') {
+                if (key.modifiers == 0 &&
+                    state.rom_kana_converter.is_active () &&
+                    state.rom_kana_converter.can_consume (key.code)) {
+                }
+                else if (key.modifiers == 0 && key.code == 'q') {
                     state.input_mode = InputMode.KATAKANA;
                     return true;
-                } else if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
-                           key.code == 'q') {
+                }
+                else if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                         key.code == 'q') {
                     state.input_mode = InputMode.HANKAKU_KATAKANA;
                     return true;
-                } else if (key.modifiers == 0 && key.code == 'l') {
+                }
+                else if (key.modifiers == 0 && key.code == 'l') {
                     state.input_mode = InputMode.LATIN;
                     return true;
-                } else if (key.modifiers == 0 && key.code == 'L') {
+                }
+                else if (key.modifiers == 0 && key.code == 'L') {
                     state.input_mode = InputMode.WIDE_LATIN;
                     return true;
                 }
                 break;
             case InputMode.KATAKANA:
-                if (key.modifiers == 0 && key.code == 'q') {
+                if (key.modifiers == 0 &&
+                    state.rom_kana_converter.is_active () &&
+                    state.rom_kana_converter.can_consume (key.code)) {
+                }
+                else if (key.modifiers == 0 && key.code == 'q') {
                     state.input_mode = InputMode.HIRAGANA;
                     return true;
-                } else if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
-                           key.code == 'q') {
+                }
+                else if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                         key.code == 'q') {
                     state.input_mode = InputMode.HANKAKU_KATAKANA;
                     return true;
-                } else if (key.modifiers == 0 && key.code == 'l') {
+                }
+                else if (key.modifiers == 0 && key.code == 'l') {
                     state.input_mode = InputMode.LATIN;
                     return true;
-                } else if (key.modifiers == 0 && key.code == 'L') {
+                }
+                else if (key.modifiers == 0 && key.code == 'L') {
                     state.input_mode = InputMode.WIDE_LATIN;
                     return true;
                 }
                 break;
             case InputMode.HANKAKU_KATAKANA:
-                if ((key.modifiers == 0 ||
+                if (key.modifiers == 0 &&
+                    state.rom_kana_converter.is_active () &&
+                    state.rom_kana_converter.can_consume (key.code)) {
+                }
+                else if ((key.modifiers == 0 ||
                      (key.modifiers & ModifierType.CONTROL_MASK) != 0) &&
                     key.code == 'q') {
                     state.input_mode = InputMode.HIRAGANA;
                     return true;
-                } else if (key.modifiers == 0 && key.code == 'l') {
+                }
+                else if (key.modifiers == 0 && key.code == 'l') {
                     state.input_mode = InputMode.LATIN;
                     return true;
-                } else if (key.modifiers == 0 && key.code == 'L') {
+                }
+                else if (key.modifiers == 0 && key.code == 'L') {
                     state.input_mode = InputMode.WIDE_LATIN;
                     return true;
                 }
@@ -148,6 +192,19 @@ namespace Skk {
                 break;
             }
 
+            if (key.code == '\x7F' ||
+                (key.modifiers & ModifierType.CONTROL_MASK) != 0) {
+                if (state.rom_kana_converter.delete ()) {
+                    return true;
+                }
+                if (state.output.len > 0) {
+                    state.output.truncate (
+                        state.output.str.index_of_nth_char (
+                            state.output.str.char_count () - 1));
+                    return true;
+                }
+            }
+
             switch (state.input_mode) {
             case InputMode.HIRAGANA:
             case InputMode.KATAKANA:
@@ -156,7 +213,7 @@ namespace Skk {
                     state.handler_type = typeof (StartStateHandler);
                     return false;
                 }
-                state.rom_kana_converter.append ((char)key.code);
+                state.rom_kana_converter.append (key.code);
                 state.output.append (state.rom_kana_converter.output);
                 state.rom_kana_converter.output = "";
                 break;
@@ -164,7 +221,8 @@ namespace Skk {
                 state.output.append_c ((char)key.code);
                 break;
             case InputMode.WIDE_LATIN:
-                state.output.append_unichar (Util.get_wide_latin_char ((char)key.code));
+                state.output.append_unichar (
+                    Util.get_wide_latin_char ((char)key.code));
                 break;
             }
             return true;
@@ -181,33 +239,105 @@ namespace Skk {
 
     class StartStateHandler : StateHandler {
         internal override bool process_key_event (State state, KeyEvent key) {
-            if (key.code == ' ') {
+            if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                key.code == 'g') {
+                var input_mode = state.input_mode;
+                state.reset ();
+                state.input_mode = input_mode;
+                return true;
+            }
+            else if (key.modifiers == 0 && key.code == 'q' &&
+                     (state.input_mode == InputMode.HIRAGANA ||
+                      state.input_mode == InputMode.KATAKANA ||
+                      state.input_mode == InputMode.HANKAKU_KATAKANA)) {
+                state.rom_kana_converter.output_nn_if_any ();
+                switch (state.input_mode) {
+                case InputMode.HIRAGANA:
+                    state.output.assign (
+                        Util.get_katakana (state.rom_kana_converter.output));
+                    state.rom_kana_converter.reset ();
+                    state.input_mode = InputMode.KATAKANA;
+                    state.handler_type = typeof (NoneStateHandler);
+                    break;
+                case InputMode.KATAKANA:
+                    state.output.assign (
+                        Util.get_hiragana (state.rom_kana_converter.output));
+                    state.rom_kana_converter.reset ();
+                    state.input_mode = InputMode.HIRAGANA;
+                    state.handler_type = typeof (NoneStateHandler);
+                    break;
+                case InputMode.HANKAKU_KATAKANA:
+                    state.output.assign (
+                        Util.get_hiragana (state.rom_kana_converter.output));
+                    state.rom_kana_converter.reset ();
+                    state.handler_type = typeof (NoneStateHandler);
+                    break;
+                }
+                return true;
+            }
+            else if (key.code == ' ') {
                 if (!state.rom_kana_converter.is_active ()) {
                     state.reset ();
                     return true;
                 }
                 state.handler_type = typeof (SelectStateHandler);
                 return false;
-            } else if (key.code == '\n') {
+            }
+            else if (key.code == '\n') {
                 state.output.append (state.rom_kana_converter.output);
                 state.reset ();
                 return true;
-            } else if (key.code.isalpha () && key.code.isupper ()) {
-                // the first letter in this state is uppercase
-                if (!state.rom_kana_converter.is_active ())
-                    state.rom_kana_converter.append ((char)key.code.tolower ());
-                else {
-                    state.okuri_rom_kana_converter.append ((char)key.code.tolower ());
-                    if (state.okuri_rom_kana_converter.preedit.length == 0) {
-                        state.handler_type = typeof (SelectStateHandler);
-                        return false;
-                    }
+            }
+            else if (key.code == '\x7F' ||
+                     (key.modifiers & ModifierType.CONTROL_MASK) != 0) {
+                if (state.okuri_rom_kana_converter.delete () ||
+                    state.rom_kana_converter.delete ()) {
+                    return true;
                 }
-                return true;
-            } else {
-                state.rom_kana_converter.append ((char)key.code.tolower ());
+                if (state.output.len > 0) {
+                    state.output.truncate (
+                        state.output.str.index_of_nth_char (
+                            state.output.str.char_count () - 1));
+                    return true;
+                }
+                state.handler_type = typeof (NoneStateHandler);
                 return true;
             }
+            else if (key.code.isalpha ()) {
+                // okuri_rom_kana_converter is started or being started
+                if (state.okuri_rom_kana_converter.is_active () ||
+                    (key.code.isupper () &&
+                     state.rom_kana_converter.is_active () &&
+                     !state.rom_kana_converter.can_consume (
+                         key.code.tolower (), true))) {
+                    if (state.rom_kana_converter.preedit.length > 0) {
+                        state.rom_kana_converter.append (key.code.tolower ());
+                    }
+                    state.rom_kana_converter.output_nn_if_any ();
+                    state.okuri_rom_kana_converter.append (key.code.tolower ());
+                    if (state.okuri_rom_kana_converter.preedit.length == 0) {
+                        state.handler_type = typeof (SelectStateHandler);
+                        key.code = ' ';
+                        return false;
+                    }
+                    return true;
+                }
+                else {
+                    state.rom_kana_converter.append (key.code.tolower ());
+                    return true;
+                }
+            }
+            else if (state.rom_kana_converter.is_active () && key.code == '>') {
+                state.rom_kana_converter.append (key.code.tolower ());
+                state.handler_type = typeof (SelectStateHandler);
+                key.code = ' ';
+                return false;
+            }
+            else {
+                state.rom_kana_converter.append (key.code.tolower ());
+                return true;
+            }
+            return false;
         }
 
         internal override string get_preedit (State state) {
@@ -236,20 +366,16 @@ namespace Skk {
                     state.handler_type = typeof (StartStateHandler);
                     return true;
                 }
-            } else if (key.code == '\n') {
-                var c = state.candidates.get (state.candidate_index);
-                state.output.append (c.text);
-                state.reset ();
-                return true;
-            } else {
+            }
+            else if (key.code == ' ') {
                 if (state.candidate_index < 0) {
                     StringBuilder builder = new StringBuilder (state.rom_kana_converter.output);
                     bool okuri = false;
                     if (state.okuri_rom_kana_converter.is_active ()) {
-                        builder.append_unichar (state.okuri_rom_kana_converter.input[0]);
+                        builder.append_unichar (
+                            state.okuri_rom_kana_converter.input[0]);
                         okuri = true;
                     }
-                    // FIXME check okuri-kana
                     state.lookup (builder.str, okuri);
                 }
 
@@ -261,6 +387,25 @@ namespace Skk {
                     // state.candidates_end ();
                     return true;
                 }
+            }
+            else {
+                var c = state.candidates.get (state.candidate_index);
+                state.output.append (c.text);
+                if (state.okuri_rom_kana_converter.is_active ()) {
+                    state.output.append (state.okuri_rom_kana_converter.output);
+                }
+                state.reset ();
+                if (key.code == '>') {
+                    state.handler_type = typeof (StartStateHandler);
+                    return false;
+                }
+                else if (key.code.isalpha () ||
+                         key.code == '\x7F' ||
+                         (key.modifiers & ModifierType.CONTROL_MASK) != 0) {
+                    state.handler_type = typeof (NoneStateHandler);
+                    return false;
+                }
+                return true;
             }
             return false;
         }

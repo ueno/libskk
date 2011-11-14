@@ -137,10 +137,11 @@ namespace Skk {
         }
 
         internal static string get_hankaku_katakana (string kana) {
+            string katakana = get_katakana (kana);
             StringBuilder builder = new StringBuilder ();
             int index = 0;
             unichar uc;
-            while (kana.get_next_char (ref index, out uc)) {
+            while (katakana.get_next_char (ref index, out uc)) {
                 string str = uc.to_string ();
                 if (_HankakuKatakanaSubstitutes.has_key (str)) {
                     builder.append (_HankakuKatakanaSubstitutes.get (str));
@@ -151,6 +152,39 @@ namespace Skk {
                 }
             }
             return builder.str;
+        }
+
+        internal static string get_hiragana (string kana) {
+            int diff = 0x30a2 - 0x3042; // ア - あ
+            string str = kana.replace ("ヴ", "ウ゛");
+            StringBuilder builder = new StringBuilder ();
+            int index = 0;
+            unichar uc;
+            while (str.get_next_char (ref index, out uc)) {
+                // ァ <= uc && uc <= ン
+                if (0x30a1 <= uc && uc <= 0x30f3) {
+                    builder.append_unichar (uc - diff);
+                } else {
+                    builder.append_unichar (uc);
+                }
+            }
+            return builder.str;
+        }
+
+        internal static string get_katakana (string kana) {
+            int diff = 0x30a2 - 0x3042; // ア - あ
+            StringBuilder builder = new StringBuilder ();
+            int index = 0;
+            unichar uc;
+            while (kana.get_next_char (ref index, out uc)) {
+                // ぁ <= uc && uc <= ん
+                if (0x3041 <= uc && uc <= 0x3093) {
+                    builder.append_unichar (uc + diff);
+                } else {
+                    builder.append_unichar (uc);
+                }
+            }
+            return builder.str.replace ("ウ゛", "ヴ");
         }
 
         static construct {

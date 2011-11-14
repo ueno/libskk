@@ -110,6 +110,15 @@ namespace Skk {
         public bool process_key_event (string key) {
             var state = state_stack.data;
             var ev = new KeyEvent (key);
+            // FIXME instead of directly inspecting handler type, add
+            // a signal to StateHandler to trigger abort_dict_edit()
+            if ((ev.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                ev.code == 'g') {
+                if (dict_edit_level () > 0 &&
+                    state.handler_type == typeof (NoneStateHandler)) {
+                    return abort_dict_edit ();
+                }
+            }
             while (true) {
                 var handler_type = state.handler_type;
                 var handler = handlers.get (handler_type);
