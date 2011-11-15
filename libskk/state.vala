@@ -62,6 +62,8 @@ namespace Skk {
 
         internal StringBuilder output = new StringBuilder ();
 
+        internal Iterator<string>? completion_iterator;
+
         internal State (Dict[] dictionaries) {
             this.dictionaries = dictionaries;
             this.rom_kana_converter = new RomKanaConverter ();
@@ -74,6 +76,7 @@ namespace Skk {
             _input_mode = InputMode.DEFAULT;
             rom_kana_converter.reset ();
             okuri_rom_kana_converter.reset ();
+            completion_iterator = null;
             candidates.clear ();
             candidate_index = -1;
         }
@@ -88,6 +91,10 @@ namespace Skk {
                 }
             }
         }
+
+        internal signal void enter_dict_edit ();
+        internal signal void leave_dict_edit ();
+        internal signal void abort_dict_edit ();
     }
 
     abstract class StateHandler : Object {
@@ -301,6 +308,31 @@ namespace Skk {
                     return true;
                 }
                 state.handler_type = typeof (NoneStateHandler);
+                return true;
+            }
+            else if (key.code == '\t' ||
+                     (key.modifiers & ModifierType.CONTROL_MASK) != 0) {
+                if (state.completion_iterator == null) {
+                    var completion = new TreeSet<string> ();
+                    foreach (var dict in state.dictionaries) {
+                        string[] _completion = dict.complete (state.rom_kana_converter.output);
+                        foreach (var c in _completion) {
+                            completion.add (c);
+                        }
+                    }
+                    if (!completion.is_empty) {
+                        state.completion_iterator = completion.iterator_at (completion.first ());
+                        state.completion_iterator.next ();
+                    }
+                }
+                if (state.completion_iterator != null) {
+                    string midasi = state.completion_iterator.get ();
+                    state.rom_kana_converter.reset ();
+                    state.rom_kana_converter.output = midasi;
+                    if (state.completion_iterator.has_next ()) {
+                        state.completion_iterator.next ();
+                    }
+                }
                 return true;
             }
             else if (key.code.isalpha ()) {

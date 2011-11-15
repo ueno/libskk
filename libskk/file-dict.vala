@@ -48,7 +48,7 @@ namespace Skk {
                     break;
                 }
                 if (line.has_prefix (";; okuri-ari entries.")) {
-                    offsets = okuri_ari;
+                    offsets = okuri_ari_offsets;
                     pos = fp.tell ();
                     break;
                 }
@@ -61,11 +61,19 @@ namespace Skk {
                         break;
                     }
                     if (line.has_prefix (";; okuri-nasi entries.")) {
-                        offsets = okuri_nasi;
+                        offsets = okuri_nasi_offsets;
                     } else {
-                        if (offsets == okuri_nasi)
+                        if (offsets == okuri_nasi_offsets) {
+                            int index = line.index_of (" ");
+                            if (index > 0) {
+                                try {
+                                    midasi_strings.add (
+                                        converter.decode (line[0:index]));
+                                } catch (GLib.Error e) {
+                                }
+                            }
                             offsets.add (pos);
-                        else
+                        } else
                             offsets.insert (0, pos);
                     }
                 }
@@ -79,8 +87,9 @@ namespace Skk {
             }
 
             if (buf.st_mtime > mtime) {
-                this.okuri_ari.clear ();
-                this.okuri_nasi.clear ();
+                this.okuri_ari_offsets.clear ();
+                this.okuri_nasi_offsets.clear ();
+                this.midasi_strings.clear ();
                 load ();
                 this.mtime = buf.st_mtime;
             }
@@ -129,9 +138,9 @@ namespace Skk {
         public override Candidate[] lookup (string midasi, bool okuri = false) {
             ArrayList<long> offsets;
             if (okuri) {
-                offsets = okuri_ari;
+                offsets = okuri_ari_offsets;
             } else {
-                offsets = okuri_nasi;
+                offsets = okuri_nasi_offsets;
             }
             if (offsets.size == 0) {
                 reload ();
@@ -160,6 +169,18 @@ namespace Skk {
             return new Candidate[0];
         }
 
+        public override string[] complete (string midasi) {
+            var completion = new ArrayList<string> ();
+            foreach (var s in midasi_strings) {
+                if (s.has_prefix (midasi)) {
+                    completion.add (s);
+                } else if (strcmp (s, midasi) > 0) {
+                    break;
+                }
+            }
+            return completion.to_array ();
+        }
+
         public override bool read_only {
             get {
                 return true;
@@ -170,17 +191,18 @@ namespace Skk {
         time_t mtime;
         EncodingConverter converter;
         Posix.FILE? file;
-        ArrayList<long> okuri_ari = new ArrayList<long> ();
-        ArrayList<long> okuri_nasi = new ArrayList<long> ();
+        ArrayList<long> okuri_ari_offsets = new ArrayList<long> ();
+        ArrayList<long> okuri_nasi_offsets = new ArrayList<long> ();
+        ArrayList<string> midasi_strings = new ArrayList<string> ();
 
         /**
          * skk_file_dict_new:
          * @path: a path to the file
-         * @encoding: encoding of the file (default UTF-8)
+         * @encoding: encoding of the file (default EUC-JP)
          *
          * Create a new #SkkFileDict.
          */
-        public FileDict (string path, string encoding) throws GLib.Error {
+        public FileDict (string path, string encoding = "EUC-JP") throws GLib.Error {
             this.path = path;
             this.mtime = 0;
             this.converter = new EncodingConverter (encoding);

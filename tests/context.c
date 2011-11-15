@@ -240,6 +240,24 @@ hankaku_katakana (void)
   g_object_unref (context);
 }
 
+static void
+completion (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "A \t", "▽あい", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A \t \t", "▽あいさつ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A k a \t", "▽あかつき", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A k a \t \t", "▽あかね", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A k a \t \t \t", "▽あかね", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A p a \t", "▽あぱ", "", SKK_INPUT_MODE_HIRAGANA },
+  };
+
+  context = create_context ();
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
 int
 main (int argc, char **argv) {
   g_type_init ();
@@ -251,5 +269,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/okuri-ari", okuri_ari);
   g_test_add_func ("/libskk/delete", delete);
   g_test_add_func ("/libskk/hankaku-katakana", hankaku_katakana);
+  g_test_add_func ("/libskk/completion", completion);
   return g_test_run ();
 }

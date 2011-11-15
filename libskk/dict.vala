@@ -137,7 +137,8 @@ namespace Skk {
          * Returns: an array of #SkkCandidate
          */
         public abstract Candidate[] lookup (string midasi, bool okuri = false);
-        // public abstract CandidateCompleter get_completer (string midasi);
+
+        public abstract string[] complete (string midasi);
 
         public abstract bool read_only { get; }
 
@@ -199,6 +200,10 @@ namespace Skk {
 
         public override Candidate[] lookup (string midasi, bool okuri = false) {
             return new Candidate[0];
+        }
+
+        public override string[] complete (string midasi) {
+            return new string[0];
         }
 
         public override bool read_only {

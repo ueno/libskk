@@ -177,6 +177,10 @@ namespace Skk {
             }
         }
 
+        public override string[] complete (string midasi) {
+            return new string[0];
+        }
+
         public override bool select_candidate (string midasi,
                                                Candidate candidate,
                                                bool okuri = false)
