@@ -10,7 +10,7 @@ namespace Skk {
     public class KanaKanDict : Object {
         HashMap<string,Set<string>> dict =
             new HashMap<string,Set<string>> ();
-        public KanaKanDict (string path) {
+        public KanaKanDict (string path) throws GLib.Error, GLib.IOError {
             File file = File.new_for_path (path);
             DataInputStream input = new DataInputStream (file.read ());
             while (true) {
@@ -40,7 +40,7 @@ namespace Skk {
 
     public class KanaKanScoreMap : Object {
         Map<string,double?> map = new HashMap<string,double?> ();
-        public KanaKanScoreMap (string path, KanaKanDict dict) {
+        public KanaKanScoreMap (string path, KanaKanDict dict) throws GLib.Error, GLib.IOError {
             File file = File.new_for_path (path);
             DataInputStream input = new DataInputStream (file.read ());
             while (true) {

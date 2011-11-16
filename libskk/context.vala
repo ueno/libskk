@@ -30,7 +30,8 @@ namespace Skk {
     }
 
     /**
-     * The input context with support for SKK kana-kanji conversion method.
+     * The input context with support for SKK kana-kanji conversion
+     * method.  This is the main entry point of libskk.
      */
     public class Context : Object {
         Dict[] dictionaries;
@@ -62,42 +63,48 @@ namespace Skk {
                           new StartStateHandler ());
             handlers.set (typeof (SelectStateHandler),
                           new SelectStateHandler ());
-            this.state_stack.prepend (new State (dictionaries));
-            this.state_stack.data.enter_dict_edit.connect ((midasi) => {
-                    this.enter_dict_edit (midasi);
-                });
+            state_stack.prepend (new State (dictionaries));
+            connect_state_signals (state_stack.data);
         }
 
-        public bool complete () {
-            // FIXME not implemented
-            return false;
+        void connect_state_signals (State state) {
+            state.recursive_edit_start.connect (start_dict_edit);
+            state.recursive_edit_end.connect (end_dict_edit);
+            state.recursive_edit_abort.connect (abort_dict_edit);
         }
 
         uint dict_edit_level () {
             return state_stack.length () - 1;
         }
 
-        bool enter_dict_edit (string midasi) {
-            this.midasi_stack.prepend (midasi);
-            this.state_stack.prepend (new State (dictionaries));
-            this.state_stack.data.enter_dict_edit.connect ((midasi) => {
-                    this.enter_dict_edit (midasi);
-                });
-            return true;
+        void start_dict_edit (string midasi) {
+            midasi_stack.prepend (midasi);
+            state_stack.prepend (new State (dictionaries));
+            connect_state_signals (state_stack.data);
+        }
+
+        void end_dict_edit (string midasi, string candidate) {
+            if (leave_dict_edit ()) {
+                // FIXME save a word in dictionary
+            }
         }
 
         bool leave_dict_edit () {
             if (dict_edit_level () > 0) {
-                this.midasi_stack.delete_link (this.midasi_stack);
-                this.state_stack.delete_link (this.state_stack);
+                midasi_stack.delete_link (midasi_stack);
+                state_stack.delete_link (state_stack);
                 return true;
             }
             return false;
         }
 
+        void abort_dict_edit () {
+            leave_dict_edit ();
+        }
+
         /**
-         * Pass key events to the context.  This function is only used
-         * in unit tests.
+         * Pass key events to the context.  This function is rarely
+         * used in programs but in unit tests.
          *
          * @param keys a string representing key events, seperated by " "
          *
@@ -125,16 +132,6 @@ namespace Skk {
         public bool process_key_event (string key) {
             var state = state_stack.data;
             var ev = new KeyEvent (key);
-            if (dict_edit_level () > 0 &&
-                state.handler_type == typeof (NoneStateHandler)) {
-                if ((ev.modifiers & ModifierType.CONTROL_MASK) != 0 &&
-                    ev.code == 'g') {
-                    return leave_dict_edit ();
-                }
-                else if (ev.modifiers == 0 && ev.code == '\n') {
-                    return leave_dict_edit ();
-                }
-            }
             while (true) {
                 var handler_type = state.handler_type;
                 var handler = handlers.get (handler_type);

@@ -54,8 +54,11 @@ namespace Skk {
                 string coding_system = info.fetch (1);
                 foreach (var entry in ENCODING_TO_CODING_SYSTEM_RULE) {
                     if (entry.value == coding_system) {
-                        // override encoding with coding cookie
-                        converter = new EncodingConverter (entry.key);
+                        try {
+                            // override encoding with coding cookie
+                            converter = new EncodingConverter (entry.key);
+                        } catch (GLib.Error e) {
+                        }
                         break;
                     }
                 }
@@ -73,7 +76,6 @@ namespace Skk {
             }
             if (entries != null) {
                 while (true) {
-                    long pos = fp.tell ();
                     line = fp.gets (buf);
                     if (line == null) {
                         break;

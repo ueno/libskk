@@ -49,7 +49,7 @@ namespace Skk {
             }
         }
 
-        string read_response () {
+        string read_response () throws SkkServError, GLib.IOError {
             StringBuilder builder = new StringBuilder ();
             // skksearch does not terminate the line with LF on
             // error (Issue#30)

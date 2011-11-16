@@ -90,9 +90,9 @@ namespace Skk {
             }
         }
 
-        internal signal void enter_dict_edit (string midasi);
-        internal signal void leave_dict_edit ();
-        internal signal void abort_dict_edit ();
+        internal signal void recursive_edit_abort ();
+        internal signal void recursive_edit_end (string midasi, string value);
+        internal signal void recursive_edit_start (string midasi);
     }
 
     abstract class StateHandler : Object {
@@ -110,11 +110,22 @@ namespace Skk {
                 bool handled = true;
                 if (state.rom_kana_converter.preedit == "") {
                     handled = false;
+                    state.recursive_edit_abort ();
                 }
                 var input_mode = state.input_mode;
                 state.reset ();
                 state.input_mode = input_mode;
                 return handled;
+            } else if (key.modifiers == 0 && key.code == '\n') {
+                if (state.midasi == null) {
+                    state.recursive_edit_abort ();
+                } else {
+                    state.recursive_edit_end (state.midasi, state.output.str);
+                }
+                var input_mode = state.input_mode;
+                state.reset ();
+                state.input_mode = input_mode;
+                return true;
             } else if (key.modifiers == 0 && key.code == 'Q') {
                 state.handler_type = typeof (StartStateHandler);
                 return true;
@@ -394,7 +405,6 @@ namespace Skk {
                 state.rom_kana_converter.append (key.code.tolower ());
                 return true;
             }
-            return false;
         }
 
         internal override string get_preedit (State state) {
@@ -448,7 +458,7 @@ namespace Skk {
                     // state.preedit_updated ();
                     return true;
                 } else {
-                    state.enter_dict_edit (state.midasi);
+                    state.recursive_edit_start (state.midasi);
                     if (state.candidates.size == 0) {
                         state.handler_type = typeof (StartStateHandler);
                     }
@@ -474,7 +484,6 @@ namespace Skk {
                 }
                 return true;
             }
-            return false;
         }
 
         internal override string get_preedit (State state) {
