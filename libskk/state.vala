@@ -90,6 +90,14 @@ namespace Skk {
             }
         }
 
+        internal void purge_candidate (string midasi, Candidate candidate, bool okuri = false) {
+            foreach (var dict in dictionaries) {
+                if (!dict.read_only) {
+                    dict.purge_candidate (midasi, candidate);
+                }
+            }
+        }
+
         internal signal void recursive_edit_abort ();
         internal signal void recursive_edit_end (string text);
         internal signal void recursive_edit_start (string midasi);
@@ -116,8 +124,10 @@ namespace Skk {
                 state.reset ();
                 state.input_mode = input_mode;
                 return handled;
-            } else if (key.modifiers == 0 && key.code == '\n') {
-                if (state.midasi == null) {
+            } else if ((key.modifiers == 0 && key.code == '\n') ||
+                       ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                        key.code == 'm')) {
+                if (state.output.str.length == 0) {
                     state.recursive_edit_abort ();
                 } else {
                     state.recursive_edit_end (state.output.str);
@@ -437,6 +447,12 @@ namespace Skk {
                     state.handler_type = typeof (StartStateHandler);
                     return true;
                 }
+            }
+            else if (key.modifiers == 0 && key.code == 'X') {
+                state.purge_candidate (state.midasi,
+                                       state.candidates.get (state.candidate_index));
+                state.reset ();
+                return true;
             }
             else if (key.modifiers == 0 && key.code == ' ') {
                 if (state.candidate_index < 0) {

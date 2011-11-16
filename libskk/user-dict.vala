@@ -159,8 +159,7 @@ namespace Skk {
             }
         }
 
-        Map<string,ArrayList<Candidate>> get_entries (string midasi,
-                                                      bool okuri = false) {
+        Map<string,ArrayList<Candidate>> get_entries (bool okuri = false) {
             if (okuri) {
                 return okuri_ari_entries;
             } else {
@@ -169,7 +168,7 @@ namespace Skk {
         }
 
         public override Candidate[] lookup (string midasi, bool okuri = false) {
-            var entries = get_entries (midasi, okuri);
+            var entries = get_entries (okuri);
             if (entries.has_key (midasi)) {
                 return entries.get (midasi).to_array ();
             } else {
@@ -209,7 +208,7 @@ namespace Skk {
             midasi_history[0] = midasi;
 
             // update candidates list associated with midasi
-            var entries = get_entries (midasi, okuri);
+            var entries = get_entries (okuri);
             if (!entries.has_key (midasi)) {
                 entries.set (midasi, new ArrayList<Candidate> ());
             }
@@ -236,18 +235,21 @@ namespace Skk {
                                               bool okuri = false)
         {
             bool modified = false;
-            var entries = get_entries (midasi, okuri);
+            var entries = get_entries (okuri);
             if (entries.has_key (midasi)) {
                 var candidates = entries.get (midasi);
                 if (candidates.size > 0) {
-                    for (var iter = candidates.iterator ();
-                         iter.has_next ();
-                         iter.next ()) {
+                    var iter = candidates.iterator ();
+                    iter.first ();
+                    do {
                         var c = iter.get ();
                         if (c.text == candidate.text) {
                             iter.remove ();
                             modified = true;
                         }
+                    } while (iter.next ());
+                    if (candidates.size == 0) {
+                        entries.remove (midasi);
                     }
                 }
             }
