@@ -1,49 +1,5 @@
 #include <libskk/libskk.h>
-
-struct _SkkTransition {
-  SkkInputMode input_mode;
-  const gchar *keys;
-  const gchar *preedit;
-  const gchar *output;
-  SkkInputMode next_input_mode;
-};
-typedef struct _SkkTransition SkkTransition;
-
-static SkkContext *
-create_context (void)
-{
-  GError *error = NULL;
-  SkkFileDict *dict = skk_file_dict_new ("/usr/share/skk/SKK-JISYO.S",
-                                         "EUC-JP",
-                                         &error);
-  g_assert_no_error (error);
-
-  SkkDict *dictionaries[1];
-  dictionaries[0] = SKK_DICT (dict);
-  return skk_context_new (dictionaries, 1);
-}
-
-static void
-check_transitions (SkkContext    *context,
-                   SkkTransition *transitions,
-                   int            n_transitions)
-{
-  gint i;
-
-  for (i = 0; i < n_transitions; i++) {
-    const gchar *preedit, *output;
-    SkkInputMode input_mode;
-    skk_context_reset (context);
-    skk_context_set_input_mode (context, transitions[i].input_mode);
-    skk_context_process_key_events (context, transitions[i].keys);
-    preedit = skk_context_get_preedit (context);
-    g_assert_cmpstr (preedit, ==, transitions[i].preedit);
-    output = skk_context_get_output (context);
-    g_assert_cmpstr (output, ==, transitions[i].output);
-    input_mode = skk_context_get_input_mode (context);
-    g_assert_cmpint (input_mode, ==, transitions[i].next_input_mode);
-  }
-}
+#include "common.h"
 
 static void
 context (void)
@@ -201,8 +157,8 @@ okuri_ari (void)
     // Issue#19
     { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC", "▼東", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC >", "▽>", "東", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC > s h i SPC", "▼>し", "東", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "T y o u >", "▼ちょう>", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC > s h i SPC", "▼氏", "東", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "T y o u >", "▼超", "", SKK_INPUT_MODE_HIRAGANA },
   };
 
   context = create_context ();

@@ -4,7 +4,7 @@ static void
 file_dict (void)
 {
   GError *error = NULL;
-  SkkFileDict *dict = skk_file_dict_new ("/usr/share/skk/SKK-JISYO.S",
+  SkkFileDict *dict = skk_file_dict_new ("file-dict.dat",
                                          "EUC-JP",
                                          &error);
   g_assert_no_error (error);
