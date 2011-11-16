@@ -40,11 +40,29 @@ GLIB_GSETTINGS
 
 GOBJECT_INTROSPECTION_CHECK([0.9.0])
 
-GTK_DOC_CHECK([1.15])
-
 AM_PROG_VALAC([0.14.0])
 AC_SUBST(VALAC)
 AC_SUBST(VALAFLAGS)
+
+AC_ARG_ENABLE([docs],
+              AS_HELP_STRING([--enable-docs],[Enable documentation generation]),
+              [enable_docs=$enableval], [enable_docs=no])
+AM_CONDITIONAL([ENABLE_DOCS], [test x$enable_docs = xyes])
+
+VALADOC_REQUIRED=0.3.1
+
+have_valadoc=no
+if test x$enable_docs = xyes; then
+  # make sure the library is new enough and the program exists
+  PKG_CHECK_MODULES([VALADOC], [valadoc-1.0 >= $VALADOC_REQUIRED])
+  AC_PATH_PROG([VALADOC], [valadoc], [:])
+  AS_IF([test "$VALADOC" != :], have_valadoc=yes)
+fi
+AM_CONDITIONAL([HAVE_VALADOC], [test x$have_valadoc = xyes])
+
+if test "x$enable_docs" = "xyes" -a "x$have_valadoc" != "xyes"; then
+    AC_MSG_ERROR([Doc building requested but valadoc not installed.])
+fi
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile

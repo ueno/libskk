@@ -20,15 +20,6 @@
 using Gee;
 
 namespace Skk {
-    public enum InputMode {
-        HIRAGANA = KanaMode.HIRAGANA,
-        KATAKANA = KanaMode.KATAKANA,
-        HANKAKU_KATAKANA = KanaMode.HANKAKU_KATAKANA,
-        LATIN,
-        WIDE_LATIN,
-        DEFAULT = HIRAGANA
-    }
-
     class State : Object {
         internal Type handler_type;
         InputMode _input_mode;

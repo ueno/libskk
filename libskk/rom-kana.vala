@@ -376,9 +376,6 @@ namespace Skk {
         static const string[] NN = { "ん", "ン", "ﾝ" };
 
         /**
-         * skk_rom_kana_converter_output_nn_if_any:
-         * @self: an #SkkRomKanaConverter
-         *
          * Output "nn" if preedit ends with "n".
          */
         public void output_nn_if_any () {
@@ -390,11 +387,9 @@ namespace Skk {
         }
 
         /**
-         * skk_rom_kana_converter_append_text:
-         * @self: an #SkkRomKanaConverter
-         * @text: a string
+         * Append text to the internal buffer.
          *
-         * Append @text to the internal buffer.
+         * @param text a string
          */
         public void append_text (string text) {
             int index = 0;
@@ -405,45 +400,43 @@ namespace Skk {
         }
 
         /**
-         * skk_rom_kana_converter_append:
-         * @self: an #SkkRomKanaConverter
-         * @letter: an ASCII character
+         * Append a character to the internal buffer.
          *
-         * Append @letter to the internal buffer.
+         * @param uc an ASCII character
          */
-        public void append (unichar letter) {
-            var child_node = current_node.children[letter];
+        public void append (unichar uc) {
+            var child_node = current_node.children[uc];
             if (child_node == null) {
                 output_nn_if_any ();
                 // no such transition path in trie
-                var index = ".,".index_of_char ((char)letter);
+                var index = ".,".index_of_char ((char)uc);
                 if (index >= 0) {
                     index = PERIOD_RULE[period_style].index_of_nth_char (index);
                     unichar period = PERIOD_RULE[period_style].get_char (index);
-                    _input.append_unichar (letter);
+                    _input.append_unichar (uc);
                     _output.append_unichar (period);
                     _preedit.erase ();
                     current_node = root_node;
-                } else if (root_node.children[letter] == null) {
-                    _input.append_unichar (letter);
-                    _output.append_unichar (letter);
+                } else if (root_node.children[uc] == null) {
+                    _input.append_unichar (uc);
+                    _output.append_unichar (uc);
                     _preedit.erase ();
                     current_node = root_node;
                     return;
                 } else {
                     // abondon current preedit and restart lookup from
-                    // the root with letter
+                    // the root with uc
                     _preedit.erase ();
                     current_node = root_node;
-                    append (letter);
+                    append (uc);
                 }
             } else if (child_node.entry == null) {
                 // node is not a terminal
-                _preedit.append_unichar (letter);
-                _input.append_unichar (letter);
+                _preedit.append_unichar (uc);
+                _input.append_unichar (uc);
                 current_node = child_node;
             } else {
-                _input.append_unichar (letter);
+                _input.append_unichar (uc);
                 _output.append (child_node.entry.get_kana (kana_mode));
                 _preedit.erase ();
                 current_node = root_node;
@@ -454,17 +447,16 @@ namespace Skk {
         }
 
         /**
-         * skk_rom_kana_converter_can_consume:
-         * @self: an #SkkRomKanaConverter
-         * @letter: an ASCII character
-         * @preedit_only: whether to return %FALSE if preedit is not active
+         * Check if a character will be consumed by the current conversion.
          *
-         * Check if @letter will finish the conversion.
+         * @param uc an ASCII character
+         * @param preedit_only only checks if preedit is active
+         * @return `true` if the character can be consumed
          */
-        public bool can_consume (unichar letter, bool preedit_only = false) {
+        public bool can_consume (unichar uc, bool preedit_only = false) {
             if (preedit_only && _preedit.len == 0)
                 return false;
-            var child_node = current_node.children[letter];
+            var child_node = current_node.children[uc];
             if (child_node == null)
                 return false;
             if (child_node.entry == null)
@@ -475,10 +467,7 @@ namespace Skk {
         }
 
         /**
-         * skk_rom_kana_converter_reset:
-         * @self: an #SkkRomKanaConverter
-         *
-         * Reset the internal state of @self.
+         * Reset the internal state of the converter.
          */
         public void reset () {
             _input.erase ();
@@ -488,10 +477,9 @@ namespace Skk {
         }
 
         /**
-         * skk_rom_kana_delete:
-         * @self: an #SkkRomKanaConverter
-         *
          * Delete the trailing character from the internal buffer.
+         *
+         * @return `true` if any character is removed, `false` otherwise
          */
         public bool delete () {
             if (_preedit.len > 0) {
@@ -518,10 +506,9 @@ namespace Skk {
         }
 
         /**
-         * skk_rom_kana_is_active:
-         * @self: an #SkkRomKanaConverter
+         * Check if the converter is active
          *
-         * Return %TRUE if @self is active, otherwise %FALSE.
+         * @return `true` if the converter is active, `false` otherwise
          */
         public bool is_active () {
             return _output.len > 0 || _preedit.len > 0;

@@ -21,9 +21,7 @@ using Gee;
 
 namespace Skk {
     /**
-     * SkkUserDict:
-     *
-     * A file based implementation of #SkkDict used for user dictionary.
+     * A file based implementation of Dict used for user dictionary.
      */
     public class UserDict : Dict {
         unowned Posix.FILE get_fp (string mode = "r") {
@@ -272,11 +270,13 @@ namespace Skk {
         string midasi_history[128];
 
         /**
-         * skk_user_dict_new:
-         * @path: a path to the file
-         * @encoding: encoding of the file (default UTF-8)
+         * Create a new UserDict.
          *
-         * Create a new #SkkUserDict.
+         * @param path a path to the file
+         * @param encoding encoding of the file (default UTF-8)
+         *
+         * @return a new UserDict
+         * @throws GLib.Error if opening the file is failed
          */
         public UserDict (string path, string encoding) throws GLib.Error {
             this.path = path;

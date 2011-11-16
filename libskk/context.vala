@@ -20,9 +20,16 @@
 using Gee;
 
 namespace Skk {
+    public enum InputMode {
+        HIRAGANA = KanaMode.HIRAGANA,
+        KATAKANA = KanaMode.KATAKANA,
+        HANKAKU_KATAKANA = KanaMode.HANKAKU_KATAKANA,
+        LATIN,
+        WIDE_LATIN,
+        DEFAULT = HIRAGANA
+    }
+
     /**
-     * SkkContext:
-     *
      * The input context with support for SKK kana-kanji conversion method.
      */
     public class Context : Object {
@@ -41,10 +48,11 @@ namespace Skk {
         }
 
         /**
-         * skk_context_new:
-         * @dictionaries: an array of #SkkDict
+         * Create a new Context.
          *
-         * Create a new #SkkContext.
+         * @param dictionaries an array of Dict
+         *
+         * @return a new Context
          */
         public Context (Dict[] dictionaries) {
             this.dictionaries = dictionaries;
@@ -88,12 +96,12 @@ namespace Skk {
         }
 
         /**
-         * skk_context_process_key_events:
-         * @self: an #SkkContext
-         * @keys: a string representing key events, seperated by " "
-         *
-         * Feed key events to the context.  This function is only used
+         * Pass key events to the context.  This function is only used
          * in unit tests.
+         *
+         * @param keys a string representing key events, seperated by " "
+         *
+         * @return `true` if any of key events are handled, `false` otherwise
          */
         public bool process_key_events (string keys) {
             var _keys = keys.split (" ");
@@ -108,11 +116,11 @@ namespace Skk {
         }
 
         /**
-         * skk_context_process_key_event:
-         * @self: an #SkkContext
-         * @key: a string representing a key event
+         * Pass one key event to the context.
          *
-         * Feed a key event to the context.
+         * @param key a string representing a key event
+         *
+         * @return `true` if the key event is handled, `false` otherwise
          */
         public bool process_key_event (string key) {
             var state = state_stack.data;
@@ -141,9 +149,6 @@ namespace Skk {
         }
 
         /**
-         * skk_context_reset:
-         * @self: an #SkkContext
-         *
          * Reset the context.
          */
         public void reset () {
@@ -154,11 +159,10 @@ namespace Skk {
         }
 
         /**
-         * skk_context_get_output:
-         * @self: an #SkkContext
-         *
          * Get the current output string.  This will clear the current
          * output after calling.
+         *
+         * @return an output string
          */
         public string get_output () {
             var state = state_stack.data;
@@ -173,10 +177,9 @@ namespace Skk {
         }
 
         /**
-         * skk_context_get_preedit:
-         * @self: an #SkkContext
-         *
          * Get the current preedit string.
+         *
+         * @return the preedit string
          */
         public string get_preedit () {
             var state = state_stack.data;

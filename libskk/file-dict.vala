@@ -21,9 +21,7 @@ using Gee;
 
 namespace Skk {
     /**
-     * SkkFileDict:
-     *
-     * A file based implementation of #SkkDict.
+     * A file based implementation of Dict.
      */
     public class FileDict : Dict {
         unowned Posix.FILE get_fp (string mode = "r") {
@@ -196,11 +194,13 @@ namespace Skk {
         ArrayList<string> midasi_strings = new ArrayList<string> ();
 
         /**
-         * skk_file_dict_new:
-         * @path: a path to the file
-         * @encoding: encoding of the file (default EUC-JP)
+         * Create a new FileDict.
          *
-         * Create a new #SkkFileDict.
+         * @param path a path to the file
+         * @param encoding encoding of the file (default EUC-JP)
+         *
+         * @return a new FileDict
+         * @throws GLib.Error if opening the file is failed
          */
         public FileDict (string path, string encoding = "EUC-JP") throws GLib.Error {
             this.path = path;

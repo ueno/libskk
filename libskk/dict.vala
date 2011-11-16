@@ -19,17 +19,13 @@
  */
 namespace Skk {
     /**
-     * SkkCandidate:
-     *
-     * Candidate word in dictionaries.
+     * Object representing a candidate in dictionaries.
      */
     public class Candidate : Object {
         string _text;
         string? _annotation;
 
         /**
-         * SkkCandidate:text:
-         *
          * Base string value of the candidate.
          */
         public string text {
@@ -39,8 +35,6 @@ namespace Skk {
         }
 
         /**
-         * SkkCandidate:annotation:
-         *
          * Optional annotation text to the candidate.
          */
         public string? annotation {
@@ -50,10 +44,8 @@ namespace Skk {
         }
 
         /**
-         * skk_candidate_to_string:
-         * @self: an #SkkCandidate
-         *
          * Returns a string representing the candidate.
+         * @return a string representing the candidate
          */
         public string to_string () {
             if (_annotation != null) {
@@ -64,11 +56,12 @@ namespace Skk {
         }
 
         /**
-         * skk_candidate_new:
-         * @text: base string value of the candidate
-         * @annotation: optional annotation text to the candidate
+         * Create a new Candidate.
          *
-         * Create a new #SkkCandidate.
+         * @param text base string value of the candidate
+         * @param annotation optional annotation text to the candidate
+         *
+         * @return a new SkkCandidate
          */
         public Candidate (string text, string? annotation) {
             _text = text;
@@ -76,11 +69,12 @@ namespace Skk {
         }
 
         /**
-         * skk_candidate_new_from_string:
-         * @str: a string representation of a candidate
+         * Create a new Candidate from a textual representation
          *
-         * Create a new #SkkCandidate from a text representation
+         * @param str a string representation of a candidate
          * (i.e. text and annotation are separated by ";").
+         *
+         * @return a new Candidate
          */
         public Candidate.from_string (string str) {
             var strv = str.split (";", 2);
@@ -97,8 +91,6 @@ namespace Skk {
     }
 
     /**
-     * SkkDict:
-     *
      * Base abstract class of dictionaries.
      */
     public abstract class Dict : Object {
@@ -120,21 +112,17 @@ namespace Skk {
         }
 
         /**
-         * skk_dict_reload:
-         * @self: an #SkkDict
-         *
          * Reload the dictionary.
          */
         public abstract void reload ();
 
         /**
-         * skk_dict_lookup:
-         * @self: an #SkkDict
-         * @midasi: a midasi (title) string to lookup
-         * @okuri: whether to search okuri-ari entries or okuri-nasi entries
-         *
          * Lookup candidates in the dictionary.
-         * Returns: an array of #SkkCandidate
+         *
+         * @param midasi a midasi (title) string to lookup
+         * @param okuri whether to search okuri-ari entries or okuri-nasi entries
+         *
+         * @return an array of Candidate
          */
         public abstract Candidate[] lookup (string midasi, bool okuri = false);
 
@@ -143,14 +131,13 @@ namespace Skk {
         public abstract bool read_only { get; }
 
         /**
-         * skk_dict_select_candidate:
-         * @self: an #SkkDict
-         * @midasi: a midasi (title) string
-         * @candidate: an #SkkCandidate
-         * @okuri: whether to select okuri-ari entries or okuri-nasi entries
-         *
          * Select a candidate in the dictionary.
-         * Returns: %TRUE if the dictionary is modified, %FALSE otherwise.
+         *
+         * @param midasi a midasi (title) string
+         * @param candidate an Candidate
+         * @param okuri whether to select okuri-ari entries or okuri-nasi entries
+         *
+         * @return `true` if the dictionary is modified, `false` otherwise.
          */
         public virtual bool select_candidate (string midasi,
                                               Candidate candidate,
@@ -161,14 +148,13 @@ namespace Skk {
         }
 
         /**
-         * skk_dict_purge_candidate:
-         * @self: an #SkkDict
-         * @midasi: a midasi (title) string
-         * @candidate: an #SkkCandidate
-         * @okuri: whether to purge okuri-ari entries or okuri-nasi entries
-         *
          * Purge a candidate in the dictionary.
-         * Returns: %TRUE if the dictionary is modified, %FALSE otherwise.
+         *
+         * @param midasi a midasi (title) string
+         * @param candidate an Candidate
+         * @param okuri whether to purge okuri-ari entries or okuri-nasi entries
+         *
+         * @return `true` if the dictionary is modified, `false` otherwise.
          */
         public virtual bool purge_candidate (string midasi,
                                              Candidate candidate,
@@ -179,10 +165,7 @@ namespace Skk {
         }
 
         /**
-         * skk_dict_save:
-         * @self: an #SkkDict
-         *
-         * Update the dictionary on disk.
+         * Save the dictionary on disk.
          */
         public virtual void save () {
             // FIXME: throw an error when the dictionary is read only
@@ -190,9 +173,7 @@ namespace Skk {
     }
 
     /**
-     * SkkEmptyDict:
-     *
-     * Null implementation of #SkkDict.
+     * Null implementation of Dict.
      */
     public class EmptyDict : Dict {
         public override void reload () {
