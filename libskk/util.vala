@@ -119,6 +119,20 @@ namespace Skk {
             return WideLatinTable[c - 32].get_char ();
         }
 
+        internal static string get_wide_latin (string latin) {
+            StringBuilder builder = new StringBuilder ();
+            int index = 0;
+            unichar uc;
+            while (latin.get_next_char (ref index, out uc)) {
+                if (0x20 <= uc && uc <= 0x7E) {
+                    builder.append_unichar (get_wide_latin_char ((char)uc));
+                } else {
+                    builder.append_unichar (uc);
+                }
+            }
+            return builder.str;
+        }
+
         internal static string get_zenkaku_katakana (string kana) {
             StringBuilder builder = new StringBuilder ();
             int index = 0;

@@ -214,6 +214,29 @@ completion (void)
   g_object_unref (context);
 }
 
+static void
+abbrev (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    // We choose "request" since it contains "q", which normally
+    // triggers input mode change
+    { SKK_INPUT_MODE_HIRAGANA, "/ r e q u e s t", "▽request", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ r e q u e s t SPC", "▼リクエスト", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "z /", "", "・", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ ]", "▽]", "", SKK_INPUT_MODE_HIRAGANA },
+    // Ignore "" in abbrev mode (Issue#16).
+    { SKK_INPUT_MODE_HIRAGANA, "/ (", "▽(", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ A", "▽A", "", SKK_INPUT_MODE_HIRAGANA },
+    // Convert latin to wide latin with ctrl+q (Issue#17).
+    { SKK_INPUT_MODE_HIRAGANA, "/ a a C-q", "", "ａａ", SKK_INPUT_MODE_HIRAGANA },
+  };
+
+  context = create_context ();
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
 int
 main (int argc, char **argv) {
   g_type_init ();
@@ -226,5 +249,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/delete", delete);
   g_test_add_func ("/libskk/hankaku-katakana", hankaku_katakana);
   g_test_add_func ("/libskk/completion", completion);
+  g_test_add_func ("/libskk/abbrev", abbrev);
   return g_test_run ();
 }
