@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <libskk/libskk.h>
 #include "common.h"
 
@@ -12,6 +13,8 @@ create_context (void)
   error = NULL;
   file_dict = skk_file_dict_new ("file-dict.dat", "EUC-JP", &error);
   g_assert_no_error (error);
+
+  unlink ("user-dict.dat");
 
   error = NULL;
   user_dict = skk_user_dict_new ("user-dict.dat", "EUC-JP", &error);

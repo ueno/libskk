@@ -101,6 +101,24 @@ namespace Skk {
         internal signal void recursive_edit_abort ();
         internal signal void recursive_edit_end (string text);
         internal signal void recursive_edit_start (string midasi);
+
+        internal string get_yomi () {
+            StringBuilder builder = new StringBuilder ();
+            if (in_abbrev) {
+                builder.append (abbrev.str);
+            }
+            else if (okuri_rom_kana_converter.is_active ()) {
+                builder.append (rom_kana_converter.output);
+                builder.append ("*");
+                builder.append (okuri_rom_kana_converter.output);
+                builder.append (okuri_rom_kana_converter.preedit);
+            }
+            else {
+                builder.append (rom_kana_converter.output);
+                builder.append (rom_kana_converter.preedit);
+            }
+            return builder.str;
+        }
     }
 
     abstract class StateHandler : Object {
@@ -419,19 +437,7 @@ namespace Skk {
 
         internal override string get_preedit (State state) {
             StringBuilder builder = new StringBuilder ("▽");
-            if (state.in_abbrev) {
-                builder.append (state.abbrev.str);
-            }
-            else if (state.okuri_rom_kana_converter.is_active ()) {
-                builder.append (state.rom_kana_converter.output);
-                builder.append ("*");
-                builder.append (state.okuri_rom_kana_converter.output);
-                builder.append (state.okuri_rom_kana_converter.preedit);
-            }
-            else {
-                builder.append (state.rom_kana_converter.output);
-                builder.append (state.rom_kana_converter.preedit);
-            }
+            builder.append (state.get_yomi ());
             return builder.str;
         }
     }
@@ -474,7 +480,7 @@ namespace Skk {
                     // state.preedit_updated ();
                     return true;
                 } else {
-                    state.recursive_edit_start (state.midasi);
+                    state.recursive_edit_start (state.get_yomi ());
                     if (state.candidates.size == 0) {
                         state.handler_type = typeof (StartStateHandler);
                     }
