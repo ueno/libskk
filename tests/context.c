@@ -252,6 +252,8 @@ dict_edit (void)
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC \n", "▽かぱ", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC", "[DictEdit] かぱ ▼下", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC \n", "[DictEdit] かぱ 下破", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC \n \n", "", "下破", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC", "▼下破", "", SKK_INPUT_MODE_HIRAGANA },
   };
 
   context = create_context ();

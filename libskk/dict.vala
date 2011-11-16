@@ -63,7 +63,7 @@ namespace Skk {
          *
          * @return a new SkkCandidate
          */
-        public Candidate (string text, string? annotation) {
+        public Candidate (string text, string? annotation = null) {
             _text = text;
             _annotation = annotation;
         }

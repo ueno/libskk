@@ -91,7 +91,7 @@ namespace Skk {
         }
 
         internal signal void recursive_edit_abort ();
-        internal signal void recursive_edit_end (string midasi, string value);
+        internal signal void recursive_edit_end (string text);
         internal signal void recursive_edit_start (string midasi);
     }
 
@@ -120,7 +120,7 @@ namespace Skk {
                 if (state.midasi == null) {
                     state.recursive_edit_abort ();
                 } else {
-                    state.recursive_edit_end (state.midasi, state.output.str);
+                    state.recursive_edit_end (state.output.str);
                 }
                 var input_mode = state.input_mode;
                 state.reset ();

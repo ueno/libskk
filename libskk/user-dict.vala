@@ -117,8 +117,8 @@ namespace Skk {
             }
         }
 
-        int compare_entry (Map.Entry<string,ArrayList<Candidate>> a,
-                           Map.Entry<string,ArrayList<Candidate>> b) {
+        static int compare_entry (Map.Entry<string,ArrayList<Candidate>> a,
+                                  Map.Entry<string,ArrayList<Candidate>> b) {
             return strcmp (a.key, b.key);
         }
 
@@ -133,10 +133,10 @@ namespace Skk {
                     break;
                 }
             }
-            fp.puts (";; okuri-ari entries.");
+            fp.printf (";; okuri-ari entries.\n");
             var entries = new TreeSet<Map.Entry<string,ArrayList<Candidate>>> ((CompareFunc) compare_entry);
             entries.add_all (okuri_ari_entries.entries);
-            if (entries.size > 0) {
+            if (!entries.is_empty) {
                 var iter = entries.iterator_at (entries.last ());
                 do {
                     var entry = iter.get ();
@@ -145,11 +145,11 @@ namespace Skk {
                                join_candidates (entry.value.to_array ()));
                 } while (iter.previous ());
             }
-            fp.puts (";; okuri-nasi entries.");
+            fp.printf (";; okuri-nasi entries.\n");
             entries.clear ();
             entries.add_all (okuri_nasi_entries.entries);
-            if (entries.size > 0) {
-                var iter = entries.iterator ();
+            if (!entries.is_empty) {
+                var iter = entries.iterator_at (entries.first ());
                 do {
                     var entry = iter.get ();
                     fp.printf ("%s %s\n",

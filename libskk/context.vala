@@ -83,9 +83,18 @@ namespace Skk {
             connect_state_signals (state_stack.data);
         }
 
-        void end_dict_edit (string midasi, string candidate) {
+        void end_dict_edit (string text) {
             if (leave_dict_edit ()) {
-                // FIXME save a word in dictionary
+                var candidate = new Candidate (text);
+                foreach (var dict in dictionaries) {
+                    if (!dict.read_only) {
+                        dict.select_candidate (state_stack.data.midasi,
+                                               candidate);
+                        save_dictionaries ();
+                    }
+                }
+                state_stack.data.reset ();
+                state_stack.data.output.assign (text);
             }
         }
 
