@@ -54,6 +54,7 @@ namespace Skk {
         }
 
         internal Dict[] dictionaries;
+        internal string midasi;
         internal ArrayList<Candidate> candidates = new ArrayList<Candidate> ();
         internal int candidate_index;
 
@@ -87,6 +88,7 @@ namespace Skk {
         }
 
         internal void lookup (string midasi, bool okuri = false) {
+            this.midasi = midasi;
             candidates.clear ();
             candidate_index = -1;
             foreach (var dict in dictionaries) {
@@ -97,7 +99,7 @@ namespace Skk {
             }
         }
 
-        internal signal void enter_dict_edit ();
+        internal signal void enter_dict_edit (string midasi);
         internal signal void leave_dict_edit ();
         internal signal void abort_dict_edit ();
     }
@@ -455,7 +457,10 @@ namespace Skk {
                     // state.preedit_updated ();
                     return true;
                 } else {
-                    // state.candidates_end ();
+                    state.enter_dict_edit (state.midasi);
+                    if (state.candidates.size == 0) {
+                        state.handler_type = typeof (StartStateHandler);
+                    }
                     return true;
                 }
             }

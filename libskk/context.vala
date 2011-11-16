@@ -28,6 +28,7 @@ namespace Skk {
     public class Context : Object {
         Dict[] dictionaries;
         SList<State> state_stack;
+        SList<string> midasi_stack;
         HashMap<Type, StateHandler> handlers =
             new HashMap<Type, StateHandler> ();
         public InputMode input_mode {
@@ -54,6 +55,9 @@ namespace Skk {
             handlers.set (typeof (SelectStateHandler),
                           new SelectStateHandler ());
             this.state_stack.prepend (new State (dictionaries));
+            this.state_stack.data.enter_dict_edit.connect ((midasi) => {
+                    this.enter_dict_edit (midasi);
+                });
         }
 
         public bool complete () {
@@ -65,18 +69,21 @@ namespace Skk {
             return state_stack.length () - 1;
         }
 
-        bool enter_dict_edit () {
-            // FIXME not implemented
-            return false;
+        bool enter_dict_edit (string midasi) {
+            this.midasi_stack.prepend (midasi);
+            this.state_stack.prepend (new State (dictionaries));
+            this.state_stack.data.enter_dict_edit.connect ((midasi) => {
+                    this.enter_dict_edit (midasi);
+                });
+            return true;
         }
 
         bool leave_dict_edit () {
-            // FIXME not implemented
-            return false;
-        }
-
-        bool abort_dict_edit () {
-            // FIXME not implemented
+            if (dict_edit_level () > 0) {
+                this.midasi_stack.delete_link (this.midasi_stack);
+                this.state_stack.delete_link (this.state_stack);
+                return true;
+            }
             return false;
         }
 
@@ -110,13 +117,14 @@ namespace Skk {
         public bool process_key_event (string key) {
             var state = state_stack.data;
             var ev = new KeyEvent (key);
-            // FIXME instead of directly inspecting handler type, add
-            // a signal to StateHandler to trigger abort_dict_edit()
-            if ((ev.modifiers & ModifierType.CONTROL_MASK) != 0 &&
-                ev.code == 'g') {
-                if (dict_edit_level () > 0 &&
-                    state.handler_type == typeof (NoneStateHandler)) {
-                    return abort_dict_edit ();
+            if (dict_edit_level () > 0 &&
+                state.handler_type == typeof (NoneStateHandler)) {
+                if ((ev.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                    ev.code == 'g') {
+                    return leave_dict_edit ();
+                }
+                else if (ev.modifiers == 0 && ev.code == '\n') {
+                    return leave_dict_edit ();
                 }
             }
             while (true) {
@@ -155,9 +163,13 @@ namespace Skk {
         public string get_output () {
             var state = state_stack.data;
             var handler = handlers.get (state.handler_type);
-            var output = handler.get_output (state);
-            state.output.erase ();
-            return output;
+            if (dict_edit_level () > 0) {
+                return "";
+            } else {
+                var output = handler.get_output (state);
+                state.output.erase ();
+                return output;
+            }
         }
 
         /**
@@ -169,7 +181,23 @@ namespace Skk {
         public string get_preedit () {
             var state = state_stack.data;
             var handler = handlers.get (state.handler_type);
-            return handler.get_preedit (state);
+            var builder = new StringBuilder ();
+            if (dict_edit_level () > 0) {
+                var level = dict_edit_level ();
+                for (var i = 0; i < level; i++) {
+                    builder.append_c ('[');
+                }
+                builder.append ("DictEdit");
+                for (var i = 0; i < level; i++) {
+                    builder.append_c (']');
+                }
+                builder.append (" ");
+                builder.append (midasi_stack.data);
+                builder.append (" ");
+                builder.append (handler.get_output (state));
+            }
+            builder.append (handler.get_preedit (state));
+            return builder.str;
         }
 
         public void save_dictionaries () {

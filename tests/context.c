@@ -237,6 +237,28 @@ abbrev (void)
   g_object_unref (context);
 }
 
+static void
+dict_edit (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC", "[DictEdit] かぱ ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC a", "[DictEdit] かぱ あ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a", "[DictEdit] かぱ ▽か", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a p a SPC", "[[DictEdit]] かぱ ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a p a SPC C-g", "[DictEdit] かぱ ▽かぱ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a p a SPC C-g C-g", "[DictEdit] かぱ ", "", SKK_INPUT_MODE_HIRAGANA },
+    // Don't register empty string (Debian Bug#590191)
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC \n", "▽かぱ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC", "[DictEdit] かぱ ▼下", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC \n", "[DictEdit] かぱ 下破", "", SKK_INPUT_MODE_HIRAGANA },
+  };
+
+  context = create_context ();
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
 int
 main (int argc, char **argv) {
   g_type_init ();
@@ -250,5 +272,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/hankaku-katakana", hankaku_katakana);
   g_test_add_func ("/libskk/completion", completion);
   g_test_add_func ("/libskk/abbrev", abbrev);
+  g_test_add_func ("/libskk/dict-edit", dict_edit);
   return g_test_run ();
 }
