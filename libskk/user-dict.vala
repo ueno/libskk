@@ -249,7 +249,7 @@ namespace Skk {
                         }
                     } while (iter.next ());
                     if (candidates.size == 0) {
-                        entries.remove (midasi);
+                        entries.unset (midasi);
                     }
                 }
             }

@@ -57,6 +57,8 @@ namespace Skk {
         internal bool in_abbrev = false;
         internal StringBuilder abbrev = new StringBuilder ();
 
+        internal StringBuilder kuten = new StringBuilder ();
+
         internal Iterator<string>? completion_iterator;
 
         internal State (Dict[] dictionaries) {
@@ -76,6 +78,7 @@ namespace Skk {
             candidate_index = -1;
             in_abbrev = false;
             abbrev.erase ();
+            kuten.erase ();
         }
 
         internal void lookup (string midasi, bool okuri = false) {
@@ -237,7 +240,8 @@ namespace Skk {
             }
 
             if ((key.modifiers == 0 && key.code == '\x7F') ||
-                (key.modifiers & ModifierType.CONTROL_MASK) != 0) {
+                ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                 key.code == 'h')) {
                 if (state.rom_kana_converter.delete ()) {
                     return true;
                 }
@@ -258,12 +262,17 @@ namespace Skk {
                     state.handler_type = typeof (StartStateHandler);
                     return false;
                 }
-                else if (key.modifiers == 0 && key.code == '/' &&
-                         !state.rom_kana_converter.can_consume (
-                             key.code, true)) {
-                    state.handler_type = typeof (StartStateHandler);
-                    state.in_abbrev = true;
-                    return true;
+                else if (!state.rom_kana_converter.can_consume (key.code,
+                                                                true)) {
+                    if (key.modifiers == 0 && key.code == '/') {
+                        state.handler_type = typeof (StartStateHandler);
+                        state.in_abbrev = true;
+                        return true;
+                    }
+                    else if (key.modifiers == 0 && key.code == '\\') {
+                        state.handler_type = typeof (KutenStateHandler);
+                        return true;
+                    }
                 }
                 state.rom_kana_converter.append (key.code);
                 state.output.append (state.rom_kana_converter.output);
@@ -286,6 +295,83 @@ namespace Skk {
                 builder.append (state.rom_kana_converter.preedit);
             }
             return builder.str;
+        }
+    }
+
+    class KutenStateHandler : StateHandler {
+        EncodingConverter converter;
+
+        internal KutenStateHandler () {
+            try {
+                converter = new EncodingConverter ("EUC-JP");
+            } catch (GLib.Error e) {
+                converter = null;
+            }
+        }
+
+        int hex_char_to_int (char hex) {
+            if ('0' <= hex && hex <= '9') {
+                return hex - '0';
+            } else if ('a' <= hex.tolower () && hex.tolower () <= 'f') {
+                return hex - 'a' + 10;
+            }
+            return -1;
+        }
+
+        string parse_hex (string hex) {
+            var builder = new StringBuilder ();
+            for (var i = 0; i < hex.length - 1; i += 2) {
+                int c = (hex_char_to_int (hex[i]) << 4) |
+                    hex_char_to_int (hex[i + 1]);
+                builder.append_c ((char)c);
+            }
+            return builder.str;
+        }
+
+        internal override bool process_key_event (State state, KeyEvent key) {
+            if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                key.code == 'g') {
+                var input_mode = state.input_mode;
+                state.reset ();
+                state.input_mode = input_mode;
+                return true;
+            }
+            else if (key.modifiers == 0 && key.code == '\n' &&
+                (state.kuten.len == 4 || state.kuten.len == 6)) {
+                if (converter != null) {
+                    // FIXME JISX0208 is represented as equivalent
+                    // byte sequences in EUC-JP
+                    var euc = parse_hex (state.kuten.str);
+                    try {
+                        state.output.append (converter.decode (euc));
+                    } catch (GLib.Error e) {
+                    }
+                }
+                var input_mode = state.input_mode;
+                state.reset ();
+                state.input_mode = input_mode;
+                return true;
+            }
+            else if ((key.modifiers == 0 && key.code == '\x7F') ||
+                     ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                      key.code == 'h') &&
+                     state.kuten.len > 0) {
+                state.kuten.truncate (state.kuten.len - 1);
+                return true;
+            }
+            else if (key.modifiers == 0 &&
+                       (('a' <= key.code && key.code <= 'f') ||
+                        ('A' <= key.code && key.code <= 'F') ||
+                        ('0' <= key.code && key.code <= '9')) &&
+                       state.kuten.len < 6) {
+                state.kuten.append_unichar (key.code);
+                return true;
+            }
+            return true;
+        }
+
+        internal override string get_preedit (State state) {
+            return "Kuten([MM]KKTT) " + state.kuten.str;
         }
     }
 

@@ -268,6 +268,24 @@ dict_edit (void)
   g_object_unref (context);
 }
 
+static void
+kuten (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "\\", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\ a \x7F", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\ a 1 a 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
+    // Don't start KUTEN input on latin input modes.
+    { SKK_INPUT_MODE_LATIN, "\\", "", "\\", SKK_INPUT_MODE_LATIN },
+    { SKK_INPUT_MODE_WIDE_LATIN, "\\", "", "＼", SKK_INPUT_MODE_WIDE_LATIN },
+  };
+
+  context = create_context ();
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
 int
 main (int argc, char **argv) {
   g_type_init ();
@@ -282,5 +300,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/completion", completion);
   g_test_add_func ("/libskk/abbrev", abbrev);
   g_test_add_func ("/libskk/dict-edit", dict_edit);
+  g_test_add_func ("/libskk/kuten", kuten);
   return g_test_run ();
 }
