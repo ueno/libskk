@@ -1,6 +1,7 @@
 lib_LTLIBRARIES = libskk.la
 
 libskk_la_VALAFLAGS = \
+	--includedir=libskk \
 	-H libskk.h --vapi skk-@SKK_API_VERSION@.vapi \
 	-h skk-internals.h \
 	--vapidir=. \
@@ -16,7 +17,7 @@ libskk_la_LIBADD = \
 
 libskkincludedir = $(includedir)/libskk
 
-skkinclude_headers = \
+skk_headers = \
 	libskk.h
 
 libskkinclude_HEADERS = \
