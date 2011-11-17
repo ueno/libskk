@@ -58,3 +58,6 @@ CLEANFILES = \
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libskk.pc
+
+vapi_DATA = skk-1.0.vapi skk-1.0.deps
+vapidir = $(datadir)/vala/vapi
