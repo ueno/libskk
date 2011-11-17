@@ -63,6 +63,8 @@ namespace Skk {
                           new StartStateHandler ());
             handlers.set (typeof (SelectStateHandler),
                           new SelectStateHandler ());
+            handlers.set (typeof (AbbrevStateHandler),
+                          new AbbrevStateHandler ());
             handlers.set (typeof (KutenStateHandler),
                           new KutenStateHandler ());
             state_stack.prepend (new State (dictionaries));

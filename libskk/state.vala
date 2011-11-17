@@ -53,10 +53,7 @@ namespace Skk {
         internal RomKanaConverter okuri_rom_kana_converter;
 
         internal StringBuilder output = new StringBuilder ();
-
-        internal bool in_abbrev = false;
         internal StringBuilder abbrev = new StringBuilder ();
-
         internal StringBuilder kuten = new StringBuilder ();
 
         internal Iterator<string>? completion_iterator;
@@ -76,7 +73,6 @@ namespace Skk {
             completion_iterator = null;
             candidates.clear ();
             candidate_index = -1;
-            in_abbrev = false;
             abbrev.erase ();
             kuten.erase ();
         }
@@ -107,7 +103,7 @@ namespace Skk {
 
         internal string get_yomi () {
             StringBuilder builder = new StringBuilder ();
-            if (in_abbrev) {
+            if (abbrev.len > 0) {
                 builder.append (abbrev.str);
             }
             else if (okuri_rom_kana_converter.is_active ()) {
@@ -265,8 +261,7 @@ namespace Skk {
                 else if (!state.rom_kana_converter.can_consume (key.code,
                                                                 true)) {
                     if (key.modifiers == 0 && key.code == '/') {
-                        state.handler_type = typeof (StartStateHandler);
-                        state.in_abbrev = true;
+                        state.handler_type = typeof (AbbrevStateHandler);
                         return true;
                     }
                     else if (key.modifiers == 0 && key.code == '\\') {
@@ -375,6 +370,53 @@ namespace Skk {
         }
     }
 
+    class AbbrevStateHandler : StateHandler {
+        internal override bool process_key_event (State state, KeyEvent key) {
+            if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                key.code == 'g') {
+                var input_mode = state.input_mode;
+                state.reset ();
+                state.input_mode = input_mode;
+                return true;
+            }
+            else if (key.modifiers == 0 && key.code == ' ') {
+                state.handler_type = typeof (SelectStateHandler);
+                return false;
+            }
+            else if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                     key.code == 'q') {
+                state.output.assign (
+                    Util.get_wide_latin (state.abbrev.str));
+                var input_mode = state.input_mode;
+                state.reset ();
+                state.input_mode = input_mode;
+                return true;
+            }
+            else if ((key.modifiers == 0 && key.code == '\x7F') ||
+                     ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                      key.code == 'h')) {
+                if (state.abbrev.len > 0) {
+                    state.abbrev.truncate (state.abbrev.len - 1);
+                } else {
+                    var input_mode = state.input_mode;
+                    state.reset ();
+                    state.input_mode = input_mode;
+                }
+                return true;
+            }
+            else if (key.modifiers == 0 &&
+                     0x20 <= key.code && key.code <= 0x7E) {
+                state.abbrev.append_unichar (key.code);
+                return true;
+            }
+            return true;
+        }
+
+        internal override string get_preedit (State state) {
+            return "▽" + state.abbrev.str;
+        }
+    }
+
     class StartStateHandler : StateHandler {
         internal override bool process_key_event (State state, KeyEvent key) {
             if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
@@ -384,18 +426,7 @@ namespace Skk {
                 state.input_mode = input_mode;
                 return true;
             }
-            else if (state.in_abbrev &&
-                     (key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
-                     key.code == 'q') {
-                state.output.assign (
-                    Util.get_wide_latin (state.abbrev.str));
-                var input_mode = state.input_mode;
-                state.reset ();
-                state.input_mode = input_mode;
-                return true;
-            }
-            else if (!state.in_abbrev &&
-                     key.modifiers == 0 && key.code == 'q' &&
+            else if (key.modifiers == 0 && key.code == 'q' &&
                      (state.input_mode == InputMode.HIRAGANA ||
                       state.input_mode == InputMode.KATAKANA ||
                       state.input_mode == InputMode.HANKAKU_KATAKANA)) {
@@ -425,8 +456,7 @@ namespace Skk {
                 return true;
             }
             else if (key.modifiers == 0 && key.code == ' ') {
-                if (!state.in_abbrev &&
-                    !state.rom_kana_converter.is_active ()) {
+                if (!state.rom_kana_converter.is_active ()) {
                     state.reset ();
                     return true;
                 }
@@ -476,12 +506,6 @@ namespace Skk {
                         state.completion_iterator.next ();
                     }
                 }
-                return true;
-            }
-            else if (key.modifiers == 0 &&
-                     0x20 <= key.code && key.code <= 0x7E &&
-                     state.in_abbrev) {
-                state.abbrev.append_unichar (key.code);
                 return true;
             }
             else if (key.modifiers == 0 && key.code.isalpha ()) {
@@ -548,17 +572,22 @@ namespace Skk {
             }
             else if (key.modifiers == 0 && key.code == ' ') {
                 if (state.candidate_index < 0) {
-                    StringBuilder builder = new StringBuilder (state.rom_kana_converter.output);
+                    string midasi;
                     bool okuri = false;
-                    if (state.in_abbrev) {
-                        builder.append (state.abbrev.str);
+                    if (state.abbrev.len > 0) {
+                        midasi = state.abbrev.str;
                     }
-                    else if (state.okuri_rom_kana_converter.is_active ()) {
-                        builder.append_unichar (
-                            state.okuri_rom_kana_converter.input[0]);
-                        okuri = true;
+                    else {
+                        StringBuilder builder = new StringBuilder ();
+                        builder.append (state.rom_kana_converter.output);
+                        if (state.okuri_rom_kana_converter.is_active ()) {
+                            builder.append_unichar (
+                                state.okuri_rom_kana_converter.input[0]);
+                            okuri = true;
+                        }
+                        midasi = builder.str;
                     }
-                    state.lookup (builder.str, okuri);
+                    state.lookup (midasi, okuri);
                 }
 
                 if (state.candidate_index < state.candidates.size - 1) {
