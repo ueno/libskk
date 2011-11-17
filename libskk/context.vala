@@ -115,9 +115,10 @@ namespace Skk {
             midasi_stack.prepend (midasi);
             state_stack.prepend (new State (dictionaries));
             connect_state_signals (state_stack.data);
+            update_preedit ();
         }
 
-        void end_dict_edit (string text) {
+        bool end_dict_edit (string text) {
             if (leave_dict_edit ()) {
                 var candidate = new Candidate (text);
                 foreach (var dict in dictionaries) {
@@ -129,7 +130,10 @@ namespace Skk {
                 }
                 state_stack.data.reset ();
                 state_stack.data.output.assign (text);
+                update_preedit ();
+                return true;
             }
+            return false;
         }
 
         bool leave_dict_edit () {
@@ -141,8 +145,12 @@ namespace Skk {
             return false;
         }
 
-        void abort_dict_edit () {
-            leave_dict_edit ();
+        bool abort_dict_edit () {
+            if (leave_dict_edit ()) {
+                update_preedit ();
+                return true;
+            }
+            return false;
         }
 
         /**
@@ -178,8 +186,11 @@ namespace Skk {
             while (true) {
                 var handler_type = state.handler_type;
                 var handler = handlers.get (handler_type);
-                if (handler.process_key_event (state, ev))
+                if (handler.process_key_event (state, ev)) {
+                    // FIXME should do this only when preedit is really changed
+                    update_preedit ();
                     return true;
+                }
                 // state.handler_type may change if handler cannot
                 // handle the event.  In that case retry with the new
                 // handler.  Otherwise exit the loop.
@@ -216,19 +227,12 @@ namespace Skk {
             }
         }
 
-        string _preedit;
-
         /**
          * Current preedit string.
          */
-        public string preedit {
-            get {
-                _preedit = _get_preedit ();
-                return _preedit;
-            }
-        }
+        public string preedit { get; private set; }
 
-        string _get_preedit () {
+        void update_preedit () {
             var state = state_stack.data;
             var handler = handlers.get (state.handler_type);
             var builder = new StringBuilder ();
@@ -247,7 +251,7 @@ namespace Skk {
                 builder.append (handler.get_output (state));
             }
             builder.append (handler.get_preedit (state));
-            return builder.str;
+            preedit = builder.str;
         }
 
         /**

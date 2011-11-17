@@ -432,8 +432,10 @@ namespace Skk {
          * Append a character to the internal buffer.
          *
          * @param uc an ASCII character
+         *
+         * @return `true` if the character is handled, `false` otherwise
          */
-        public void append (unichar uc) {
+        public bool append (unichar uc) {
             var child_node = current_node.children[uc];
             if (child_node == null) {
                 output_nn_if_any ();
@@ -446,24 +448,26 @@ namespace Skk {
                     _output.append_unichar (period);
                     _preedit.erase ();
                     current_node = root_node;
+                    return true;
                 } else if (root_node.children[uc] == null) {
                     _input.append_unichar (uc);
                     _output.append_unichar (uc);
                     _preedit.erase ();
                     current_node = root_node;
-                    return;
+                    return false;
                 } else {
                     // abondon current preedit and restart lookup from
                     // the root with uc
                     _preedit.erase ();
                     current_node = root_node;
-                    append (uc);
+                    return append (uc);
                 }
             } else if (child_node.entry == null) {
                 // node is not a terminal
                 _preedit.append_unichar (uc);
                 _input.append_unichar (uc);
                 current_node = child_node;
+                return true;
             } else {
                 _input.append_unichar (uc);
                 _output.append (child_node.entry.get_kana (kana_mode));
@@ -472,6 +476,7 @@ namespace Skk {
                 for (int i = 0; i < child_node.entry.carryover.length; i++) {
                     append (child_node.entry.carryover[i]);
                 }
+                return true;
             }
         }
 

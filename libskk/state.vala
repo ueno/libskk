@@ -97,8 +97,8 @@ namespace Skk {
             }
         }
 
-        internal signal void recursive_edit_abort ();
-        internal signal void recursive_edit_end (string text);
+        internal signal bool recursive_edit_abort ();
+        internal signal bool recursive_edit_end (string text);
         internal signal void recursive_edit_start (string midasi);
 
         internal string get_yomi () {
@@ -132,27 +132,33 @@ namespace Skk {
         internal override bool process_key_event (State state, KeyEvent key) {
             if ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
                 key.code == 'g') {
-                bool handled = true;
-                if (state.rom_kana_converter.preedit == "") {
-                    handled = false;
-                    state.recursive_edit_abort ();
+                bool retval;
+                if (state.rom_kana_converter.preedit.length > 0) {
+                    retval = true;
+                } else {
+                    retval = state.recursive_edit_abort ();
                 }
                 var input_mode = state.input_mode;
                 state.reset ();
                 state.input_mode = input_mode;
-                return handled;
+                return retval;
             } else if ((key.modifiers == 0 && key.code == '\n') ||
                        ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
                         key.code == 'm')) {
-                if (state.output.str.length == 0) {
-                    state.recursive_edit_abort ();
-                } else {
-                    state.recursive_edit_end (state.output.str);
+                bool retval;
+                if (state.rom_kana_converter.preedit.length > 0) {
+                    retval = true;
+                }
+                else if (state.output.str.length == 0) {
+                    retval = state.recursive_edit_abort ();
+                }
+                else {
+                    retval = state.recursive_edit_end (state.output.str);
                 }
                 var input_mode = state.input_mode;
                 state.reset ();
                 state.input_mode = input_mode;
-                return true;
+                return retval;
             } else if (key.modifiers == 0 && key.code == 'Q') {
                 state.handler_type = typeof (StartStateHandler);
                 return true;
@@ -163,6 +169,7 @@ namespace Skk {
                 if (key.modifiers == 0 &&
                     state.rom_kana_converter.is_active () &&
                     state.rom_kana_converter.can_consume (key.code)) {
+                    // do nothing and proceed to rom-kana conversion
                 }
                 else if (key.modifiers == 0 && key.code == 'q') {
                     state.input_mode = InputMode.KATAKANA;
@@ -258,30 +265,34 @@ namespace Skk {
                     state.handler_type = typeof (StartStateHandler);
                     return false;
                 }
-                else if (!state.rom_kana_converter.can_consume (key.code,
+                else if (key.modifiers == 0 &&
+                         !state.rom_kana_converter.can_consume (key.code,
                                                                 true)) {
-                    if (key.modifiers == 0 && key.code == '/') {
+                    if (key.code == '/') {
                         state.handler_type = typeof (AbbrevStateHandler);
                         return true;
                     }
-                    else if (key.modifiers == 0 && key.code == '\\') {
+                    else if (key.code == '\\') {
                         state.handler_type = typeof (KutenStateHandler);
                         return true;
                     }
                 }
-                state.rom_kana_converter.append (key.code);
-                state.output.append (state.rom_kana_converter.output);
-                state.rom_kana_converter.output = "";
+                if (key.modifiers == 0 &&
+                    state.rom_kana_converter.append (key.code)) {
+                    state.output.append (state.rom_kana_converter.output);
+                    state.rom_kana_converter.output = "";
+                    return true;
+                }
                 break;
             case InputMode.LATIN:
                 state.output.append_c ((char)key.code);
-                break;
+                return true;
             case InputMode.WIDE_LATIN:
                 state.output.append_unichar (
                     Util.get_wide_latin_char ((char)key.code));
-                break;
+                return true;
             }
-            return true;
+            return false;
         }
 
         internal override string get_preedit (State state) {
@@ -484,7 +495,8 @@ namespace Skk {
                 return true;
             }
             else if ((key.modifiers == 0 && key.code == '\t') ||
-                     (key.modifiers & ModifierType.CONTROL_MASK) != 0) {
+                     ((key.modifiers & ModifierType.CONTROL_MASK) != 0 &&
+                      key.code == 'i')) {
                 if (state.completion_iterator == null) {
                     var completion = new TreeSet<string> ();
                     foreach (var dict in state.dictionaries) {
@@ -532,12 +544,17 @@ namespace Skk {
                     return true;
                 }
             }
-            else if (state.rom_kana_converter.is_active () &&
-                     (key.modifiers == 0 && key.code == '>')) {
-                state.rom_kana_converter.append (key.code.tolower ());
-                state.handler_type = typeof (SelectStateHandler);
-                key.code = ' ';
-                return false;
+            else if (key.modifiers == 0 && key.code == '>') {
+                if (state.rom_kana_converter.is_active ()) {
+                    state.rom_kana_converter.append (key.code.tolower ());
+                    state.handler_type = typeof (SelectStateHandler);
+                    key.code = ' ';
+                    return false;
+                }
+                else {
+                    state.rom_kana_converter.append (key.code);
+                    return true;
+                }
             }
             else {
                 state.rom_kana_converter.append (key.code.tolower ());
@@ -579,6 +596,7 @@ namespace Skk {
                     }
                     else {
                         StringBuilder builder = new StringBuilder ();
+                        state.rom_kana_converter.output_nn_if_any ();
                         builder.append (state.rom_kana_converter.output);
                         if (state.okuri_rom_kana_converter.is_active ()) {
                             builder.append_unichar (
@@ -614,9 +632,7 @@ namespace Skk {
                     return false;
                 }
                 else if ((key.modifiers == 0 && key.code.isalpha ()) ||
-                         (key.modifiers == 0 && key.code == '\x7F') ||
-                         (key.modifiers & ModifierType.CONTROL_MASK) != 0) {
-                    state.handler_type = typeof (NoneStateHandler);
+                         (key.modifiers == 0 && key.code == '\x7F')) {
                     return false;
                 }
                 return true;
