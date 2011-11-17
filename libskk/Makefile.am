@@ -53,4 +53,8 @@ CLEANFILES = \
 	skk-internals-@SKK_API_VERSION@.vapi \
 	Skk-@SKK_API_VERSION@.typelib \
 	Skk-@SKK_API_VERSION@.gir \
-	*.[ch]
+	*.[ch] \
+	*.pc
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libskk.pc
