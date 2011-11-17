@@ -128,6 +128,9 @@ namespace Skk {
 
         public abstract string[] complete (string midasi);
 
+        /**
+         * Flag to indicate whether the dictionary is read only.
+         */
         public abstract bool read_only { get; }
 
         /**
@@ -176,17 +179,29 @@ namespace Skk {
      * Null implementation of Dict.
      */
     public class EmptyDict : Dict {
+        /**
+         * {@inheritDoc}
+         */
         public override void reload () {
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override Candidate[] lookup (string midasi, bool okuri = false) {
             return new Candidate[0];
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override string[] complete (string midasi) {
             return new string[0];
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override bool read_only {
             get {
                 return true;

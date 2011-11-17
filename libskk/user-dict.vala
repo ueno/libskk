@@ -103,6 +103,9 @@ namespace Skk {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override void reload () {
             Posix.Stat buf;
             if (Posix.stat (path, out buf) < 0) {
@@ -122,6 +125,9 @@ namespace Skk {
             return strcmp (a.key, b.key);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override void save () {
             // this will cause file close
             if (file != null)
@@ -167,6 +173,9 @@ namespace Skk {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override Candidate[] lookup (string midasi, bool okuri = false) {
             var entries = get_entries (okuri);
             if (entries.has_key (midasi)) {
@@ -176,10 +185,16 @@ namespace Skk {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override string[] complete (string midasi) {
             return new string[0];
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override bool select_candidate (string midasi,
                                                Candidate candidate,
                                                bool okuri = false)
@@ -230,6 +245,9 @@ namespace Skk {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override bool purge_candidate (string midasi,
                                               Candidate candidate,
                                               bool okuri = false)
@@ -256,6 +274,9 @@ namespace Skk {
             return modified;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override bool read_only {
             get {
                 return false;

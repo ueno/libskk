@@ -20,12 +20,38 @@
 using Gee;
 
 namespace Skk {
+    /**
+     * Type to specify input modes.
+     */
     public enum InputMode {
+        /**
+         * Hiragana like "あいう...".
+         */
         HIRAGANA = KanaMode.HIRAGANA,
+
+        /**
+         * Katakana like "アイウ...".
+         */
         KATAKANA = KanaMode.KATAKANA,
+
+        /**
+         * Half-width katakana like "ｱｲｳ...".
+         */
         HANKAKU_KATAKANA = KanaMode.HANKAKU_KATAKANA,
+
+        /**
+         * Half-width latin like "abc...".
+         */
         LATIN,
+
+        /**
+         * Full-width latin like "ａｂｃ...".
+         */
         WIDE_LATIN,
+
+        /**
+         * The default.
+         */
         DEFAULT = HIRAGANA
     }
 
@@ -39,6 +65,10 @@ namespace Skk {
         SList<string> midasi_stack;
         HashMap<Type, StateHandler> handlers =
             new HashMap<Type, StateHandler> ();
+
+        /**
+         * Current input mode.
+         */
         public InputMode input_mode {
             get {
                 return state_stack.data.input_mode;
@@ -116,8 +146,8 @@ namespace Skk {
         }
 
         /**
-         * Pass key events to the context.  This function is rarely
-         * used in programs but in unit tests.
+         * Pass key events (separated by spaces) to the context.  This
+         * function is rarely used in programs but in unit tests.
          *
          * @param keys a string representing key events, seperated by " "
          *
@@ -186,12 +216,19 @@ namespace Skk {
             }
         }
 
+        string _preedit;
+
         /**
-         * Get the current preedit string.
-         *
-         * @return the preedit string
+         * Current preedit string.
          */
-        public string get_preedit () {
+        public string preedit {
+            get {
+                _preedit = _get_preedit ();
+                return _preedit;
+            }
+        }
+
+        string _get_preedit () {
             var state = state_stack.data;
             var handler = handlers.get (state.handler_type);
             var builder = new StringBuilder ();
@@ -213,6 +250,9 @@ namespace Skk {
             return builder.str;
         }
 
+        /**
+         * Save dictionaries on to disk.
+         */
         public void save_dictionaries () {
             foreach (var dict in dictionaries) {
                 if (!dict.read_only) {

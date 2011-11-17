@@ -319,16 +319,48 @@ namespace Skk {
         }
     }
 
+    /**
+     * Type representing kana scripts.
+     */
     public enum KanaMode {
+        /**
+         * Hiragana like "あいう...".
+         */
         HIRAGANA,
+
+        /**
+         * Katakana like "アイウ...".
+         */
         KATAKANA,
+
+        /**
+         * Half-width katakana like "ｱｲｳ...".
+         */
         HANKAKU_KATAKANA
     }
 
+    /**
+     * Type to specify how "." and "," are converted.
+     */
     public enum PeriodStyle {
+        /**
+         * Use "。" and "、" for "." and ",".
+         */
         JA_JA,
+
+        /**
+         * Use "．" and "，" for "." and ",".
+         */
         EN_EN,
+
+        /**
+         * Use "。" and "，" for "." and ",".
+         */
         JA_EN,
+
+        /**
+         * Use "．" and "、" for "." and ",".
+         */
         EN_JA
     }
 
@@ -347,15 +379,12 @@ namespace Skk {
             get {
                 return _input.str;
             }
-            set {
-                _input.assign (value);
-            }
         }
         public string output {
             get {
                 return _output.str;
             }
-            set {
+            internal set {
                 _output.assign (value);
             }
         }

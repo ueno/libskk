@@ -22,12 +22,18 @@ namespace Skk {
         INVALID_RESPONSE
     }
 
+    /**
+     * An implementation of Dict which talks the skkserv protocol.
+     */
     public class SkkServ : Dict {
         SocketConnection? connection;
         uint8 buffer[4096];
         string host;
         uint16 port;
 
+        /**
+         * {@inheritDoc}
+         */
         public override void reload () {
             // this will cause connection close
             if (connection != null)
@@ -65,6 +71,9 @@ namespace Skk {
             return builder.str;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override Candidate[] lookup (string midasi, bool okuri = false) {
             if (connection == null)
                 return new Candidate[0];
@@ -91,6 +100,9 @@ namespace Skk {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override string[] complete (string midasi) {
             if (connection == null)
                 return new string[0];
@@ -117,6 +129,9 @@ namespace Skk {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override bool read_only {
             get {
                 return true;
@@ -125,6 +140,16 @@ namespace Skk {
 
         EncodingConverter converter;
 
+        /**
+         * Create a new SkkServ.
+         *
+         * @param host host to connect
+         * @param port port at the host
+         * @param encoding encoding to convert text over network traffic
+         *
+         * @return a new SkkServ.
+         * @throws GLib.Error if opening a connection is failed
+         */
         public SkkServ (string host, uint16 port = 1178, string encoding = "EUC-JP") throws GLib.Error {
             this.host = host;
             this.port = port;

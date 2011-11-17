@@ -78,6 +78,9 @@ namespace Skk {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override void reload () {
             Posix.Stat buf;
             if (Posix.stat (path, out buf) < 0) {
@@ -133,6 +136,9 @@ namespace Skk {
             return false;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override Candidate[] lookup (string midasi, bool okuri = false) {
             ArrayList<long> offsets;
             if (okuri) {
@@ -167,6 +173,9 @@ namespace Skk {
             return new Candidate[0];
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override string[] complete (string midasi) {
             var completion = new ArrayList<string> ();
             foreach (var s in midasi_strings) {
@@ -179,6 +188,9 @@ namespace Skk {
             return completion.to_array ();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override bool read_only {
             get {
                 return true;
