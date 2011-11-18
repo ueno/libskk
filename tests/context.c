@@ -109,7 +109,8 @@ rom_kana (void)
     { SKK_INPUT_MODE_KATAKANA, "V u q", "", "う゛", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "Q n q", "", "ン", SKK_INPUT_MODE_KATAKANA },
     /* Issue#36 */
-    { SKK_INPUT_MODE_HIRAGANA, "W o", "▽を", "", SKK_INPUT_MODE_HIRAGANA }
+    { SKK_INPUT_MODE_HIRAGANA, "W o", "▽を", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\t K a", "▽か", "", SKK_INPUT_MODE_HIRAGANA }
   };
 
   context = create_context ();
@@ -131,6 +132,7 @@ okuri_nasi (void)
     { SKK_INPUT_MODE_HIRAGANA, "N A N", "▽な*n", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "I z e n SPC", "▼以前", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K a n j i SPC C-j", "", "漢字", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a n j i SPC C-g", "▽かんじ", "", SKK_INPUT_MODE_HIRAGANA },
     /* FIXME */
     // { SKK_INPUT_MODE_HIRAGANA, "A", "[DictEdit] な*んあ ", "", SKK_INPUT_MODE_HIRAGANA },
     // { SKK_INPUT_MODE_HIRAGANA, "A C-g\n", "", "", SKK_INPUT_MODE_HIRAGANA },

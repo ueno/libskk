@@ -438,8 +438,8 @@ namespace Skk {
         public bool append (unichar uc) {
             var child_node = current_node.children[uc];
             if (child_node == null) {
-                output_nn_if_any ();
                 // no such transition path in trie
+                output_nn_if_any ();
                 var index = ".,".index_of_char ((char)uc);
                 if (index >= 0) {
                     index = PERIOD_RULE[period_style].index_of_nth_char (index);

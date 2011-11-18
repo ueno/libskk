@@ -20,27 +20,44 @@
 using Gee;
 
 namespace Skk {
+    /**
+     * Object maintaining the current candidates.
+     */
     public class CandidateList : Object {
         ArrayList<Candidate> _candidates = new ArrayList<Candidate> ();
 
-        public int cursor_pos { get; internal set; }
+        /**
+         * Current cursor position.  This will be set to -1 if the
+         * candidate list is not active.
+         */
+        public int cursor_pos { get; set; }
 
+        /**
+         * Get the current candidate at the given index.
+         *
+         * @param index candidate position (-1 for the current cursor position)
+         *
+         * @returns a Candidate
+         */
         public new Candidate @get (int index = -1) {
             if (index < 0)
                 index = cursor_pos;
+            assert (0 <= index && index < size);
             return _candidates.get (index);
         }
 
-        public Candidate[] slice (int start, int end) {
-            return _candidates.slice (start, end).to_array ();
-        }
-
+        /**
+         * The number of candidate in the candidate list.
+         */
         public int size {
             get {
                 return _candidates.size;
             }
         }
 
+        /**
+         * Signal emitted when candidates are filled and ready for traversal.
+         */
         public signal void populate ();
 
         internal void add_all (Candidate[] array) {
@@ -49,10 +66,18 @@ namespace Skk {
             }
         }
 
+        /**
+         * Create a new CandidateList.
+         *
+         * @return a new CandidateList.
+         */
         public CandidateList () {
             clear ();
         }
 
+        /**
+         * Clear the candidate list.
+         */
         public void clear () {
             _candidates.clear ();
             cursor_pos = -1;
@@ -145,6 +170,9 @@ namespace Skk {
             candidates = new CandidateList ();
             state_stack.prepend (new State (dictionaries, candidates));
             connect_state_signals (state_stack.data);
+            candidates.notify["cursor-pos"].connect (() => {
+                    update_preedit ();
+                });
         }
 
         void connect_state_signals (State state) {
