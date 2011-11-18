@@ -18,7 +18,7 @@
  * 02110-1301 USA
  */
 namespace Skk {
-    internal enum ModifierType {
+    enum ModifierType {
         NONE = 0,
         SHIFT_MASK = 1 << 0,
         LOCK_MASK = 1 << 1,
@@ -33,7 +33,7 @@ namespace Skk {
         META_MASK = 1 << 28
     }
 
-    internal class KeyEvent {
+    class KeyEvent {
         internal unichar code;
         internal ModifierType modifiers;
 
