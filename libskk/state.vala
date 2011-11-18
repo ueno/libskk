@@ -46,8 +46,7 @@ namespace Skk {
 
         internal Dict[] dictionaries;
         internal string midasi;
-        internal ArrayList<Candidate> candidates = new ArrayList<Candidate> ();
-        internal int candidate_index;
+        internal CandidateList candidates;
 
         internal RomKanaConverter rom_kana_converter;
         internal RomKanaConverter okuri_rom_kana_converter;
@@ -58,8 +57,9 @@ namespace Skk {
 
         internal Iterator<string>? completion_iterator;
 
-        internal State (Dict[] dictionaries) {
+        internal State (Dict[] dictionaries, CandidateList candidates) {
             this.dictionaries = dictionaries;
+            this.candidates = candidates;
             this.rom_kana_converter = new RomKanaConverter ();
             this.okuri_rom_kana_converter = new RomKanaConverter ();
             reset ();
@@ -72,7 +72,6 @@ namespace Skk {
             okuri_rom_kana_converter.reset ();
             completion_iterator = null;
             candidates.clear ();
-            candidate_index = -1;
             abbrev.erase ();
             kuten.erase ();
         }
@@ -80,13 +79,10 @@ namespace Skk {
         internal void lookup (string midasi, bool okuri = false) {
             this.midasi = midasi;
             candidates.clear ();
-            candidate_index = -1;
             foreach (var dict in dictionaries) {
-                var _candidates = dict.lookup (midasi, okuri);
-                foreach (var c in _candidates) {
-                    candidates.add (c);
-                }
+                candidates.add_all (dict.lookup (midasi, okuri));
             }
+            candidates.populate ();
         }
 
         internal void purge_candidate (string midasi, Candidate candidate, bool okuri = false) {
@@ -572,9 +568,8 @@ namespace Skk {
     class SelectStateHandler : StateHandler {
         internal override bool process_key_event (State state, KeyEvent key) {
             if (key.modifiers == 0 && key.code == 'x') {
-                state.candidate_index--;
-                if (state.candidate_index >= 0) {
-                    // state.preedit_updated ();
+                state.candidates.cursor_pos--;
+                if (state.candidates.cursor_pos >= 0) {
                     return true;
                 } else {
                     state.handler_type = typeof (StartStateHandler);
@@ -583,12 +578,12 @@ namespace Skk {
             }
             else if (key.modifiers == 0 && key.code == 'X') {
                 state.purge_candidate (state.midasi,
-                                       state.candidates.get (state.candidate_index));
+                                       state.candidates.get ());
                 state.reset ();
                 return true;
             }
             else if (key.modifiers == 0 && key.code == ' ') {
-                if (state.candidate_index < 0) {
+                if (state.candidates.cursor_pos < 0) {
                     string midasi;
                     bool okuri = false;
                     if (state.abbrev.len > 0) {
@@ -608,11 +603,12 @@ namespace Skk {
                     state.lookup (midasi, okuri);
                 }
 
-                if (state.candidate_index < state.candidates.size - 1) {
-                    state.candidate_index++;
+                if (state.candidates.cursor_pos < state.candidates.size - 1) {
+                    state.candidates.cursor_pos++;
                     // state.preedit_updated ();
                     return true;
-                } else {
+                }
+                else {
                     state.recursive_edit_start (state.get_yomi ());
                     if (state.candidates.size == 0) {
                         state.handler_type = typeof (StartStateHandler);
@@ -621,7 +617,7 @@ namespace Skk {
                 }
             }
             else {
-                var c = state.candidates.get (state.candidate_index);
+                var c = state.candidates.get ();
                 state.output.append (c.text);
                 if (state.okuri_rom_kana_converter.is_active ()) {
                     state.output.append (state.okuri_rom_kana_converter.output);
@@ -641,8 +637,8 @@ namespace Skk {
 
         internal override string get_preedit (State state) {
             StringBuilder builder = new StringBuilder ("▼");
-            if (state.candidate_index >= 0) {
-                var c = state.candidates.get (state.candidate_index);
+            if (state.candidates.cursor_pos >= 0) {
+                var c = state.candidates.get ();
                 builder.append (c.text);
             } else {
                 builder.append (state.rom_kana_converter.output);

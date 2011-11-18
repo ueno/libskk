@@ -20,6 +20,45 @@
 using Gee;
 
 namespace Skk {
+    public class CandidateList : Object {
+        ArrayList<Candidate> _candidates = new ArrayList<Candidate> ();
+
+        public int cursor_pos { get; internal set; }
+
+        public new Candidate @get (int index = -1) {
+            if (index < 0)
+                index = cursor_pos;
+            return _candidates.get (index);
+        }
+
+        public Candidate[] slice (int start, int end) {
+            return _candidates.slice (start, end).to_array ();
+        }
+
+        public int size {
+            get {
+                return _candidates.size;
+            }
+        }
+
+        public signal void populate ();
+
+        internal void add_all (Candidate[] array) {
+            foreach (var c in array) {
+                _candidates.add (c);
+            }
+        }
+
+        public CandidateList () {
+            clear ();
+        }
+
+        public void clear () {
+            _candidates.clear ();
+            cursor_pos = -1;
+        }
+    }
+
     /**
      * Type to specify input modes.
      */
@@ -61,6 +100,12 @@ namespace Skk {
      */
     public class Context : Object {
         Dict[] dictionaries;
+
+        /**
+         * Current candidates.
+         */
+        public CandidateList candidates { get; private set; }
+
         SList<State> state_stack;
         SList<string> midasi_stack;
         HashMap<Type, StateHandler> handlers =
@@ -97,7 +142,8 @@ namespace Skk {
                           new AbbrevStateHandler ());
             handlers.set (typeof (KutenStateHandler),
                           new KutenStateHandler ());
-            state_stack.prepend (new State (dictionaries));
+            candidates = new CandidateList ();
+            state_stack.prepend (new State (dictionaries, candidates));
             connect_state_signals (state_stack.data);
         }
 
@@ -113,7 +159,7 @@ namespace Skk {
 
         void start_dict_edit (string midasi) {
             midasi_stack.prepend (midasi);
-            state_stack.prepend (new State (dictionaries));
+            state_stack.prepend (new State (dictionaries, candidates));
             connect_state_signals (state_stack.data);
             update_preedit ();
         }
