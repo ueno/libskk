@@ -290,12 +290,18 @@ namespace Skk {
                 }
                 break;
             case InputMode.LATIN:
-                state.output.append_c ((char)key.code);
-                return true;
+                if (0x20 <= key.code && key.code <= 0x7F) {
+                    state.output.append_c ((char)key.code);
+                    return true;
+                }
+                break;
             case InputMode.WIDE_LATIN:
-                state.output.append_unichar (
-                    Util.get_wide_latin_char ((char)key.code));
-                return true;
+                if (0x20 <= key.code && key.code <= 0x7F) {
+                    state.output.append_unichar (
+                        Util.get_wide_latin_char ((char)key.code));
+                    return true;
+                }
+                break;
             }
             return false;
         }
