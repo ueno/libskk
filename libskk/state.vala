@@ -608,7 +608,7 @@ namespace Skk {
                                 state.okuri_rom_kana_converter.input[0]);
                             okuri = true;
                         }
-                        midasi = builder.str;
+                        midasi = Util.get_hiragana (builder.str);
                     }
                     state.lookup (midasi, okuri);
                 }
