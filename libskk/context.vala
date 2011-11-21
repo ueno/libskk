@@ -179,6 +179,9 @@ namespace Skk {
             state.recursive_edit_start.connect (start_dict_edit);
             state.recursive_edit_end.connect (end_dict_edit);
             state.recursive_edit_abort.connect (abort_dict_edit);
+            state.notify["input-mode"].connect ((s, p) => {
+                    notify_property ("input-mode");
+                });
         }
 
         uint dict_edit_level () {
