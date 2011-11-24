@@ -149,6 +149,18 @@ namespace Skk {
         }
 
         /**
+         * Array of strings which cause automatic conversion.
+         */
+        public string[] auto_start_henkan_keywords {
+            get {
+                return state_stack.data.auto_start_henkan_keywords;
+            }
+            set {
+                state_stack.data.auto_start_henkan_keywords = value;
+            }
+        }
+
+        /**
          * Create a new Context.
          *
          * @param dictionaries an array of Dict

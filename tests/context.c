@@ -295,6 +295,21 @@ kuten (void)
   g_object_unref (context);
 }
 
+static void
+auto_conversion (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "A i ,", "▼愛、", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A i , SPC", "▼哀、", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A i w o", "▼愛を", "", SKK_INPUT_MODE_HIRAGANA },
+  };
+
+  context = create_context ();
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
 int
 main (int argc, char **argv) {
   g_type_init ();
@@ -310,5 +325,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/abbrev", abbrev);
   g_test_add_func ("/libskk/dict-edit", dict_edit);
   g_test_add_func ("/libskk/kuten", kuten);
+  g_test_add_func ("/libskk/auto-conversion", auto_conversion);
   return g_test_run ();
 }

@@ -57,11 +57,22 @@ namespace Skk {
 
         internal Iterator<string>? completion_iterator;
 
+        internal static const string[] AUTO_START_HENKAN_KEYWORDS = {
+            "を", "、", "。", "．", "，", "？", "」",
+            "！", "；", "：", ")", ";", ":", "）",
+            "”", "】", "』", "》", "〉", "｝", "］",
+            "〕", "}", "]", "?", ".", ",", "!"
+        };
+
+        internal string[] auto_start_henkan_keywords;
+        internal string? auto_start_henkan_keyword = null;
+
         internal State (Dict[] dictionaries, CandidateList candidates) {
             this.dictionaries = dictionaries;
             this.candidates = candidates;
             this.rom_kana_converter = new RomKanaConverter ();
             this.okuri_rom_kana_converter = new RomKanaConverter ();
+            this.auto_start_henkan_keywords = AUTO_START_HENKAN_KEYWORDS;
             reset ();
         }
 
@@ -74,6 +85,7 @@ namespace Skk {
             candidates.clear ();
             abbrev.erase ();
             kuten.erase ();
+            auto_start_henkan_keyword = null;
         }
 
         internal void lookup (string midasi, bool okuri = false) {
@@ -555,6 +567,11 @@ namespace Skk {
                 }
                 else {
                     state.rom_kana_converter.append (key.code.tolower ());
+                    if (check_auto_conversion (state, key)) {
+                        state.handler_type = typeof (SelectStateHandler);
+                        key.code = ' ';
+                        return false;
+                    }
                     return true;
                 }
             }
@@ -572,6 +589,11 @@ namespace Skk {
             }
             else if (key.modifiers == 0) {
                 state.rom_kana_converter.append (key.code.tolower ());
+                if (check_auto_conversion (state, key)) {
+                    state.handler_type = typeof (SelectStateHandler);
+                    key.code = ' ';
+                    return false;
+                }
                 return true;
             }
             // mark any other key events are consumed here
@@ -582,6 +604,19 @@ namespace Skk {
             StringBuilder builder = new StringBuilder ("▽");
             builder.append (state.get_yomi ());
             return builder.str;
+        }
+
+        bool check_auto_conversion (State state, KeyEvent key) {
+            foreach (var keyword in state.auto_start_henkan_keywords) {
+                if (state.rom_kana_converter.output.length > keyword.length &&
+                    state.rom_kana_converter.output.has_suffix (keyword)) {
+                    state.auto_start_henkan_keyword = keyword;
+                    state.rom_kana_converter.output = state.rom_kana_converter.output[0:-keyword.length];
+                    state.handler_type = typeof (SelectStateHandler);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -637,7 +672,10 @@ namespace Skk {
             else {
                 var c = state.candidates.get ();
                 state.output.append (c.text);
-                if (state.okuri_rom_kana_converter.is_active ()) {
+                if (state.auto_start_henkan_keyword != null) {
+                    state.output.append (state.auto_start_henkan_keyword);
+                }
+                else if (state.okuri_rom_kana_converter.is_active ()) {
                     state.output.append (state.okuri_rom_kana_converter.output);
                 }
                 state.reset ();
@@ -661,8 +699,11 @@ namespace Skk {
                 builder.append (c.text);
             } else {
                 builder.append (state.rom_kana_converter.output);
-            }                    
-            if (state.okuri_rom_kana_converter.is_active ()) {
+            }
+            if (state.auto_start_henkan_keyword != null) {
+                builder.append (state.auto_start_henkan_keyword);
+            }
+            else if (state.okuri_rom_kana_converter.is_active ()) {
                 builder.append (state.okuri_rom_kana_converter.output);
             }
             return builder.str;
