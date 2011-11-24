@@ -67,6 +67,8 @@ namespace Skk {
         internal string[] auto_start_henkan_keywords;
         internal string? auto_start_henkan_keyword = null;
 
+        internal bool egg_like_newline = false;
+
         internal PeriodStyle period_style {
             get {
                 return rom_kana_converter.period_style;
@@ -694,7 +696,9 @@ namespace Skk {
                     return false;
                 }
                 else if ((key.modifiers == 0 && key.code.isalpha ()) ||
-                         (key.modifiers == 0 && key.code == '\x7F')) {
+                         (key.modifiers == 0 && key.code == '\x7F') ||
+                         (!state.egg_like_newline &&
+                          (key.modifiers == 0 && key.code == '\n'))) {
                     return false;
                 }
             }

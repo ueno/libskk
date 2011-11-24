@@ -40,7 +40,7 @@ context (void)
   g_assert_cmpstr (preedit, ==, "▼愛");
 
   retval = skk_context_process_key_events (context, "\n");
-  g_assert (retval);
+  g_assert (!retval);
 
   output = skk_context_get_output (context);
   g_assert_cmpstr (output, ==, "愛");
@@ -260,8 +260,8 @@ dict_edit (void)
     // Don't register empty string (Debian Bug#590191)
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC \n", "▽かぱ", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC", "[DictEdit] かぱ ▼下", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC \n", "[DictEdit] かぱ 下破", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC \n \n", "", "下破", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC C-j", "[DictEdit] かぱ 下破", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC \n", "", "下破", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC", "▼下破", "", SKK_INPUT_MODE_HIRAGANA },
     // Purge "下破" from the user dictionary (Debian Bug#590188).
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC X", "", "", SKK_INPUT_MODE_HIRAGANA },

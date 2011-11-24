@@ -161,6 +161,18 @@ namespace Skk {
         }
 
         /**
+         * Whether or not consume \n on conversion state.
+         */
+        public bool egg_like_newline {
+            get {
+                return state_stack.data.egg_like_newline;
+            }
+            set {
+                state_stack.data.egg_like_newline = value;
+            }
+        }
+
+        /**
          * Period style used in romaji-to-kana conversion.
          */
         public PeriodStyle period_style {
