@@ -161,6 +161,18 @@ namespace Skk {
         }
 
         /**
+         * Period style used in romaji-to-kana conversion.
+         */
+        public PeriodStyle period_style {
+            get {
+                return state_stack.data.period_style;
+            }
+            set {
+                state_stack.data.period_style = value;
+            }
+        }
+
+        /**
          * Create a new Context.
          *
          * @param dictionaries an array of Dict

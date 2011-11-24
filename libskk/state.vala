@@ -20,6 +20,13 @@
 using Gee;
 
 namespace Skk {
+    public static const string[] AUTO_START_HENKAN_KEYWORDS = {
+        "を", "、", "。", "．", "，", "？", "」",
+        "！", "；", "：", ")", ";", ":", "）",
+        "”", "】", "』", "》", "〉", "｝", "］",
+        "〕", "}", "]", "?", ".", ",", "!"
+    };
+
     class State : Object {
         internal Type handler_type;
         InputMode _input_mode;
@@ -57,15 +64,18 @@ namespace Skk {
 
         internal Iterator<string>? completion_iterator;
 
-        internal static const string[] AUTO_START_HENKAN_KEYWORDS = {
-            "を", "、", "。", "．", "，", "？", "」",
-            "！", "；", "：", ")", ";", ":", "）",
-            "”", "】", "』", "》", "〉", "｝", "］",
-            "〕", "}", "]", "?", ".", ",", "!"
-        };
-
         internal string[] auto_start_henkan_keywords;
         internal string? auto_start_henkan_keyword = null;
+
+        internal PeriodStyle period_style {
+            get {
+                return rom_kana_converter.period_style;
+            }
+            set {
+                rom_kana_converter.period_style = value;
+                okuri_rom_kana_converter.period_style = value;
+            }
+        }
 
         internal State (Dict[] dictionaries, CandidateList candidates) {
             this.dictionaries = dictionaries;
