@@ -59,16 +59,28 @@ namespace Skk {
             StringBuilder builder = new StringBuilder ();
             // skksearch does not terminate the line with LF on
             // error (Issue#30)
-            while (builder.str.last_index_of_char ('\n') < 0) {
+            while (builder.str.index_of_char ('\n') < 0) {
                 ssize_t len = connection.input_stream.read (buffer);
-                // skksearch does not terminate the line with LF on
-                // error (Issue#30)
-                if (len > 0 && buffer[0] != '1') {
-                    throw new SkkServError.INVALID_RESPONSE ("");
+                if (len < 0) {
+                    throw new SkkServError.INVALID_RESPONSE ("read error");
                 }
-                builder.append ((string)buffer[0:len]);
+                else if (len == 0) {
+                    break;
+                }
+                else if (len > 0) {
+                    if (buffer[0] != '1') {
+                        throw new SkkServError.INVALID_RESPONSE (
+                            "invalid response code");
+                    }
+                    uint8[] _buffer = buffer[0:len];
+                    builder.append ((string)_buffer);
+                }
             }
-            return builder.str;
+            var index = builder.str.index_of_char ('\n');
+            if (index < 0) {
+                throw new SkkServError.INVALID_RESPONSE ("missing newline");
+            }
+            return builder.str[0:index];
         }
 
         /**
