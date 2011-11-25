@@ -89,13 +89,13 @@ namespace Skk {
             seen.clear ();
         }
 
-        public Candidate select () {
+        public Candidate select (bool okuri = false) {
             Candidate candidate = this.get ();
-            selected (candidate);
+            selected (candidate, okuri);
             return candidate;
         }
 
-        public signal void selected (Candidate c);
+        public signal void selected (Candidate candidate, bool okuri);
     }
 
     /**
@@ -232,10 +232,11 @@ namespace Skk {
             candidates.notify["cursor-pos"].connect (() => {
                     update_preedit ();
                 });
-            candidates.selected.connect ((c) => {
+            candidates.selected.connect ((candidate, okuri) => {
                     if (select_candidate_in_dictionaries (
                             state_stack.data.midasi,
-                            c)) {
+                            candidate,
+                            okuri)) {
                         save_dictionaries ();
                     }
                 });
@@ -250,6 +251,20 @@ namespace Skk {
                 });
         }
 
+        bool select_candidate_in_dictionaries (string midasi,
+                                               Candidate candidate,
+                                               bool okuri = false)
+        {
+            bool changed = false;
+            foreach (var dict in dictionaries) {
+                if (!dict.read_only &&
+                    dict.select_candidate (midasi, candidate, okuri)) {
+                    changed = true;
+                }
+            }
+            return changed;
+        }
+
         uint dict_edit_level () {
             return state_stack.length () - 1;
         }
@@ -259,19 +274,6 @@ namespace Skk {
             state_stack.prepend (new State (dictionaries, candidates));
             connect_state_signals (state_stack.data);
             update_preedit ();
-        }
-
-        bool select_candidate_in_dictionaries (string midasi,
-                                               Candidate candidate)
-        {
-            bool changed = false;
-            foreach (var dict in dictionaries) {
-                if (!dict.read_only &&
-                    dict.select_candidate (midasi, candidate)) {
-                    changed = true;
-                }
-            }
-            return changed;
         }
 
         bool end_dict_edit (string text) {

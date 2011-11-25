@@ -357,6 +357,7 @@ namespace Skk {
                 converter = new EncodingConverter ("EUC-JP");
             } catch (GLib.Error e) {
                 converter = null;
+                assert_not_reached ();
             }
         }
 
@@ -396,6 +397,8 @@ namespace Skk {
                     try {
                         state.output.append (converter.decode (euc));
                     } catch (GLib.Error e) {
+                        warning ("can't decode %s in EUC-JP: %s",
+                                 euc, e.message);
                     }
                 }
                 var input_mode = state.input_mode;
@@ -692,7 +695,8 @@ namespace Skk {
                 state.handler_type = typeof (StartStateHandler);
             }
             else {
-                var c = state.candidates.select ();
+                var c = state.candidates.select (
+                    state.okuri_rom_kana_converter.is_active ());
                 state.output.append (c.text);
                 if (state.auto_start_henkan_keyword != null) {
                     state.output.append (state.auto_start_henkan_keyword);

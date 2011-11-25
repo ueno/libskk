@@ -58,6 +58,8 @@ namespace Skk {
                             // override encoding with coding cookie
                             converter = new EncodingConverter (entry.key);
                         } catch (GLib.Error e) {
+                            warning ("can't create encoder for %s: %s",
+                                     entry.key, e.message);
                         }
                         break;
                     }
@@ -87,6 +89,7 @@ namespace Skk {
                     try {
                         line = converter.decode (line);
                     } catch (GLib.Error e) {
+                        warning ("can't decode line %s: %s", line, e.message);
                         continue;
                     }
                     int index = line.index_of (" ");
@@ -147,9 +150,16 @@ namespace Skk {
                 var iter = entries.iterator_at (entries.last ());
                 do {
                     var entry = iter.get ();
-                    fp.printf ("%s %s\n",
-                               converter.encode (entry.key),
-                               converter.encode (join_candidates (entry.value.to_array ())));
+                    try {
+                        fp.printf ("%s %s\n",
+                                   converter.encode (entry.key),
+                                   converter.encode (
+                                       join_candidates (
+                                           entry.value.to_array ())));
+                    } catch (GLib.Error e) {
+                        warning ("can't write entry for \"%s\": %s",
+                                 entry.key, e.message);
+                    }
                 } while (iter.previous ());
             }
             fp.printf (";; okuri-nasi entries.\n");
@@ -159,9 +169,16 @@ namespace Skk {
                 var iter = entries.iterator_at (entries.first ());
                 do {
                     var entry = iter.get ();
-                    fp.printf ("%s %s\n",
-                               converter.encode (entry.key),
-                               converter.encode (join_candidates (entry.value.to_array ())));
+                    try {
+                        fp.printf ("%s %s\n",
+                                   converter.encode (entry.key),
+                                   converter.encode (
+                                       join_candidates (
+                                           entry.value.to_array ())));
+                    } catch (GLib.Error e) {
+                        warning ("can't write entry for \"%s\": %s",
+                                 entry.key, e.message);
+                    }
                 } while (iter.next ());
             }
             fp.flush ();

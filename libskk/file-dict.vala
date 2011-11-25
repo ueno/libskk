@@ -68,6 +68,8 @@ namespace Skk {
                                     midasi_strings.add (
                                         converter.decode (line[0:index]));
                                 } catch (GLib.Error e) {
+                                    warning ("can't decode line %s: %s",
+                                             line, e.message);
                                 }
                             }
                             offsets.add (pos);
@@ -153,6 +155,7 @@ namespace Skk {
             try {
                 _midasi = converter.encode (midasi);
             } catch (GLib.Error e) {
+                warning ("can't decode %s: %s", midasi, e.message);
                 return new Candidate[0];
             }
 
@@ -165,6 +168,8 @@ namespace Skk {
                     try {
                         _line = converter.decode (line[index:-1]);
                     } catch (GLib.Error e) {
+                        warning ("can't decode line %s: %s",
+                                 line, e.message);
                         return new Candidate[0];
                     }
                     return split_candidates (_line);
