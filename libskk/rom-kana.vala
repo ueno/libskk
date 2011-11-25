@@ -190,15 +190,23 @@ namespace Skk {
             }
             set {
                 if (_rule != value) {
-                    load_rule (value);
-                    _rule = value;
+                    try {
+                        load_rule (value);
+                        _rule = value;
+                    } catch (RomKanaRuleParseError e) {
+                        warning ("can't load rule %s: %s", value, e.message);
+                    }
                 }
             }
         }
 
         public RomKanaConverter () {
             parser = new Json.Parser ();
-            load_rule (_rule);
+            try {
+                load_rule (_rule);
+            } catch (RomKanaRuleParseError e) {
+                warning ("can't load rule %s: %s", _rule, e.message);
+            }
             current_node = root_node;
         }
 

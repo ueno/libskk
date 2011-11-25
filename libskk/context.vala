@@ -233,8 +233,9 @@ namespace Skk {
                     update_preedit ();
                 });
             candidates.selected.connect ((c) => {
-                    if (select_candidate_in_dictionaries (state_stack.data.midasi,
-                                                          c)) {
+                    if (select_candidate_in_dictionaries (
+                            state_stack.data.midasi,
+                            c)) {
                         save_dictionaries ();
                     }
                 });
