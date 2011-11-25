@@ -5,13 +5,16 @@ libskk_la_VALAFLAGS = \
 	-H libskk.h --vapi skk-@SKK_API_VERSION@.vapi \
 	-h skk-internals.h \
 	--vapidir=. \
-	--pkg glib-2.0 --pkg gio-2.0 --pkg gee-1.0 --pkg posix \
+	--pkg config --pkg glib-2.0 --pkg gio-2.0 --pkg gee-1.0 \
+	--pkg posix --pkg json-glib-1.0 \
 	--internal-vapi skk-internals-@SKK_API_VERSION@.vapi \
 	--library skk-@SKK_API_VERSION@ --gir Skk-@SKK_API_VERSION@.gir \
 	$(VALAFLAGS)
 
 libskk_la_CFLAGS = \
-	$(LIBSKK_CFLAGS)
+	$(LIBSKK_CFLAGS) \
+	-DROMKANADIR=\"$(romkanadir)\"
+
 libskk_la_LIBADD = \
 	$(LIBSKK_LIBS)
 
@@ -22,6 +25,9 @@ skk_headers = \
 
 libskkinclude_HEADERS = \
 	$(skk_headers)
+
+romkanadir = $(pkgdatadir)/rom-kana
+romkana_DATA = standard.json kzik.json
 
 libskk_la_SOURCES = \
 	rom-kana.vala \
@@ -62,3 +68,6 @@ pkgconfig_DATA = libskk.pc
 
 vapi_DATA = skk-1.0.vapi skk-1.0.deps
 vapidir = $(datadir)/vala/vapi
+
+EXTRA_DIST = config.vapi
+

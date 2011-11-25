@@ -184,6 +184,15 @@ namespace Skk {
             }
         }
 
+        public string rom_kana_rule {
+            get {
+                return state_stack.data.rom_kana_rule;
+            }
+            set {
+                state_stack.data.rom_kana_rule = value;
+            }
+        }
+
         /**
          * Create a new Context.
          *

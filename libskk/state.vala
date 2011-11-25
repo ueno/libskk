@@ -79,6 +79,16 @@ namespace Skk {
             }
         }
 
+        internal string rom_kana_rule {
+            get {
+                return rom_kana_converter.rule;
+            }
+            set {
+                rom_kana_converter.rule = value;
+                okuri_rom_kana_converter.rule = value;
+            }
+        }
+        
         internal State (Dict[] dictionaries, CandidateList candidates) {
             this.dictionaries = dictionaries;
             this.candidates = candidates;

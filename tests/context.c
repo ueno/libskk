@@ -310,6 +310,22 @@ auto_conversion (void)
   g_object_unref (context);
 }
 
+static void
+kzik (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "b g d", "", "びぇん", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "s q", "", "さい", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "d l", "", "どん", SKK_INPUT_MODE_HIRAGANA },
+  };
+
+  context = create_context ();
+  skk_context_set_rom_kana_rule (context, "kzik");
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
 int
 main (int argc, char **argv) {
   g_type_init ();
@@ -326,5 +342,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/dict-edit", dict_edit);
   g_test_add_func ("/libskk/kuten", kuten);
   g_test_add_func ("/libskk/auto-conversion", auto_conversion);
+  g_test_add_func ("/libskk/kzik", kzik);
   return g_test_run ();
 }
