@@ -60,9 +60,14 @@ namespace Skk {
          */
         public signal void populate ();
 
+        Set<string> seen = new HashSet<string> ();
+
         internal void add_all (Candidate[] array) {
             foreach (var c in array) {
-                _candidates.add (c);
+                if (!(c.text in seen)) {
+                    _candidates.add (c);
+                    seen.add (c.text);
+                }
             }
         }
 
@@ -81,6 +86,7 @@ namespace Skk {
         public void clear () {
             _candidates.clear ();
             cursor_pos = -1;
+            seen.clear ();
         }
 
         public Candidate select () {
