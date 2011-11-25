@@ -132,6 +132,7 @@ namespace Skk {
             // this will cause file close
             if (file != null)
                 file = null;
+
             unowned Posix.FILE fp = get_fp ("w+");
             foreach (var entry in ENCODING_TO_CODING_SYSTEM_RULE) {
                 if (entry.key == converter.encoding) {
@@ -147,8 +148,8 @@ namespace Skk {
                 do {
                     var entry = iter.get ();
                     fp.printf ("%s %s\n",
-                               entry.key,
-                               join_candidates (entry.value.to_array ()));
+                               converter.encode (entry.key),
+                               converter.encode (join_candidates (entry.value.to_array ())));
                 } while (iter.previous ());
             }
             fp.printf (";; okuri-nasi entries.\n");
@@ -159,10 +160,11 @@ namespace Skk {
                 do {
                     var entry = iter.get ();
                     fp.printf ("%s %s\n",
-                               entry.key,
-                               join_candidates (entry.value.to_array ()));
+                               converter.encode (entry.key),
+                               converter.encode (join_candidates (entry.value.to_array ())));
                 } while (iter.next ());
             }
+            fp.flush ();
         }
 
         Map<string,ArrayList<Candidate>> get_entries (bool okuri = false) {

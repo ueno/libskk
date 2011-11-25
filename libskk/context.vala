@@ -82,6 +82,14 @@ namespace Skk {
             _candidates.clear ();
             cursor_pos = -1;
         }
+
+        public Candidate select () {
+            Candidate candidate = this.get ();
+            selected (candidate);
+            return candidate;
+        }
+
+        public signal void selected (Candidate c);
     }
 
     /**
@@ -218,6 +226,12 @@ namespace Skk {
             candidates.notify["cursor-pos"].connect (() => {
                     update_preedit ();
                 });
+            candidates.selected.connect ((c) => {
+                    if (select_candidate_in_dictionaries (state_stack.data.midasi,
+                                                          c)) {
+                        save_dictionaries ();
+                    }
+                });
         }
 
         void connect_state_signals (State state) {
@@ -240,15 +254,25 @@ namespace Skk {
             update_preedit ();
         }
 
+        bool select_candidate_in_dictionaries (string midasi,
+                                               Candidate candidate)
+        {
+            bool changed = false;
+            foreach (var dict in dictionaries) {
+                if (!dict.read_only &&
+                    dict.select_candidate (midasi, candidate)) {
+                    changed = true;
+                }
+            }
+            return changed;
+        }
+
         bool end_dict_edit (string text) {
             if (leave_dict_edit ()) {
                 var candidate = new Candidate (text);
-                foreach (var dict in dictionaries) {
-                    if (!dict.read_only) {
-                        dict.select_candidate (state_stack.data.midasi,
-                                               candidate);
-                        save_dictionaries ();
-                    }
+                if (select_candidate_in_dictionaries (state_stack.data.midasi, 
+                                                      candidate)) {
+                    save_dictionaries ();
                 }
                 state_stack.data.reset ();
                 state_stack.data.output.assign (text);

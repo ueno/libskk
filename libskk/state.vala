@@ -692,7 +692,7 @@ namespace Skk {
                 state.handler_type = typeof (StartStateHandler);
             }
             else {
-                var c = state.candidates.get ();
+                var c = state.candidates.select ();
                 state.output.append (c.text);
                 if (state.auto_start_henkan_keyword != null) {
                     state.output.append (state.auto_start_henkan_keyword);
