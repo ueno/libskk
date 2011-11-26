@@ -293,9 +293,13 @@ namespace Skk {
          *
          * @param uc an ASCII character
          * @param preedit_only only checks if preedit is active
+         * @param no_carryover return false if there will be carryover
          * @return `true` if the character can be consumed
          */
-        public bool can_consume (unichar uc, bool preedit_only = false) {
+        public bool can_consume (unichar uc,
+                                 bool preedit_only = false,
+                                 bool no_carryover = true)
+        {
             if (preedit_only && _preedit.len == 0)
                 return false;
             var child_node = current_node.children[uc];
@@ -303,7 +307,7 @@ namespace Skk {
                 return false;
             if (child_node.entry == null)
                 return false;
-            if (child_node.entry.carryover != "")
+            if (no_carryover && child_node.entry.carryover != "")
                 return false;
             return true;
         }

@@ -578,7 +578,9 @@ namespace Skk {
                      state.rom_kana_converter.is_active () &&
                      !state.rom_kana_converter.can_consume (
                          key.code.tolower (), true))) {
-                    if (state.rom_kana_converter.preedit.length > 0) {
+                    if (!state.okuri_rom_kana_converter.is_active () &&
+                        state.rom_kana_converter.can_consume (
+                            key.code.tolower (), true, false)) {
                         state.rom_kana_converter.append (key.code.tolower ());
                     }
                     state.rom_kana_converter.output_nn_if_any ();
@@ -670,8 +672,11 @@ namespace Skk {
                         state.rom_kana_converter.output_nn_if_any ();
                         builder.append (state.rom_kana_converter.output);
                         if (state.okuri_rom_kana_converter.is_active ()) {
-                            builder.append_unichar (
-                                state.okuri_rom_kana_converter.input[0]);
+                            var uc = state.okuri_rom_kana_converter.input[0];
+                            if (uc == 'j') {
+                                uc = 'z';
+                            }
+                            builder.append_unichar (uc);
                             okuri = true;
                         }
                         midasi = Util.get_hiragana (builder.str);
