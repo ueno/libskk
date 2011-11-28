@@ -24,60 +24,79 @@ namespace Skk {
      * A file based implementation of Dict.
      */
     public class FileDict : Dict {
-        unowned Posix.FILE get_fp (string mode = "r") {
-            if (file == null)
-                file = Posix.FILE.open (path, mode);
-            return file;
+        unowned void remap () {
+            if (memory != null) {
+                Posix.munmap (memory, memory_length);
+                memory = null;
+            }
+
+            int fd = Posix.open (path, Posix.O_RDONLY, 0);
+            return_if_fail (fd >= 0);
+
+            Posix.Stat stat;
+            int retval = Posix.fstat (fd, out stat);
+            return_if_fail  (retval == 0);
+
+            memory = Posix.mmap (null,
+                                 stat.st_size,
+                                 Posix.PROT_READ,
+                                 Posix.MAP_SHARED,
+                                 fd,
+                                 0);
+            return_if_fail (memory != Posix.MAP_FAILED);
+            memory_length = stat.st_size;
         }
 
-        static const int BUFSIZ = 4096;
+        string read_line (ref long offset) {
+            return_val_if_fail (offset < memory_length, null);
+            char *p = ((char *)memory + offset);
+            for (; offset > 0; offset--, p--) {
+                if (*p == '\n')
+                    break;
+            }
+
+            if (offset > 0) {
+                offset++;
+                p++;
+            }
+
+            var builder = new StringBuilder ();
+            long _offset = offset;
+            for (; _offset < memory_length; _offset++, p++) {
+                if (*p == '\n')
+                    break;
+                builder.append_c (*p);
+            }
+            return builder.str;
+        }
+
+        bool read_until (ref long offset, string line) {
+            return_val_if_fail (offset < memory_length, null);
+            while (offset + line.length < memory_length) {
+                char *p = ((char *)memory + offset);
+                if (*p == '\n' &&
+                    Memory.cmp (p + 1, (void *)line, line.length) == 0) {
+                    offset += line.length;
+                    return true;
+                }
+                offset++;
+            }
+            return false;
+        }
 
         void load () {
-            // this will cause file close
-            if (file != null)
-                file = null;
-            unowned Posix.FILE fp = get_fp ();
-            char[] buf = new char[BUFSIZ];
-            ArrayList<long>? offsets = null;
-            while (true) {
-                long pos = fp.tell ();
-                string line = fp.gets (buf);
-                if (line == null) {
-                    break;
-                }
-                if (line.has_prefix (";; okuri-ari entries.")) {
-                    offsets = okuri_ari_offsets;
-                    pos = fp.tell ();
-                    break;
-                }
+            remap ();
+
+            long offset = 0;
+            if (!read_until (ref offset, ";; okuri-ari entries.\n")) {
+                warning ("cannot find the beginning of okuri-ari entries");
             }
-            if (offsets != null) {
-                while (true) {
-                    long pos = fp.tell ();
-                    string line = fp.gets (buf);
-                    if (line == null) {
-                        break;
-                    }
-                    if (line.has_prefix (";; okuri-nasi entries.")) {
-                        offsets = okuri_nasi_offsets;
-                    } else {
-                        if (offsets == okuri_nasi_offsets) {
-                            int index = line.index_of (" ");
-                            if (index > 0) {
-                                try {
-                                    midasi_strings.add (
-                                        converter.decode (line[0:index]));
-                                } catch (GLib.Error e) {
-                                    warning ("can't decode line %s: %s",
-                                             line, e.message);
-                                }
-                            }
-                            offsets.add (pos);
-                        } else
-                            offsets.insert (0, pos);
-                    }
-                }
+            okuri_ari_offset = offset;
+            
+            if (!read_until (ref offset, ";; okuri-nasi entries.\n")) {
+                warning ("cannot find the beginning of okuri-nasi entries");
             }
+            okuri_nasi_offset = offset;
         }
 
         /**
@@ -90,8 +109,6 @@ namespace Skk {
             }
 
             if (buf.st_mtime > mtime) {
-                this.okuri_ari_offsets.clear ();
-                this.okuri_nasi_offsets.clear ();
                 this.midasi_strings.clear ();
                 load ();
                 this.mtime = buf.st_mtime;
@@ -99,39 +116,37 @@ namespace Skk {
         }
 
         bool search_pos (string midasi,
-                         ArrayList<long> offsets,
+                         long start_offset,
+                         long end_offset,
                          CompareFunc<string> cmp,
                          out long pos,
-                         out string? line) {
-            unowned Posix.FILE fp = get_fp ();
-            char[] buf = new char[BUFSIZ];
-            fp.seek (0, Posix.FILE.SEEK_SET);
-            int begin = 0;
-            int end = offsets.size - 1;
-            int _pos = begin + (end - begin) / 2;
-            while (begin <= end) {
-                if (fp.seek (offsets.get (_pos), Posix.FILE.SEEK_SET) < 0)
-                    break;
+                         out string? line,
+                         int direction) {
+            long offset = start_offset + (end_offset - start_offset) / 2;
+            while (start_offset <= end_offset) {
+                assert (offset < memory_length);
 
-                string _line = fp.gets (buf);
-                if (_line == null)
-                    break;
-
+                string _line = read_line (ref offset);
                 int index = _line.index_of (" ");
-                if (index < 0)
+                if (index < 0) {
+                    warning ("corrupted dictionary entry: %s",
+                             _line);
                     break;
+                }
 
                 int r = cmp (_line[0:index], midasi);
                 if (r == 0) {
-                    pos = _pos;
+                    pos = offset;
                     line = _line;
                     return true;
-                } else if (r > 0) {
-                    end = _pos - 1;
-                } else {
-                    begin = _pos + 1;
                 }
-                _pos = begin + (end - begin) / 2;
+
+                if (r * direction > 0) {
+                    end_offset = offset - 2;
+                } else {
+                    start_offset = offset + _line.length + 1;
+                }
+                offset = start_offset + (end_offset - start_offset) / 2;
             }
             pos = -1;
             line = null;
@@ -142,14 +157,13 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override Candidate[] lookup (string midasi, bool okuri = false) {
-            ArrayList<long> offsets;
+            long start_offset, end_offset;
             if (okuri) {
-                offsets = okuri_ari_offsets;
+                start_offset = okuri_ari_offset;
+                end_offset = okuri_nasi_offset;
             } else {
-                offsets = okuri_nasi_offsets;
-            }
-            if (offsets.size == 0) {
-                reload ();
+                start_offset = okuri_nasi_offset;
+                end_offset = (long) memory_length;
             }
             string _midasi;
             try {
@@ -161,12 +175,18 @@ namespace Skk {
 
             long pos;
             string line;
-            if (search_pos (_midasi, offsets, strcmp, out pos, out line)) {
+            if (search_pos (_midasi,
+                            start_offset,
+                            end_offset,
+                            strcmp,
+                            out pos,
+                            out line,
+                            okuri ? -1 : 1)) {
                 int index = line.index_of (" ");
                 string _line;
                 if (index > 0) {
                     try {
-                        _line = converter.decode (line[index:-1]);
+                        _line = converter.decode (line[index:line.length]);
                     } catch (GLib.Error e) {
                         warning ("can't decode line %s: %s",
                                  line, e.message);
@@ -178,16 +198,76 @@ namespace Skk {
             return new Candidate[0];
         }
 
+        static int strcmp_prefix (string a, string b) {
+            if (a.has_prefix (b))
+                return 0;
+            return strcmp (a, b);
+        }
+
         /**
          * {@inheritDoc}
          */
         public override string[] complete (string midasi) {
             var completion = new ArrayList<string> ();
-            foreach (var s in midasi_strings) {
-                if (s.has_prefix (midasi)) {
-                    completion.add (s);
-                } else if (strcmp (s, midasi) > 0) {
-                    break;
+
+            long start_offset, end_offset;
+            start_offset = okuri_nasi_offset;
+            end_offset = (long) memory_length;
+
+            string _midasi;
+            try {
+                _midasi = converter.encode (midasi);
+            } catch (GLib.Error e) {
+                warning ("can't decode %s: %s", midasi, e.message);
+                return completion.to_array ();
+            }
+
+            long pos;
+            string line;
+            if (search_pos (_midasi,
+                            start_offset,
+                            end_offset,
+                            strcmp_prefix,
+                            out pos,
+                            out line,
+                            1)) {
+                long _pos = pos + line.length + 1;
+                while (pos >= 0 && line.has_prefix (_midasi)) {
+                    int index = line.index_of (" ");
+                    if (index < 0) {
+                        warning ("corrupted dictionary entry: %s",
+                                 line);
+                    } else {
+                        try {
+                            completion.add (converter.decode (line[0:index]));
+                        } catch (GLib.Error e) {
+                            warning ("can't decode line %s: %s",
+                                     line, e.message);
+                            return completion.to_array ();
+                        }
+                    }
+                    pos -= 2;
+                    line = read_line (ref pos);
+                }
+
+                pos = _pos;
+                line = read_line (ref pos);
+                while (pos <= memory_length && line.has_prefix (_midasi)) {
+                    int index = line.index_of (" ");
+                    if (index < 0) {
+                        warning ("corrupted dictionary entry: %s",
+                                 line);
+                    } else {
+                        try {
+                            completion.add (converter.decode (line[0:index]));
+                        } catch (GLib.Error e) {
+                            warning ("can't decode line %s: %s",
+                                     line, e.message);
+                            return completion.to_array ();
+                        }
+                    }
+                    pos += line.length + 1;
+                    line = read_line (ref pos);
                 }
             }
             return completion.to_array ();
@@ -205,9 +285,10 @@ namespace Skk {
         string path;
         time_t mtime;
         EncodingConverter converter;
-        Posix.FILE? file;
-        ArrayList<long> okuri_ari_offsets = new ArrayList<long> ();
-        ArrayList<long> okuri_nasi_offsets = new ArrayList<long> ();
+        void *memory = null;
+        size_t memory_length = 0;
+        long okuri_ari_offset;
+        long okuri_nasi_offset;
         ArrayList<string> midasi_strings = new ArrayList<string> ();
 
         /**
@@ -223,8 +304,8 @@ namespace Skk {
             this.path = path;
             this.mtime = 0;
             this.converter = new EncodingConverter (encoding);
-            this.file = null;
             reload ();
         }
     }
 }
+
