@@ -69,6 +69,8 @@ namespace Skk {
 
         internal bool egg_like_newline = false;
 
+        internal int[] numerics;
+
         internal PeriodStyle period_style {
             get {
                 return rom_kana_converter.period_style;
@@ -110,16 +112,98 @@ namespace Skk {
             auto_start_henkan_keyword = null;
         }
 
+        string extract_numerics (string midasi, out int[] _numerics) {
+            var numeric_regex = new Regex ("[0-9]+");
+            MatchInfo info = null;
+            int start_pos = 0;
+            var numeric_list = new ArrayList<int> ();
+            var builder = new StringBuilder ();
+            while (numeric_regex.match_full (midasi,
+                                             -1,
+                                             start_pos,
+                                             0,
+                                             out info))
+            {
+                string numeric = info.fetch (0);
+                int match_start_pos, match_end_pos;
+                info.fetch_pos (0,
+                                out match_start_pos,
+                                out match_end_pos);
+                numeric_list.add (int.parse (numeric));
+                builder.append (midasi[start_pos:match_start_pos]);
+                builder.append ("#");
+                start_pos = match_end_pos;
+            }
+            _numerics = numeric_list.to_array ();
+            builder.append (midasi[start_pos:midasi.length]);
+            return builder.str;
+        }
+
+        void expand_numeric_references (Candidate[] candidates) {
+            var numeric_ref_regex = new Regex ("#([0-9])");
+            foreach (var candidate in candidates) {
+                var builder = new StringBuilder ();
+                MatchInfo info = null;
+                int start_pos = 0;
+                for (int numeric_index = 0;
+                     numeric_index < numerics.length &&
+                         numeric_ref_regex.match_full (candidate.text,
+                                                       -1,
+                                                       start_pos,
+                                                       0,
+                                                       out info);
+                     numeric_index++)
+                {
+                    int match_start_pos, match_end_pos;
+                    info.fetch_pos (0,
+                                    out match_start_pos,
+                                    out match_end_pos);
+                    builder.append (candidate.text[start_pos:match_start_pos]);
+
+                    string type = info.fetch (1);
+                    switch (type[0]) {
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '5':
+                        builder.append (
+                            Util.get_numeric (
+                                numerics[numeric_index],
+                                (NumericConversionType) (type[0] - '0')));
+                        break;
+                    case '4':
+                    case '9':
+                        // not supported yet
+                        break;
+                    default:
+                        warning ("unknown numeric conversion type: %s",
+                                 type);
+                        break;
+                    }
+                    start_pos = match_end_pos;
+                }
+                builder.append (
+                    candidate.text[start_pos:candidate.text.length]);
+                candidate.text = builder.str;
+            }
+        }
+
         internal void lookup (string midasi, bool okuri = false) {
-            this.midasi = midasi;
+            this.midasi = extract_numerics (midasi, out numerics);
             candidates.clear ();
             foreach (var dict in dictionaries) {
-                candidates.add_all (dict.lookup (midasi, okuri));
+                var _candidates = dict.lookup (this.midasi, okuri);
+                expand_numeric_references (_candidates);
+                candidates.add_all (_candidates);
             }
             candidates.populate ();
         }
 
-        internal void purge_candidate (string midasi, Candidate candidate, bool okuri = false) {
+        internal void purge_candidate (string midasi,
+                                       Candidate candidate,
+                                       bool okuri = false)
+        {
             foreach (var dict in dictionaries) {
                 if (!dict.read_only) {
                     dict.purge_candidate (midasi, candidate);

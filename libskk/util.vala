@@ -24,7 +24,17 @@ namespace Skk {
         K key;
         V value;
     }
-        
+
+    enum NumericConversionType {
+        LATIN,
+        WIDE_LATIN,
+        KANJI_NUMERAL,
+        KANJI,
+        RECONVERT,
+        DAIJI,
+        SHOGI
+    }
+
     class Util {
         static const string[] WideLatinTable = {
             "　", "！", "”", "＃", "＄", "％", "＆", "’", 
@@ -104,6 +114,24 @@ namespace Skk {
         static const Entry<string,string>[] HankakuKatakanaSonants = {
             {"ﾞ", "゙"},
             {"ﾟ", "゚"}
+        };
+
+        static const string[] KanjiNumericTable = {
+            "〇", "一", "二", "三", "四", "五", "六", "七", "八", "九"
+        };
+
+        static const string[] DaijiNumericTable = {
+            "零", "壱", "弐", "参", "四", "伍", "六", "七", "八", "九"
+        };
+
+        static const string?[] KanjiNumericalPositionTable = {
+            null, "十", "百", "千", "万", null, null, null, "億",
+            null, null, null, "兆", null, null, null, null, "京"
+        };
+
+        static const string?[] DaijiNumericalPositionTable = {
+            null, "拾", "百", "阡", "萬", null, null, null, "億",
+            null, null, null, "兆", null, null, null, null, "京"
         };
 
         static HashMap<string,string> _ZenkakuToHankakuKatakanaTable =
@@ -199,6 +227,64 @@ namespace Skk {
                 }
             }
             return builder.str.replace ("ウ゛", "ヴ");
+        }
+
+        static string get_kanji_numeric (int numeric,
+                                         string[] num_table,
+                                         string[]? num_pos_table = null)
+        {
+            var builder = new StringBuilder ();
+            var str = numeric.to_string ();
+            unichar uc;
+            if (num_pos_table == null) {
+                for (var index = 0; str.get_next_char (ref index, out uc); ) {
+                    builder.append (num_table[uc - '0']);
+                }
+                return builder.str;
+            }
+            else {
+                for (var index = 0; str.get_next_char (ref index, out uc); ) {
+                    if (uc > '0') {
+                        builder.append (KanjiNumericTable[uc - '0']);
+                        int pos_index = str.length - index;
+                        var pos = num_pos_table[pos_index];
+                        if (pos == null && pos_index % 4 > 0) {
+                            pos = num_pos_table[pos_index % 4];
+                        }
+                        if (pos != null)
+                            builder.append (pos);
+                    }
+                }
+                return builder.str;
+            }
+        }
+
+        internal static string get_numeric (int numeric,
+                                            NumericConversionType type)
+        {
+            StringBuilder builder;
+            string str;
+            unichar uc;
+
+            switch (type) {
+            case NumericConversionType.LATIN:
+                return numeric.to_string ();
+            case NumericConversionType.WIDE_LATIN:
+                return get_wide_latin (numeric.to_string ());
+            case NumericConversionType.KANJI_NUMERAL:
+                return get_kanji_numeric (numeric, KanjiNumericTable);
+            case NumericConversionType.KANJI:
+                return get_kanji_numeric (numeric,
+                                          KanjiNumericTable,
+                                          KanjiNumericalPositionTable);
+            case NumericConversionType.DAIJI:
+                return get_kanji_numeric (numeric,
+                                          DaijiNumericTable,
+                                          DaijiNumericalPositionTable);
+            default:
+                break;
+            }
+            return "";
         }
 
         static construct {

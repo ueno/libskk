@@ -32,6 +32,9 @@ namespace Skk {
             get {
                 return _text;
             }
+            internal set {
+                _text = value;
+            }
         }
 
         /**

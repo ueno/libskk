@@ -327,6 +327,22 @@ kzik (void)
   g_object_unref (context);
 }
 
+static void
+numeric (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "Q 5 / 1 SPC", "▼5月1日", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "Q 5 h i k i SPC", "▼５匹", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "Q 5 h i k i SPC SPC", "▼五匹", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "Q 5 0 0 0 0 h i k i SPC SPC", "▼五万匹", "", SKK_INPUT_MODE_HIRAGANA },
+  };
+
+  context = create_context ();
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
 int
 main (int argc, char **argv) {
   g_type_init ();
@@ -344,5 +360,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/kuten", kuten);
   g_test_add_func ("/libskk/auto-conversion", auto_conversion);
   g_test_add_func ("/libskk/kzik", kzik);
+  g_test_add_func ("/libskk/numeric", numeric);
   return g_test_run ();
 }
