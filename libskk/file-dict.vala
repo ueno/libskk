@@ -47,6 +47,15 @@ namespace Skk {
             memory_length = stat.st_size;
         }
 
+        // Read a line near offset and move offset to the beginning of
+        // the line.  After the call, to fetch the previous line, do
+        //
+        //  offset -= 2; // place the cursor at the end of the previous line
+        //  line = read_line (ref offset);
+        //
+        // to fetch the next line, do:
+        //  offset += line.length + 1; // place the cursor at "\n"
+        //  line = read_line (ref offset);
         string read_line (ref long offset) {
             return_val_if_fail (offset < memory_length, null);
             char *p = ((char *)memory + offset);
@@ -70,6 +79,8 @@ namespace Skk {
             return builder.str;
         }
 
+        // Skip until the first occurrence of line.  This moves offset
+        // at the beginning of the next line.
         bool read_until (ref long offset, string line) {
             return_val_if_fail (offset < memory_length, null);
             while (offset + line.length < memory_length) {
