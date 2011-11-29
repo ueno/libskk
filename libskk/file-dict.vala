@@ -175,13 +175,16 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override Candidate[] lookup (string midasi, bool okuri = false) {
+            if (memory == null)
+                return new Candidate[0];
+
             long start_offset, end_offset;
             if (okuri) {
                 start_offset = okuri_ari_offset;
                 end_offset = okuri_nasi_offset;
             } else {
                 start_offset = okuri_nasi_offset;
-                end_offset = (long) memory_length;
+                end_offset = (long) memory_length - 1;
             }
             string _midasi;
             try {
@@ -226,6 +229,9 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override string[] complete (string midasi) {
+            if (memory == null)
+                return new string[0];
+
             var completion = new ArrayList<string> ();
 
             long start_offset, end_offset;
