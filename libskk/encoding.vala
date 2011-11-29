@@ -35,8 +35,7 @@ namespace Skk {
             decoder = new CharsetConverter (INTERNAL_ENCODING, encoding);
         }
 
-        string convert (CharsetConverter converter, string str)
-            throws GLib.Error {
+        string convert (CharsetConverter converter, string str) throws GLib.Error {
             uint8[] buf = new uint8[BUFSIZ];
             StringBuilder builder = new StringBuilder ();
             size_t bytes_read, bytes_written;

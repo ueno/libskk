@@ -20,11 +20,15 @@
 using Gee;
 
 namespace Skk {
+    errordomain SkkFileDictParseError {
+        FAILED
+    }
+
     /**
      * A file based implementation of Dict.
      */
     public class FileDict : Dict {
-        unowned void remap () {
+        void remap () {
             if (memory != null) {
                 Posix.munmap (memory, memory_length);
                 memory = null;
@@ -95,17 +99,19 @@ namespace Skk {
             return false;
         }
 
-        void load () {
+        void load () throws GLib.IOError, SkkFileDictParseError {
             remap ();
 
             long offset = 0;
             if (!read_until (ref offset, ";; okuri-ari entries.\n")) {
-                warning ("cannot find the beginning of okuri-ari entries");
+                throw new SkkFileDictParseError.FAILED (
+                    "no okuri-ari boundary");
             }
             okuri_ari_offset = offset;
             
             if (!read_until (ref offset, ";; okuri-nasi entries.\n")) {
-                warning ("cannot find the beginning of okuri-nasi entries");
+                throw new SkkFileDictParseError.FAILED (
+                    "no okuri-nasi boundary");
             }
             okuri_nasi_offset = offset;
         }
@@ -113,18 +119,18 @@ namespace Skk {
         /**
          * {@inheritDoc}
          */
-        public override void reload () {
-            FileInfo? info = null;
-            try {
-                info = file.query_info (FILE_ATTRIBUTE_ETAG_VALUE,
-                                        FileQueryInfoFlags.NONE);
-            } catch (GLib.Error e) {
-            }
-
-            if (info == null || info.get_etag () != etag) {
+        public override void reload () throws GLib.Error {
+            FileInfo info = file.query_info (FILE_ATTRIBUTE_ETAG_VALUE,
+                                             FileQueryInfoFlags.NONE);
+            if (info.get_etag () != etag) {
                 this.midasi_strings.clear ();
-                load ();
-                etag = info.get_etag ();
+                try {
+                    load ();
+                    etag = info.get_etag ();
+                } catch (SkkFileDictParseError e) {
+                    warning ("error parsing file dictionary %s %s",
+                             file.get_path (), e.message);
+                }
             }
         }
 
@@ -141,9 +147,8 @@ namespace Skk {
 
                 string _line = read_line (ref offset);
                 int index = _line.index_of (" ");
-                if (index < 0) {
-                    warning ("corrupted dictionary entry: %s",
-                             _line);
+                if (index < 1) {
+                    warning ("corrupted dictionary entry: %s", _line);
                     break;
                 }
 
@@ -182,7 +187,7 @@ namespace Skk {
             try {
                 _midasi = converter.encode (midasi);
             } catch (GLib.Error e) {
-                warning ("can't decode %s: %s", midasi, e.message);
+                warning ("can't encode %s: %s", midasi, e.message);
                 return new Candidate[0];
             }
 

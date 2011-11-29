@@ -237,7 +237,11 @@ namespace Skk {
                             state_stack.data.midasi,
                             candidate,
                             okuri)) {
-                        save_dictionaries ();
+                        try {
+                            save_dictionaries ();
+                        } catch (GLib.Error e) {
+                            warning ("error saving dictionaries %s", e.message);
+                        }
                     }
                 });
         }
@@ -281,7 +285,11 @@ namespace Skk {
                 var candidate = new Candidate (text);
                 if (select_candidate_in_dictionaries (state_stack.data.midasi, 
                                                       candidate)) {
-                    save_dictionaries ();
+                    try {
+                        save_dictionaries ();
+                    } catch (GLib.Error e) {
+                        warning ("error saving dictionaries %s", e.message);
+                    }
                 }
                 state_stack.data.reset ();
                 state_stack.data.output.assign (text);
@@ -412,7 +420,7 @@ namespace Skk {
         /**
          * Save dictionaries on to disk.
          */
-        public void save_dictionaries () {
+        public void save_dictionaries () throws GLib.Error {
             foreach (var dict in dictionaries) {
                 if (!dict.read_only) {
                     dict.save ();

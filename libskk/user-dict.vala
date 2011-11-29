@@ -31,28 +31,24 @@ namespace Skk {
             { "ISO-2022-JP", "iso-2022-jp" }
         };
 
-        void load () {
-            var memory = new MemoryInputStream ();
+        void load () throws GLib.IOError, SkkFileDictParseError {
             uint8[] contents;
             try {
                 file.load_contents (null, out contents, out etag);
-                memory.add_data (contents, null);
             } catch (GLib.Error e) {
-                contents = null;
-                etag = "";
+                throw new GLib.IOError.FAILED ("can't load contents");
             }
+            var memory = new MemoryInputStream.from_data (contents, null);
             var data = new DataInputStream (memory);
 
             string? line = null;
             size_t length;
-            try {
-                line = data.read_line (out length);
-            } catch (GLib.IOError e) {
-                line = null;
-            }
+            line = data.read_line (out length);
+            if (line == null)
+                return;
 
             MatchInfo info = null;
-            if (line != null && coding_cookie_regex.match (line, 0, out info)) {
+            if (coding_cookie_regex.match (line, 0, out info)) {
                 string coding_system = info.fetch (1);
                 foreach (var entry in ENCODING_TO_CODING_SYSTEM_RULE) {
                     if (entry.value == coding_system) {
@@ -60,90 +56,91 @@ namespace Skk {
                             // override encoding with coding cookie
                             converter = new EncodingConverter (entry.key);
                         } catch (GLib.Error e) {
-                            warning ("can't create encoder for %s: %s",
-                                     entry.key, e.message);
+                            throw new SkkFileDictParseError.FAILED (
+                                "can't create encoder for coding cookie %s: %s",
+                                entry.key, e.message);
                         }
                         break;
                     }
+                }
+                // proceed to the next line
+                line = data.read_line (out length);
+                if (line == null) {
+                    return;
                 }
             }
 
             Map<string,ArrayList<Candidate>>? entries = null;
             while (line != null) {
-                try {
-                    line = data.read_line (out length);
-                } catch (GLib.IOError e) {
-                    line = null;
-                }
-                if (line == null) {
-                    break;
-                }
                 if (line.has_prefix (";; okuri-ari entries.")) {
                     entries = okuri_ari_entries;
                     break;
                 }
-            }
-            if (entries != null) {
-                while (line != null) {
-                    try {
-                        line = data.read_line (out length);
-                    } catch (GLib.IOError e) {
-                        line = null;
-                    }
-                    if (line == null) {
-                        break;
-                    }
-                    if (line.has_prefix (";; okuri-nasi entries.")) {
-                        entries = okuri_nasi_entries;
-                        continue;
-                    }
-                    try {
-                        line = converter.decode (line);
-                    } catch (GLib.Error e) {
-                        warning ("can't decode line %s: %s", line, e.message);
-                        continue;
-                    }
-                    int index = line.index_of (" ");
-                    if (index < 1) {
-                        warning ("can't extract midasi from line %s",
-                                 line);
-                        continue;
-                    }
-
-                    string midasi = line[0:index];
-                    string candidates_str = line[index + 1:line.length];
-                    if (!candidates_str.has_prefix ("/") ||
-                        !candidates_str.has_suffix ("/")) {
-                        warning ("can't parse candidates list %s",
-                                 candidates_str);
-                        continue;
-                    }
-
-                    var candidates = split_candidates (candidates_str);
-                    var list = new ArrayList<Candidate> ();
-                    foreach (var c in candidates) {
-                        list.add (c);
-                    }
-                    entries.set (midasi, list);
+                line = data.read_line (out length);
+                if (line == null) {
+                    break;
                 }
+            }
+            if (entries == null) {
+                throw new SkkFileDictParseError.FAILED (
+                    "no okuri-ari boundary");
+            }
+
+            while (line != null) {
+                line = data.read_line (out length);
+                if (line == null) {
+                    break;
+                }
+                if (line.has_prefix (";; okuri-nasi entries.")) {
+                    entries = okuri_nasi_entries;
+                    continue;
+                }
+                try {
+                    line = converter.decode (line);
+                } catch (GLib.Error e) {
+                    throw new SkkFileDictParseError.FAILED (
+                        "can't decode line %s: %s", line, e.message);
+                }
+                int index = line.index_of (" ");
+                if (index < 1) {
+                    throw new SkkFileDictParseError.FAILED (
+                        "can't extract midasi from line %s",
+                        line);
+                }
+
+                string midasi = line[0:index];
+                string candidates_str = line[index + 1:line.length];
+                if (!candidates_str.has_prefix ("/") ||
+                    !candidates_str.has_suffix ("/")) {
+                    throw new SkkFileDictParseError.FAILED (
+                        "can't parse candidates list %s",
+                        candidates_str);
+                }
+
+                var candidates = split_candidates (candidates_str);
+                var list = new ArrayList<Candidate> ();
+                foreach (var c in candidates) {
+                    list.add (c);
+                }
+                entries.set (midasi, list);
             }
         }
 
         /**
          * {@inheritDoc}
          */
-        public override void reload () {
-            FileInfo? info = null;
-            try {
-                info = file.query_info (FILE_ATTRIBUTE_ETAG_VALUE,
-                                        FileQueryInfoFlags.NONE);
-            } catch (GLib.Error e) {
-            }
-
-            if (info == null || info.get_etag () != etag) {
+        public override void reload () throws GLib.Error {
+            FileInfo info = file.query_info (FILE_ATTRIBUTE_ETAG_VALUE,
+                                             FileQueryInfoFlags.NONE);
+            if (info.get_etag () != etag) {
                 this.okuri_ari_entries.clear ();
                 this.okuri_nasi_entries.clear ();
-                load ();
+                try {
+                    load ();
+                } catch (SkkFileDictParseError e) {
+                    warning ("error parsing user dictionary %s: %s",
+                             file.get_path (), e.message);
+                }
             }
         }
 
@@ -155,7 +152,7 @@ namespace Skk {
         /**
          * {@inheritDoc}
          */
-        public override void save () {
+        public override void save () throws GLib.Error {
             var builder = new StringBuilder ();
             foreach (var entry in ENCODING_TO_CODING_SYSTEM_RULE) {
                 if (entry.key == converter.encoding) {
@@ -190,16 +187,14 @@ namespace Skk {
                     builder.append (line);
                 } while (iter.next ());
             }
-            try {
-                var contents = converter.encode (builder.str);
-                file.replace_contents (contents,
-                                       contents.length,
-                                       etag,
-                                       false,
-                                       FileCreateFlags.NONE,
-                                       out etag);
-            } catch (GLib.Error e) {
-            }
+
+            var contents = converter.encode (builder.str);
+            file.replace_contents (contents,
+                                   contents.length,
+                                   etag,
+                                   false,
+                                   FileCreateFlags.NONE,
+                                   out etag);
         }
 
         Map<string,ArrayList<Candidate>> get_entries (bool okuri = false) {
@@ -349,7 +344,10 @@ namespace Skk {
             } catch (GLib.RegexError e) {
                 assert_not_reached ();
             }
-            reload ();
+            // user dictionary may not exist for the first time
+            if (FileUtils.test (path, FileTest.EXISTS)) {
+                reload ();
+            }
         }
     }
 }

@@ -7,13 +7,16 @@ user_dict (void)
   SkkContext *context;
   gboolean retval;
   const gchar *output, *preedit;
+  GError *error;
 
   context = create_context ();
 
   retval = skk_context_process_key_events (context, "A i SPC RET");
   g_assert (retval);
 
-  skk_context_save_dictionaries (context);
+  error = NULL;
+  skk_context_save_dictionaries (context, &error);
+  g_assert_no_error (error);
 
   g_object_unref (context);
 }

@@ -136,7 +136,7 @@ namespace Skk {
         /**
          * Reload the dictionary.
          */
-        public abstract void reload ();
+        public abstract void reload () throws GLib.Error;
 
         /**
          * Lookup candidates in the dictionary.
@@ -192,7 +192,7 @@ namespace Skk {
         /**
          * Save the dictionary on disk.
          */
-        public virtual void save () {
+        public virtual void save () throws GLib.Error {
             // FIXME: throw an error when the dictionary is read only
         }
     }
@@ -204,7 +204,7 @@ namespace Skk {
         /**
          * {@inheritDoc}
          */
-        public override void reload () {
+        public override void reload () throws GLib.Error {
         }
 
         /**
