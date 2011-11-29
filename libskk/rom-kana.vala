@@ -169,7 +169,7 @@ namespace Skk {
                     dirs.add (Path.build_filename (element, "rom-kana"));
                 }
             }
-            dirs.add (Config.PKGDATADIR);
+            dirs.add (Path.build_filename (Config.PKGDATADIR, "rom-kana"));
 
             string? filename = null;
             foreach (var dir in dirs) {
