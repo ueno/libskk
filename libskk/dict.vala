@@ -24,6 +24,7 @@ namespace Skk {
     public class Candidate : Object {
         string _text;
         string? _annotation;
+        string? _output;
 
         /**
          * Base string value of the candidate.
@@ -47,6 +48,19 @@ namespace Skk {
         }
 
         /**
+         * Output string shown instead of text.
+         * This is used for numeric conversion feature.
+         */
+        public string output {
+            get {
+                return _output;
+            }
+            internal set {
+                _output = value;
+            }
+        }
+
+        /**
          * Returns a string representing the candidate.
          * @return a string representing the candidate
          */
@@ -63,12 +77,17 @@ namespace Skk {
          *
          * @param text base string value of the candidate
          * @param annotation optional annotation text to the candidate
+         * @param output optional output text used instead of text
          *
          * @return a new SkkCandidate
          */
-        public Candidate (string text, string? annotation = null) {
+        public Candidate (string text,
+                          string? annotation = null,
+                          string? output = null)
+        {
             _text = text;
             _annotation = annotation;
+            _output = output == null ? text : output;
         }
 
         /**

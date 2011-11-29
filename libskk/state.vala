@@ -185,7 +185,7 @@ namespace Skk {
                 }
                 builder.append (
                     candidate.text[start_pos:candidate.text.length]);
-                candidate.text = builder.str;
+                candidate.output = builder.str;
             }
         }
 
@@ -786,7 +786,7 @@ namespace Skk {
             else {
                 var c = state.candidates.select (
                     state.okuri_rom_kana_converter.is_active ());
-                state.output.append (c.text);
+                state.output.append (c.output);
                 if (state.auto_start_henkan_keyword != null) {
                     state.output.append (state.auto_start_henkan_keyword);
                 }
@@ -813,7 +813,7 @@ namespace Skk {
             StringBuilder builder = new StringBuilder ("▼");
             if (state.candidates.cursor_pos >= 0) {
                 var c = state.candidates.get ();
-                builder.append (c.text);
+                builder.append (c.output);
             } else {
                 builder.append (state.rom_kana_converter.output);
             }

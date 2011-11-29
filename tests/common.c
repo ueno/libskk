@@ -10,18 +10,18 @@ create_context (void)
   SkkUserDict *user_dict;
   GError *error;
 
-  error = NULL;
-  file_dict = skk_file_dict_new ("file-dict.dat", "EUC-JP", &error);
-  g_assert_no_error (error);
-
   unlink ("user-dict.dat");
 
   error = NULL;
   user_dict = skk_user_dict_new ("user-dict.dat", "EUC-JP", &error);
   g_assert_no_error (error);
 
-  dictionaries[0] = SKK_DICT (file_dict);
-  dictionaries[1] = SKK_DICT (user_dict);
+  error = NULL;
+  file_dict = skk_file_dict_new ("file-dict.dat", "EUC-JP", &error);
+  g_assert_no_error (error);
+
+  dictionaries[0] = SKK_DICT (user_dict);
+  dictionaries[1] = SKK_DICT (file_dict);
 
   return skk_context_new (dictionaries, 2);
 }
