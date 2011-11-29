@@ -30,7 +30,7 @@ namespace Skk {
                 memory = null;
             }
 
-            int fd = Posix.open (path, Posix.O_RDONLY, 0);
+            int fd = Posix.open (file.get_path (), Posix.O_RDONLY, 0);
             return_if_fail (fd >= 0);
 
             Posix.Stat stat;
@@ -114,15 +114,17 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override void reload () {
-            Posix.Stat buf;
-            if (Posix.stat (path, out buf) < 0) {
-                return;
+            FileInfo? info = null;
+            try {
+                info = file.query_info (FILE_ATTRIBUTE_ETAG_VALUE,
+                                        FileQueryInfoFlags.NONE);
+            } catch (GLib.Error e) {
             }
 
-            if (buf.st_mtime > mtime) {
+            if (info == null || info.get_etag () != etag) {
                 this.midasi_strings.clear ();
                 load ();
-                this.mtime = buf.st_mtime;
+                etag = info.get_etag ();
             }
         }
 
@@ -293,8 +295,8 @@ namespace Skk {
             }
         }
 
-        string path;
-        time_t mtime;
+        File file;
+        string etag;
         EncodingConverter converter;
         void *memory = null;
         size_t memory_length = 0;
@@ -312,8 +314,8 @@ namespace Skk {
          * @throws GLib.Error if opening the file is failed
          */
         public FileDict (string path, string encoding = "EUC-JP") throws GLib.Error {
-            this.path = path;
-            this.mtime = 0;
+            this.file = File.new_for_path (path);
+            this.etag = "";
             this.converter = new EncodingConverter (encoding);
             reload ();
         }

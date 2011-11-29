@@ -320,10 +320,9 @@ namespace Skk {
             }
         }
 
-        string path;
-        EncodingConverter converter;
         File file;
         string etag;
+        EncodingConverter converter;
         Map<string,ArrayList<Candidate>> okuri_ari_entries =
             new HashMap<string,ArrayList<Candidate>> ();
         Map<string,ArrayList<Candidate>> okuri_nasi_entries =
@@ -341,11 +340,15 @@ namespace Skk {
          * @throws GLib.Error if opening the file is failed
          */
         public UserDict (string path, string encoding) throws GLib.Error {
-            this.path = path;
-            this.converter = new EncodingConverter (encoding);
             this.file = File.new_for_path (path);
-            this.coding_cookie_regex =
-                new Regex ("\\A\\s*;+\\s*-\\*-\\s*coding:\\s*(\\S+?)\\s*-\\*-");
+            this.etag = "";
+            this.converter = new EncodingConverter (encoding);
+            try {
+                this.coding_cookie_regex = new Regex (
+                    "\\A\\s*;+\\s*-\\*-\\s*coding:\\s*(\\S+?)\\s*-\\*-");
+            } catch (GLib.RegexError e) {
+                assert_not_reached ();
+            }
             reload ();
         }
     }
