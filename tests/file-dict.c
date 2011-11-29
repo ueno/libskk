@@ -4,9 +4,7 @@ static void
 file_dict (void)
 {
   GError *error = NULL;
-  SkkFileDict *dict = skk_file_dict_new ("file-dict.dat",
-                                         "EUC-JP",
-                                         &error);
+  SkkFileDict *dict = skk_file_dict_new (LIBSKK_FILE_DICT, "EUC-JP", &error);
   g_assert_no_error (error);
 
   gint len;

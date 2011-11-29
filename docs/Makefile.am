@@ -54,9 +54,12 @@ libskk_doc_files = \
 	$(sort \
 	$(filter-out $(libskk_doc_files_blacklist),$(libskk_doc_files_all)))
 libskk_doc_deps = \
+	config \
+	glib-2.0 \
 	gio-2.0 \
 	gee-1.0 \
 	posix \
+	json-glib-1.0 \
 	$(NULL)
 valadoc_flags_libskk = \
 	$(valadoc_flags) \

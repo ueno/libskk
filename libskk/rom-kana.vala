@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA
  */
+using Gee;
+
 namespace Skk {
     errordomain RomKanaRuleParseError {
         FAILED
@@ -159,9 +161,31 @@ namespace Skk {
         Json.Parser parser;
 
         void load_rule (string name) throws RomKanaRuleParseError {
-            var path = Path.build_filename (Config.ROMKANADIR, name + ".json");
+            ArrayList<string> dirs = new ArrayList<string> ();
+            string? path = Environment.get_variable ("LIBSKK_DATA_PATH");
+            if (path != null) {
+                string[] elements = path.split (":");
+                foreach (var element in elements) {
+                    dirs.add (Path.build_filename (element, "rom-kana"));
+                }
+            }
+            dirs.add (Config.PKGDATADIR);
+
+            string? filename = null;
+            foreach (var dir in dirs) {
+                var _filename = Path.build_filename (dir, name + ".json");
+                if (FileUtils.test (_filename, FileTest.EXISTS)) {
+                    filename = _filename;
+                    break;
+                }
+            }
+            if (filename == null) {
+                warning ("can't find rom-kana rule %s", name);
+                return;
+            }
+
             try {
-                if (!parser.load_from_file (path))
+                if (!parser.load_from_file (filename))
                     throw new RomKanaRuleParseError.FAILED ("");
             } catch (GLib.Error e) {
                 throw new RomKanaRuleParseError.FAILED (

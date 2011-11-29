@@ -69,5 +69,7 @@ AC_CONFIG_FILES([Makefile
 libskk/Makefile
 libskk/libskk.pc
 tests/Makefile
-docs/Makefile])
+docs/Makefile
+data/Makefile
+data/rom-kana/Makefile])
 AC_OUTPUT

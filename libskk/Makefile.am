@@ -13,7 +13,7 @@ libskk_la_VALAFLAGS = \
 
 libskk_la_CFLAGS = \
 	$(LIBSKK_CFLAGS) \
-	-DROMKANADIR=\"$(romkanadir)\"
+	-DPKGDATADIR=\"$(pkgdatadir)\"
 
 libskk_la_LIBADD = \
 	$(LIBSKK_LIBS)
@@ -25,9 +25,6 @@ skk_headers = \
 
 libskkinclude_HEADERS = \
 	$(skk_headers)
-
-romkanadir = $(pkgdatadir)/rom-kana
-romkana_DATA = standard.json kzik.json
 
 libskk_la_SOURCES = \
 	rom-kana.vala \
@@ -66,8 +63,8 @@ CLEANFILES = \
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libskk.pc
 
-vapi_DATA = skk-1.0.vapi skk-1.0.deps
+vapi_DATA = skk-1.0.vapi
 vapidir = $(datadir)/vala/vapi
 
-EXTRA_DIST = config.vapi
+EXTRA_DIST = config.vapi skk-1.0.deps
 

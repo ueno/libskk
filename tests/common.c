@@ -17,7 +17,7 @@ create_context (void)
   g_assert_no_error (error);
 
   error = NULL;
-  file_dict = skk_file_dict_new ("file-dict.dat", "EUC-JP", &error);
+  file_dict = skk_file_dict_new (LIBSKK_FILE_DICT, "EUC-JP", &error);
   g_assert_no_error (error);
 
   dictionaries[0] = SKK_DICT (user_dict);

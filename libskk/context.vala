@@ -37,7 +37,7 @@ namespace Skk {
          *
          * @param index candidate position (-1 for the current cursor position)
          *
-         * @returns a Candidate
+         * @return a Candidate
          */
         public new Candidate @get (int index = -1) {
             if (index < 0)
