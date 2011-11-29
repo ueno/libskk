@@ -64,9 +64,9 @@ namespace Skk {
 
         internal void add_all (Candidate[] array) {
             foreach (var c in array) {
-                if (!(c.text in seen)) {
+                if (!(c.output in seen)) {
                     _candidates.add (c);
-                    seen.add (c.text);
+                    seen.add (c.output);
                 }
             }
         }

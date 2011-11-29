@@ -43,8 +43,13 @@ namespace Skk {
             }
             var data = new DataInputStream (memory);
 
+            string? line = null;
             size_t length;
-            var line = data.read_line (out length);
+            try {
+                line = data.read_line (out length);
+            } catch (GLib.IOError e) {
+                line = null;
+            }
 
             MatchInfo info = null;
             if (line != null && coding_cookie_regex.match (line, 0, out info)) {
@@ -65,7 +70,11 @@ namespace Skk {
 
             Map<string,ArrayList<Candidate>>? entries = null;
             while (line != null) {
-                line = data.read_line (out length);
+                try {
+                    line = data.read_line (out length);
+                } catch (GLib.IOError e) {
+                    line = null;
+                }
                 if (line == null) {
                     break;
                 }
@@ -76,7 +85,11 @@ namespace Skk {
             }
             if (entries != null) {
                 while (line != null) {
-                    line = data.read_line (out length);
+                    try {
+                        line = data.read_line (out length);
+                    } catch (GLib.IOError e) {
+                        line = null;
+                    }
                     if (line == null) {
                         break;
                     }

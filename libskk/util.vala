@@ -245,8 +245,9 @@ namespace Skk {
             else {
                 for (var index = 0; str.get_next_char (ref index, out uc); ) {
                     if (uc > '0') {
-                        builder.append (KanjiNumericTable[uc - '0']);
                         int pos_index = str.length - index;
+                        if (uc != '1' || pos_index % 4 == 0)
+                            builder.append (KanjiNumericTable[uc - '0']);
                         var pos = num_pos_table[pos_index];
                         if (pos == null && pos_index % 4 > 0) {
                             pos = num_pos_table[pos_index % 4];
@@ -262,10 +263,6 @@ namespace Skk {
         internal static string get_numeric (int numeric,
                                             NumericConversionType type)
         {
-            StringBuilder builder;
-            string str;
-            unichar uc;
-
             switch (type) {
             case NumericConversionType.LATIN:
                 return numeric.to_string ();

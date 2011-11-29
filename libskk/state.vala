@@ -113,7 +113,12 @@ namespace Skk {
         }
 
         string extract_numerics (string midasi, out int[] _numerics) {
-            var numeric_regex = new Regex ("[0-9]+");
+            Regex? numeric_regex = null;
+            try {
+                numeric_regex = new Regex ("[0-9]+");
+            } catch (GLib.RegexError e) {
+                return_val_if_reached (null);
+            }
             MatchInfo info = null;
             int start_pos = 0;
             var numeric_list = new ArrayList<int> ();
@@ -140,7 +145,13 @@ namespace Skk {
         }
 
         void expand_numeric_references (Candidate[] candidates) {
-            var numeric_ref_regex = new Regex ("#([0-9])");
+            Regex? numeric_ref_regex = null;
+            try {
+                numeric_ref_regex = new Regex ("#([0-9])");
+            } catch (GLib.RegexError e) {
+                return_if_reached ();
+            }
+
             foreach (var candidate in candidates) {
                 var builder = new StringBuilder ();
                 MatchInfo info = null;
