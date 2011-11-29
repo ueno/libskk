@@ -56,13 +56,25 @@ namespace Skk {
         }
 
         /**
-         * Signal emitted when candidates are filled and ready for traversal.
+         * Whether this candidate list is generated as a result of
+         * okuri-ari conversion.
          */
-        public signal void populate ();
+        public bool okuri { get; private set; }
 
         Set<string> seen = new HashSet<string> ();
 
-        internal void add_all (Candidate[] array) {
+        internal void clear () {
+            _candidates.clear ();
+            cursor_pos = -1;
+            seen.clear ();
+        }
+
+        internal void add_candidates_start (bool okuri) {
+            clear ();
+            this.okuri = okuri;
+        }
+
+        internal void add_candidates (Candidate[] array) {
             foreach (var c in array) {
                 if (!(c.output in seen)) {
                     _candidates.add (c);
@@ -71,31 +83,36 @@ namespace Skk {
             }
         }
 
+        internal void add_candidates_end () {
+            populated ();
+        }
+
         /**
          * Create a new CandidateList.
          *
          * @return a new CandidateList.
          */
         public CandidateList () {
-            clear ();
+            Object ();
         }
 
         /**
-         * Clear the candidate list.
+         * Select the current candidate.
          */
-        public void clear () {
-            _candidates.clear ();
-            cursor_pos = -1;
-            seen.clear ();
-        }
-
-        public Candidate select (bool okuri = false) {
+        public void select () {
             Candidate candidate = this.get ();
-            selected (candidate, okuri);
-            return candidate;
+            selected (candidate);
         }
 
-        public signal void selected (Candidate candidate, bool okuri);
+        /**
+         * Signal emitted when candidates are filled and ready for traversal.
+         */
+        public signal void populated ();
+
+        /**
+         * Signal emitted when a candidate is selected.
+         */
+        public signal void selected (Candidate candidate);
     }
 
     /**
@@ -232,11 +249,11 @@ namespace Skk {
             candidates.notify["cursor-pos"].connect (() => {
                     update_preedit ();
                 });
-            candidates.selected.connect ((candidate, okuri) => {
+            candidates.selected.connect ((candidate) => {
                     if (select_candidate_in_dictionaries (
                             state_stack.data.midasi,
                             candidate,
-                            okuri)) {
+                            candidates.okuri)) {
                         try {
                             save_dictionaries ();
                         } catch (GLib.Error e) {
@@ -357,8 +374,10 @@ namespace Skk {
                 // state.handler_type may change if handler cannot
                 // handle the event.  In that case retry with the new
                 // handler.  Otherwise exit the loop.
-                if (handler_type == state.handler_type)
-                    return false;
+                if (handler_type == state.handler_type) {
+                    // consume all events when we are in dict edit mode
+                    return dict_edit_level () > 0;
+                }
             }
         }
 

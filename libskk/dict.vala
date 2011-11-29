@@ -148,6 +148,13 @@ namespace Skk {
          */
         public abstract Candidate[] lookup (string midasi, bool okuri = false);
 
+        /**
+         * Return an array of strings which matches midasi.
+         *
+         * @param midasi a midasi (title) string to lookup
+         *
+         * @return an array of strings
+         */
         public abstract string[] complete (string midasi);
 
         /**

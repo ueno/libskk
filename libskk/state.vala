@@ -94,9 +94,21 @@ namespace Skk {
         internal State (Dict[] dictionaries, CandidateList candidates) {
             this.dictionaries = dictionaries;
             this.candidates = candidates;
+            this.candidates.selected.connect (candidate_selected);
             this.rom_kana_converter = new RomKanaConverter ();
             this.okuri_rom_kana_converter = new RomKanaConverter ();
             this.auto_start_henkan_keywords = AUTO_START_HENKAN_KEYWORDS;
+            reset ();
+        }
+
+        void candidate_selected (Candidate c) {
+            output.append (c.output);
+            if (auto_start_henkan_keyword != null) {
+                output.append (auto_start_henkan_keyword);
+            }
+            else if (okuri_rom_kana_converter.is_active ()) {
+                output.append (okuri_rom_kana_converter.output);
+            }
             reset ();
         }
 
@@ -203,12 +215,13 @@ namespace Skk {
         internal void lookup (string midasi, bool okuri = false) {
             this.midasi = extract_numerics (midasi, out numerics);
             candidates.clear ();
+            candidates.add_candidates_start (okuri);
             foreach (var dict in dictionaries) {
                 var _candidates = dict.lookup (this.midasi, okuri);
                 expand_numeric_references (_candidates);
-                candidates.add_all (_candidates);
+                candidates.add_candidates (_candidates);
             }
-            candidates.populate ();
+            candidates.add_candidates_end ();
         }
 
         internal void purge_candidate (string midasi,
@@ -795,16 +808,7 @@ namespace Skk {
                 state.handler_type = typeof (StartStateHandler);
             }
             else {
-                var c = state.candidates.select (
-                    state.okuri_rom_kana_converter.is_active ());
-                state.output.append (c.output);
-                if (state.auto_start_henkan_keyword != null) {
-                    state.output.append (state.auto_start_henkan_keyword);
-                }
-                else if (state.okuri_rom_kana_converter.is_active ()) {
-                    state.output.append (state.okuri_rom_kana_converter.output);
-                }
-                state.reset ();
+                state.candidates.select ();
                 if (key.modifiers == 0 && key.code == '>') {
                     state.handler_type = typeof (StartStateHandler);
                     return false;
