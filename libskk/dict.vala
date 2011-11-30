@@ -22,6 +22,12 @@ namespace Skk {
      * Base abstract class of dictionaries.
      */
     public abstract class Dict : Object {
+        /**
+         * Parse a line consisting of candidates separated by "/".
+         *
+         * @param line a line consisting of candidates
+         * @return an array of Candidates
+         */
         protected Candidate[] split_candidates (string line) {
             var strv = line.strip ().slice (1, -1).split ("/");
             Candidate[] candidates = new Candidate[strv.length];
@@ -31,6 +37,12 @@ namespace Skk {
             return candidates;
         }
 
+        /**
+         * Format an array of Candidates to be saved in a dictionary file.
+         *
+         * @param candidates an array of Candidate
+         * @return a string
+         */
         protected string join_candidates (Candidate[] candidates) {
             var strv = new string[candidates.length];
             for (int i = 0; i < candidates.length; i++) {
@@ -41,6 +53,8 @@ namespace Skk {
 
         /**
          * Reload the dictionary.
+         *
+         * @throws GLib.Error when reading the dictionary failed.
          */
         public abstract void reload () throws GLib.Error;
 
@@ -48,7 +62,8 @@ namespace Skk {
          * Lookup candidates in the dictionary.
          *
          * @param midasi a midasi (title) string to lookup
-         * @param okuri whether to search okuri-ari entries or okuri-nasi entries
+         * @param okuri whether to search okuri-ari entries or
+         * okuri-nasi entries
          *
          * @return an array of Candidate
          */
@@ -104,6 +119,8 @@ namespace Skk {
 
         /**
          * Save the dictionary on disk.
+         *
+         * @throws GLib.Error if the dictionary cannot be saved.
          */
         public virtual void save () throws GLib.Error {
             // FIXME: throw an error when the dictionary is read only

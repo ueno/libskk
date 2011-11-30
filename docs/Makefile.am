@@ -78,7 +78,7 @@ libskk-doc: $(libskk_doc_files)
 
 libskk-gtk-doc: $(libskk_doc_files)
 	$(AM_V_GEN)$(VALADOC) \
-		-X -l -X $(top_builddir)/libskk/.libs/liblibskk.so \
+		-X -l -X $(top_builddir)/libskk/.libs/libskk.so \
 		-o gtk-doc/libskk \
 		--doclet=gtkdoc \
 		$(valadoc_flags_libskk) \

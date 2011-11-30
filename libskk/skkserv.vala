@@ -19,6 +19,7 @@
  */
 namespace Skk {
     public errordomain SkkServError {
+        NOT_READABLE,
         INVALID_RESPONSE
     }
 
@@ -62,7 +63,7 @@ namespace Skk {
             while (builder.str.index_of_char ('\n') < 0) {
                 ssize_t len = connection.input_stream.read (buffer);
                 if (len < 0) {
-                    throw new SkkServError.INVALID_RESPONSE ("read error");
+                    throw new SkkServError.NOT_READABLE ("read error");
                 }
                 else if (len == 0) {
                     break;
