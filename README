@@ -1,3 +1,9 @@
-* libskk -- a library to deal with Japanese kana-to-kanji conversion method
+libskk -- a library to deal with Japanese kana-to-kanji conversion method
 
-NOTE: WIP
+See:
+
+* file:tests/context.c for basic usage
+* http://du-a.org/docs/libskk/libskk/ for Vala binding reference
+* http://du-a.org/docs/gtk-doc/libskk/ for C binding reference
+
+
