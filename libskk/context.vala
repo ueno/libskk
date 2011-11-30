@@ -62,8 +62,22 @@ namespace Skk {
      * kana-kanji conversion method.
      */
     public class Context : Object {
-        Dict[] dictionaries;
+        ArrayList<Dict> _dictionaries = new ArrayList<Dict> ();
 
+        /**
+         * Dictionaries.
+         */
+        public Dict[] dictionaries {
+            owned get {
+                return _dictionaries.to_array ();
+            }
+            set {
+                _dictionaries.clear ();
+                foreach (var dict in value) {
+                    _dictionaries.add (dict);
+                }
+            }
+        }
         /**
          * Current candidates.
          */
@@ -151,7 +165,7 @@ namespace Skk {
             handlers.set (typeof (KutenStateHandler),
                           new KutenStateHandler ());
             candidates = new CandidateList ();
-            state_stack.prepend (new State (dictionaries, candidates));
+            state_stack.prepend (new State (_dictionaries, candidates));
             connect_state_signals (state_stack.data);
             candidates.notify["cursor-pos"].connect (() => {
                     update_preedit ();
@@ -199,7 +213,7 @@ namespace Skk {
 
         void start_dict_edit (string midasi) {
             midasi_stack.prepend (midasi);
-            state_stack.prepend (new State (dictionaries, candidates));
+            state_stack.prepend (new State (_dictionaries, candidates));
             connect_state_signals (state_stack.data);
             update_preedit ();
         }

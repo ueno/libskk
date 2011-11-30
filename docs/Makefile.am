@@ -42,7 +42,7 @@ valadoc_flags = \
 
 # libskk documentation
 libskk_doc_files_blacklist = \
-	$(top_srcdir)/libskk/internal.vala \
+	$(top_srcdir)/libskk/kana-kan.vala \
 	$(NULL)
 # this expands the list of files, so we can filter out elements
 libskk_doc_files_all = \

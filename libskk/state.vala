@@ -51,7 +51,7 @@ namespace Skk {
             }
         }
 
-        internal Dict[] dictionaries;
+        internal ArrayList<Dict> dictionaries;
         internal string midasi;
         internal CandidateList candidates;
 
@@ -91,7 +91,9 @@ namespace Skk {
             }
         }
         
-        internal State (Dict[] dictionaries, CandidateList candidates) {
+        internal State (ArrayList<Dict> dictionaries,
+                        CandidateList candidates)
+        {
             this.dictionaries = dictionaries;
             this.candidates = candidates;
             this.candidates.selected.connect (candidate_selected);

@@ -121,8 +121,9 @@ namespace Skk {
         ArrayList<Candidate> _candidates = new ArrayList<Candidate> ();
 
         /**
-         * Current cursor position.  This will be set to -1 if the
-         * candidate list is not active.
+         * Current cursor position.
+         *
+         * This will be set to -1 if the candidate list is not active.
          */
         public int cursor_pos { get; set; }
 
