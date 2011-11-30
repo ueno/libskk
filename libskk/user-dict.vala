@@ -31,12 +31,12 @@ namespace Skk {
             { "ISO-2022-JP", "iso-2022-jp" }
         };
 
-        void load () throws GLib.IOError, SkkFileDictParseError {
+        void load () throws SkkDictError {
             uint8[] contents;
             try {
                 file.load_contents (null, out contents, out etag);
             } catch (GLib.Error e) {
-                throw new GLib.IOError.FAILED ("can't load contents");
+                throw new SkkDictError.NOT_READABLE ("can't load contents");
             }
             var memory = new MemoryInputStream.from_data (contents, null);
             var data = new DataInputStream (memory);
@@ -56,7 +56,7 @@ namespace Skk {
                             // override encoding with coding cookie
                             converter = new EncodingConverter (entry.key);
                         } catch (GLib.Error e) {
-                            throw new SkkFileDictParseError.FAILED (
+                            throw new SkkDictError.MALFORMED_INPUT (
                                 "can't create encoder for coding cookie %s: %s",
                                 entry.key, e.message);
                         }
@@ -82,7 +82,7 @@ namespace Skk {
                 }
             }
             if (entries == null) {
-                throw new SkkFileDictParseError.FAILED (
+                throw new SkkDictError.MALFORMED_INPUT (
                     "no okuri-ari boundary");
             }
 
@@ -98,12 +98,12 @@ namespace Skk {
                 try {
                     line = converter.decode (line);
                 } catch (GLib.Error e) {
-                    throw new SkkFileDictParseError.FAILED (
+                    throw new SkkDictError.MALFORMED_INPUT (
                         "can't decode line %s: %s", line, e.message);
                 }
                 int index = line.index_of (" ");
                 if (index < 1) {
-                    throw new SkkFileDictParseError.FAILED (
+                    throw new SkkDictError.MALFORMED_INPUT (
                         "can't extract midasi from line %s",
                         line);
                 }
@@ -112,7 +112,7 @@ namespace Skk {
                 string candidates_str = line[index + 1:line.length];
                 if (!candidates_str.has_prefix ("/") ||
                     !candidates_str.has_suffix ("/")) {
-                    throw new SkkFileDictParseError.FAILED (
+                    throw new SkkDictError.MALFORMED_INPUT (
                         "can't parse candidates list %s",
                         candidates_str);
                 }
@@ -137,7 +137,7 @@ namespace Skk {
                 this.okuri_nasi_entries.clear ();
                 try {
                     load ();
-                } catch (SkkFileDictParseError e) {
+                } catch (SkkDictError e) {
                     warning ("error parsing user dictionary %s: %s",
                              file.get_path (), e.message);
                 }

@@ -666,7 +666,6 @@ namespace Skk {
                     }
                     if (!completion.is_empty) {
                         state.completion_iterator = completion.iterator_at (completion.first ());
-                        state.completion_iterator.next ();
                     }
                 }
                 if (state.completion_iterator != null) {

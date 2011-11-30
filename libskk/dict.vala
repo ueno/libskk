@@ -143,4 +143,9 @@ namespace Skk {
             }
         }
     }
+
+    errordomain SkkDictError {
+        NOT_READABLE,
+        MALFORMED_INPUT
+    }
 }

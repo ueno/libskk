@@ -20,26 +20,27 @@
 using Gee;
 
 namespace Skk {
-    errordomain SkkFileDictParseError {
-        FAILED
-    }
-
     /**
      * A file based implementation of Dict.
      */
     public class FileDict : Dict {
-        void remap () {
+        void remap () throws SkkDictError {
             if (memory != null) {
                 Posix.munmap (memory, memory_length);
                 memory = null;
             }
 
             int fd = Posix.open (file.get_path (), Posix.O_RDONLY, 0);
-            return_if_fail (fd >= 0);
+            if (fd < 0) {
+                throw new SkkDictError.NOT_READABLE ("can't open %s",
+                                                        file.get_path ());
+            }
 
             Posix.Stat stat;
             int retval = Posix.fstat (fd, out stat);
-            return_if_fail  (retval == 0);
+            if (fd < 0) {
+                throw new SkkDictError.NOT_READABLE ("can't stat fd");
+            }
 
             memory = Posix.mmap (null,
                                  stat.st_size,
@@ -47,19 +48,14 @@ namespace Skk {
                                  Posix.MAP_SHARED,
                                  fd,
                                  0);
-            return_if_fail (memory != Posix.MAP_FAILED);
+            if (memory == Posix.MAP_FAILED) {
+                throw new SkkDictError.NOT_READABLE ("mmap failed");
+            }
             memory_length = stat.st_size;
         }
 
         // Read a line near offset and move offset to the beginning of
-        // the line.  After the call, to fetch the previous line, do
-        //
-        //  offset -= 2; // place the cursor at the end of the previous line
-        //  line = read_line (ref offset);
-        //
-        // to fetch the next line, do:
-        //  offset += line.length + 1; // place the cursor at "\n"
-        //  line = read_line (ref offset);
+        // the line.
         string read_line (ref long offset) {
             return_val_if_fail (offset < memory_length, null);
             char *p = ((char *)memory + offset);
@@ -83,6 +79,26 @@ namespace Skk {
             return builder.str;
         }
 
+        // can only called after read*_line
+        string? read_previous_line (ref long pos, string line) {
+            if (pos < 2) {
+                return null;
+            }
+            // place the cursor at the end of the previous line
+            pos -= 2;
+            return read_line (ref pos);
+        }
+
+        // can only called after read*_line
+        string? read_next_line (ref long pos, string line) {
+            if (pos + line.length + 1 >= memory_length) {
+                return null;
+            }
+            // place the cursor at "\n" of the current line
+            pos += line.length + 1;
+            return read_line (ref pos);
+        }
+
         // Skip until the first occurrence of line.  This moves offset
         // at the beginning of the next line.
         bool read_until (ref long offset, string line) {
@@ -99,18 +115,18 @@ namespace Skk {
             return false;
         }
 
-        void load () throws GLib.IOError, SkkFileDictParseError {
+        void load () throws SkkDictError {
             remap ();
 
             long offset = 0;
             if (!read_until (ref offset, ";; okuri-ari entries.\n")) {
-                throw new SkkFileDictParseError.FAILED (
+                throw new SkkDictError.MALFORMED_INPUT (
                     "no okuri-ari boundary");
             }
             okuri_ari_offset = offset;
             
             if (!read_until (ref offset, ";; okuri-nasi entries.\n")) {
-                throw new SkkFileDictParseError.FAILED (
+                throw new SkkDictError.MALFORMED_INPUT (
                     "no okuri-nasi boundary");
             }
             okuri_nasi_offset = offset;
@@ -127,8 +143,8 @@ namespace Skk {
                 try {
                     load ();
                     etag = info.get_etag ();
-                } catch (SkkFileDictParseError e) {
-                    warning ("error parsing file dictionary %s %s",
+                } catch (SkkDictError e) {
+                    warning ("error loading file dictionary %s %s",
                              file.get_path (), e.message);
                 }
             }
@@ -255,43 +271,45 @@ namespace Skk {
                             out pos,
                             out line,
                             1)) {
-                long _pos = pos + line.length + 1;
-                while (pos >= 0 && line.has_prefix (_midasi)) {
-                    int index = line.index_of (" ");
-                    if (index < 0) {
-                        warning ("corrupted dictionary entry: %s",
-                                 line);
-                    } else {
-                        try {
-                            completion.add (converter.decode (line[0:index]));
-                        } catch (GLib.Error e) {
-                            warning ("can't decode line %s: %s",
-                                     line, e.message);
-                            return completion.to_array ();
-                        }
-                    }
-                    pos -= 2;
-                    line = read_line (ref pos);
-                }
+                long _pos = pos;
+                string _line = line;
 
-                pos = _pos;
-                line = read_line (ref pos);
-                while (pos <= memory_length && line.has_prefix (_midasi)) {
+                // search backward
+                do {
                     int index = line.index_of (" ");
                     if (index < 0) {
                         warning ("corrupted dictionary entry: %s",
                                  line);
                     } else {
                         try {
-                            completion.add (converter.decode (line[0:index]));
+                            string decoded = converter.decode (line[0:index]);
+                            completion.insert (0, decoded);
                         } catch (GLib.Error e) {
                             warning ("can't decode line %s: %s",
                                      line, e.message);
-                            return completion.to_array ();
                         }
                     }
-                    pos += line.length + 1;
-                    line = read_line (ref pos);
+                } while ((line = read_previous_line (ref pos, line)) != null &&
+                         line.has_prefix (_midasi));
+
+                // search forward
+                pos = _pos;
+                line = _line;
+                while ((line = read_next_line (ref pos, line)) != null &&
+                       line.has_prefix (_midasi)) {
+                    int index = line.index_of (" ");
+                    if (index < 0) {
+                        warning ("corrupted dictionary entry: %s",
+                                 line);
+                    } else {
+                        try {
+                            string decoded = converter.decode (line[0:index]);
+                            completion.add (decoded);
+                        } catch (GLib.Error e) {
+                            warning ("can't decode line %s: %s",
+                                     line, e.message);
+                        }
+                    }
                 }
             }
             return completion.to_array ();

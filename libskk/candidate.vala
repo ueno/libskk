@@ -205,6 +205,8 @@ namespace Skk {
 
         /**
          * Signal emitted when a candidate is selected.
+         *
+         * @param candidate selected candidate
          */
         public signal void selected (Candidate candidate);
     }
