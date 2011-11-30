@@ -7,6 +7,55 @@
 using Gee;
 
 namespace Skk {
+    /**
+     * Experimental kana-to-kanji converter using Viterbi algorithm.
+     */
+    public class KanaKanConverter : Object {
+        KanaKanDict dict;
+        KanaKanScoreMap map;
+
+        public KanaKanConverter (KanaKanDict dict, KanaKanScoreMap map) {
+            this.dict = dict;
+            this.map = map;
+        }
+
+        public string convert (string kana) {
+            var graph = new KanaKanGraph (dict, kana);
+            StringBuilder builder = new StringBuilder ();
+            string[] words = viterbi (graph, map);
+            foreach (var word in words) {
+                builder.append (word);
+            }
+            return builder.str;
+        }
+
+        static string[] viterbi (KanaKanGraph graph, KanaKanScoreMap map) {
+            foreach (var nodes in graph.nodes) {
+                foreach (var node in nodes) {
+                    if (node.is_bos ())
+                        continue;
+                    node.score = -1000000.0;
+                    var node_score = map.get_node_score (node);
+                    var prev_nodes = graph.get_prev_nodes (node);
+                    foreach (var prev_node in prev_nodes) {
+                        var score = prev_node.score + map.get_edge_score (prev_node, node) + node_score;
+                        if (score >= node.score) {
+                            node.score = score;
+                            node.prev = prev_node;
+                        }
+                    }
+                }
+            }
+            ArrayList<string> result = new ArrayList<string> ();
+            var node = graph.eos.prev;
+            while (!node.is_bos ()) {
+                result.insert (0, node.word);
+                node = node.prev;
+            }
+            return result.to_array ();
+        }
+    }
+
     public class KanaKanDict : Object {
         HashMap<string,Set<string>> dict =
             new HashMap<string,Set<string>> ();
@@ -158,52 +207,6 @@ namespace Skk {
                 int startpos = node.endpos - node.length;
                 return nodes[startpos];
             }
-        }
-    }
-
-    public class KanaKanConverter : Object {
-        KanaKanDict dict;
-        KanaKanScoreMap map;
-
-        public KanaKanConverter (KanaKanDict dict, KanaKanScoreMap map) {
-            this.dict = dict;
-            this.map = map;
-        }
-
-        public string convert (string kana) {
-            var graph = new KanaKanGraph (dict, kana);
-            StringBuilder builder = new StringBuilder ();
-            string[] words = viterbi (graph, map);
-            foreach (var word in words) {
-                builder.append (word);
-            }
-            return builder.str;
-        }
-
-        static string[] viterbi (KanaKanGraph graph, KanaKanScoreMap map) {
-            foreach (var nodes in graph.nodes) {
-                foreach (var node in nodes) {
-                    if (node.is_bos ())
-                        continue;
-                    node.score = -1000000.0;
-                    var node_score = map.get_node_score (node);
-                    var prev_nodes = graph.get_prev_nodes (node);
-                    foreach (var prev_node in prev_nodes) {
-                        var score = prev_node.score + map.get_edge_score (prev_node, node) + node_score;
-                        if (score >= node.score) {
-                            node.score = score;
-                            node.prev = prev_node;
-                        }
-                    }
-                }
-            }
-            ArrayList<string> result = new ArrayList<string> ();
-            var node = graph.eos.prev;
-            while (!node.is_bos ()) {
-                result.insert (0, node.word);
-                node = node.prev;
-            }
-            return result.to_array ();
         }
     }
 }

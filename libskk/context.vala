@@ -21,101 +21,6 @@ using Gee;
 
 namespace Skk {
     /**
-     * Object maintaining the current candidates.
-     */
-    public class CandidateList : Object {
-        ArrayList<Candidate> _candidates = new ArrayList<Candidate> ();
-
-        /**
-         * Current cursor position.  This will be set to -1 if the
-         * candidate list is not active.
-         */
-        public int cursor_pos { get; set; }
-
-        /**
-         * Get the current candidate at the given index.
-         *
-         * @param index candidate position (-1 for the current cursor position)
-         *
-         * @return a Candidate
-         */
-        public new Candidate @get (int index = -1) {
-            if (index < 0)
-                index = cursor_pos;
-            assert (0 <= index && index < size);
-            return _candidates.get (index);
-        }
-
-        /**
-         * The number of candidate in the candidate list.
-         */
-        public int size {
-            get {
-                return _candidates.size;
-            }
-        }
-
-        /**
-         * Whether this candidate list is generated as a result of
-         * okuri-ari conversion.
-         */
-        public bool okuri { get; private set; }
-
-        Set<string> seen = new HashSet<string> ();
-
-        internal void clear () {
-            _candidates.clear ();
-            cursor_pos = -1;
-            seen.clear ();
-        }
-
-        internal void add_candidates_start (bool okuri) {
-            clear ();
-            this.okuri = okuri;
-        }
-
-        internal void add_candidates (Candidate[] array) {
-            foreach (var c in array) {
-                if (!(c.output in seen)) {
-                    _candidates.add (c);
-                    seen.add (c.output);
-                }
-            }
-        }
-
-        internal void add_candidates_end () {
-            populated ();
-        }
-
-        /**
-         * Create a new CandidateList.
-         *
-         * @return a new CandidateList.
-         */
-        public CandidateList () {
-            Object ();
-        }
-
-        /**
-         * Select the current candidate.
-         */
-        public void select () {
-            Candidate candidate = this.get ();
-            selected (candidate);
-        }
-
-        /**
-         * Signal emitted when candidates are filled and ready for traversal.
-         */
-        public signal void populated ();
-
-        /**
-         * Signal emitted when a candidate is selected.
-         */
-        public signal void selected (Candidate candidate);
-    }
-
-    /**
      * Type to specify input modes.
      */
     public enum InputMode {
@@ -151,8 +56,10 @@ namespace Skk {
     }
 
     /**
-     * The input context with support for SKK kana-kanji conversion
-     * method.  This is the main entry point of libskk.
+     * The main entry point of libskk.
+     *
+     * Context represents an input context with support for SKK
+     * kana-kanji conversion method.
      */
     public class Context : Object {
         Dict[] dictionaries;

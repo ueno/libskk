@@ -128,6 +128,9 @@ namespace Skk {
         EN_JA
     }
 
+    /**
+     * Romaji-to-kana converter.
+     */
     public class RomKanaConverter : Object {
         RomKanaNode root_node;
         RomKanaNode current_node;

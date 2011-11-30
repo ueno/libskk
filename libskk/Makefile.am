@@ -37,6 +37,7 @@ libskk_la_SOURCES = \
 	key-event.vala \
 	state.vala \
 	context.vala \
+	candidate.vala \
 	util.vala
 
 if HAVE_INTROSPECTION
