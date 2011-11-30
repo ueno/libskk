@@ -26,6 +26,7 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CC_STDC
 AC_PROG_INSTALL
+IT_PROG_INTLTOOL
 
 # define PACKAGE_VERSION_* variables
 AM_DISABLE_STATIC
@@ -43,6 +44,12 @@ GOBJECT_INTROSPECTION_CHECK([0.9.0])
 AM_PROG_VALAC([0.14.0])
 AC_SUBST(VALAC)
 AC_SUBST(VALAFLAGS)
+
+# define GETTEXT_* variables
+GETTEXT_PACKAGE=libskk
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Define to the read-only architecture-independent data directory.])
+AM_GLIB_GNU_GETTEXT
 
 AC_ARG_ENABLE([docs],
               AS_HELP_STRING([--enable-docs],[Enable documentation generation]),
@@ -71,5 +78,6 @@ libskk/libskk.pc
 tests/Makefile
 docs/Makefile
 data/Makefile
-data/rom-kana/Makefile])
+data/rom-kana/Makefile
+po/Makefile.in])
 AC_OUTPUT

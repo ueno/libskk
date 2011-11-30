@@ -344,7 +344,7 @@ namespace Skk {
                 for (var i = 0; i < level; i++) {
                     builder.append_c ('[');
                 }
-                builder.append ("DictEdit");
+                builder.append (_("DictEdit"));
                 for (var i = 0; i < level; i++) {
                     builder.append_c (']');
                 }

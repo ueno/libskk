@@ -464,6 +464,11 @@ namespace Skk {
 
         internal KutenStateHandler () {
             try {
+                // use EUC-JP to get JISX0208 characters by code
+                // point, this works because EUC-JP maps JISX0208
+                // characters to equivalent bytes.  See:
+                // https://en.wikipedia.org/wiki/EUC-JP
+                // this is generally a wrong approach though
                 converter = new EncodingConverter ("EUC-JP");
             } catch (GLib.Error e) {
                 converter = null;
@@ -501,8 +506,6 @@ namespace Skk {
             else if (key.modifiers == 0 && key.code == '\n' &&
                 (state.kuten.len == 4 || state.kuten.len == 6)) {
                 if (converter != null) {
-                    // FIXME JISX0208 is represented as equivalent
-                    // byte sequences in EUC-JP
                     var euc = parse_hex (state.kuten.str);
                     try {
                         state.output.append (converter.decode (euc));
@@ -535,7 +538,7 @@ namespace Skk {
         }
 
         internal override string get_preedit (State state) {
-            return "Kuten([MM]KKTT) " + state.kuten.str;
+            return _("Kuten([MM]KKTT) ") + state.kuten.str;
         }
     }
 
