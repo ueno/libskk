@@ -35,6 +35,7 @@ libskk_la_SOURCES = \
 	encoding.vala \
 	dict.vala \
 	file-dict.vala \
+	cdb-dict.vala \
 	user-dict.vala \
 	skkserv.vala \
 	key-event.vala \

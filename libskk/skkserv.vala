@@ -18,7 +18,7 @@
  * 02110-1301 USA
  */
 namespace Skk {
-    public errordomain SkkServError {
+    errordomain SkkServError {
         NOT_READABLE,
         INVALID_RESPONSE
     }

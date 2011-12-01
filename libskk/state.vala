@@ -20,7 +20,7 @@
 using Gee;
 
 namespace Skk {
-    public static const string[] AUTO_START_HENKAN_KEYWORDS = {
+    static const string[] AUTO_START_HENKAN_KEYWORDS = {
         "を", "、", "。", "．", "，", "？", "」",
         "！", "；", "：", ")", ";", ":", "）",
         "”", "】", "』", "》", "〉", "｝", "］",

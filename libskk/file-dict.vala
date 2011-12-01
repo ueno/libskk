@@ -109,7 +109,6 @@ namespace Skk {
             FileInfo info = file.query_info (FILE_ATTRIBUTE_ETAG_VALUE,
                                              FileQueryInfoFlags.NONE);
             if (info.get_etag () != etag) {
-                this.midasi_strings.clear ();
                 try {
                     load ();
                     etag = info.get_etag ();
@@ -300,7 +299,6 @@ namespace Skk {
         EncodingConverter converter;
         long okuri_ari_offset;
         long okuri_nasi_offset;
-        ArrayList<string> midasi_strings = new ArrayList<string> ();
 
         /**
          * Create a new FileDict.
