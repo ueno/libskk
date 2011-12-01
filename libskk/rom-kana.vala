@@ -81,6 +81,16 @@ namespace Skk {
             }
             return node.entry;
         }
+
+        internal void @remove (string key) {
+            var node = this;
+            for (var i = 0; i < key.length; i++) {
+                node = node.children[key[i]];
+                if (node == null)
+                    return;
+            }
+            node.entry = null;
+        }
     }
 
     /**
@@ -161,9 +171,7 @@ namespace Skk {
             }
         }
 
-        Json.Parser parser;
-
-        void load_rule (string name) throws RomKanaRuleParseError {
+        string? locate_rule_file (string name) {
             ArrayList<string> dirs = new ArrayList<string> ();
             string? path = Environment.get_variable ("LIBSKK_DATA_PATH");
             if (path != null) {
@@ -182,11 +190,17 @@ namespace Skk {
                     break;
                 }
             }
+            return filename;
+        }
+
+        void load_rule (RomKanaNode node, string name) throws RomKanaRuleParseError {
+            string? filename = locate_rule_file (name);
             if (filename == null) {
                 warning ("can't find rom-kana rule %s", name);
                 return;
             }
 
+            Json.Parser parser = new Json.Parser ();
             try {
                 if (!parser.load_from_file (filename))
                     throw new RomKanaRuleParseError.FAILED ("");
@@ -195,18 +209,47 @@ namespace Skk {
                     "%s".printf (e.message));
             }
             var root = parser.get_root ();
-            var elements = root.get_array ().get_elements ();
-            root_node = new RomKanaNode (null);
-            foreach (var element in elements) {
-                var components = element.get_array ();
-                RomKanaEntry entry = {
-                    components.get_string_element (0),
-                    components.get_string_element (1),
-                    components.get_string_element (2),
-                    components.get_string_element (3),
-                    components.get_string_element (4)
-                };
-                root_node.insert (entry.rom, entry);
+            if (root.get_node_type () != Json.NodeType.OBJECT) {
+                throw new RomKanaRuleParseError.FAILED (
+                    "root element must be an object");
+            }
+
+            // FIXME: check circular include
+            var object = root.get_object ();
+            if (object.has_member ("include")) {
+                var include = object.get_array_member ("include");
+                var elements = include.get_elements ();
+                foreach (var element in elements) {
+                    var _name = element.get_string ();
+                    load_rule (node, _name);
+                }
+            }
+
+            if (object.has_member ("define")) {
+                var define = object.get_array_member ("define");
+                var elements = define.get_elements ();
+                foreach (var element in elements) {
+                    var components = element.get_array ();
+                    switch (components.get_length ()) {
+                    case 1:
+                        node.remove (components.get_string_element (0));
+                        break;
+                    case 5:
+                        RomKanaEntry entry = {
+                            components.get_string_element (0),
+                            components.get_string_element (1),
+                            components.get_string_element (2),
+                            components.get_string_element (3),
+                            components.get_string_element (4)
+                        };
+                        node.insert (entry.rom, entry);
+                        break;
+                    default:
+                        throw new RomKanaRuleParseError.FAILED (
+                            "rule element must have one or five elements");
+                        break;
+                    }
+                }
             }
         }
 
@@ -218,7 +261,9 @@ namespace Skk {
             set {
                 if (_rule != value) {
                     try {
-                        load_rule (value);
+                        RomKanaNode node = new RomKanaNode (null);
+                        load_rule (node, value);
+                        root_node = node;
                         _rule = value;
                     } catch (RomKanaRuleParseError e) {
                         warning ("can't load rule %s: %s", value, e.message);
@@ -228,13 +273,13 @@ namespace Skk {
         }
 
         public RomKanaConverter () {
-            parser = new Json.Parser ();
             try {
-                load_rule (_rule);
+                RomKanaNode node = new RomKanaNode (null);
+                load_rule (node, _rule);
+                current_node = root_node = node;
             } catch (RomKanaRuleParseError e) {
                 warning ("can't load rule %s: %s", _rule, e.message);
             }
-            current_node = root_node;
         }
 
         static const string[] NN = { "ん", "ン", "ﾝ" };
