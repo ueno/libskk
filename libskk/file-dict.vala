@@ -24,41 +24,11 @@ namespace Skk {
      * A file based implementation of Dict.
      */
     public class FileDict : Dict {
-        void remap () throws SkkDictError {
-            if (memory != null) {
-                Posix.munmap (memory, memory_length);
-                memory = null;
-            }
-
-            int fd = Posix.open (file.get_path (), Posix.O_RDONLY, 0);
-            if (fd < 0) {
-                throw new SkkDictError.NOT_READABLE ("can't open %s",
-                                                        file.get_path ());
-            }
-
-            Posix.Stat stat;
-            int retval = Posix.fstat (fd, out stat);
-            if (fd < 0) {
-                throw new SkkDictError.NOT_READABLE ("can't stat fd");
-            }
-
-            memory = Posix.mmap (null,
-                                 stat.st_size,
-                                 Posix.PROT_READ,
-                                 Posix.MAP_SHARED,
-                                 fd,
-                                 0);
-            if (memory == Posix.MAP_FAILED) {
-                throw new SkkDictError.NOT_READABLE ("mmap failed");
-            }
-            memory_length = stat.st_size;
-        }
-
         // Read a line near offset and move offset to the beginning of
         // the line.
         string read_line (ref long offset) {
-            return_val_if_fail (offset < memory_length, null);
-            char *p = ((char *)memory + offset);
+            return_val_if_fail (offset < mmap.length, null);
+            char *p = ((char *)mmap.memory + offset);
             for (; offset > 0; offset--, p--) {
                 if (*p == '\n')
                     break;
@@ -71,7 +41,7 @@ namespace Skk {
 
             var builder = new StringBuilder ();
             long _offset = offset;
-            for (; _offset < memory_length; _offset++, p++) {
+            for (; _offset < mmap.length; _offset++, p++) {
                 if (*p == '\n')
                     break;
                 builder.append_c (*p);
@@ -91,7 +61,7 @@ namespace Skk {
 
         // can only called after read*_line
         string? read_next_line (ref long pos, string line) {
-            if (pos + line.length + 1 >= memory_length) {
+            if (pos + line.length + 1 >= mmap.length) {
                 return null;
             }
             // place the cursor at "\n" of the current line
@@ -102,9 +72,9 @@ namespace Skk {
         // Skip until the first occurrence of line.  This moves offset
         // at the beginning of the next line.
         bool read_until (ref long offset, string line) {
-            return_val_if_fail (offset < memory_length, null);
-            while (offset + line.length < memory_length) {
-                char *p = ((char *)memory + offset);
+            return_val_if_fail (offset < mmap.length, null);
+            while (offset + line.length < mmap.length) {
+                char *p = ((char *)mmap.memory + offset);
                 if (*p == '\n' &&
                     Memory.cmp (p + 1, (void *)line, line.length) == 0) {
                     offset += line.length;
@@ -116,7 +86,7 @@ namespace Skk {
         }
 
         void load () throws SkkDictError {
-            remap ();
+            mmap.remap ();
 
             long offset = 0;
             if (!read_until (ref offset, ";; okuri-ari entries.\n")) {
@@ -159,7 +129,7 @@ namespace Skk {
                          int direction) {
             long offset = start_offset + (end_offset - start_offset) / 2;
             while (start_offset <= end_offset) {
-                assert (offset < memory_length);
+                assert (offset < mmap.length);
 
                 string _line = read_line (ref offset);
                 int index = _line.index_of (" ");
@@ -191,7 +161,7 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override Candidate[] lookup (string midasi, bool okuri = false) {
-            if (memory == null)
+            if (mmap.memory == null)
                 return new Candidate[0];
 
             long start_offset, end_offset;
@@ -200,7 +170,7 @@ namespace Skk {
                 end_offset = okuri_nasi_offset;
             } else {
                 start_offset = okuri_nasi_offset;
-                end_offset = (long) memory_length - 1;
+                end_offset = (long) mmap.length - 1;
             }
             string _midasi;
             try {
@@ -245,14 +215,14 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override string[] complete (string midasi) {
-            if (memory == null)
+            if (mmap.memory == null)
                 return new string[0];
 
             var completion = new ArrayList<string> ();
 
             long start_offset, end_offset;
             start_offset = okuri_nasi_offset;
-            end_offset = (long) memory_length;
+            end_offset = (long) mmap.length;
 
             string _midasi;
             try {
@@ -325,10 +295,9 @@ namespace Skk {
         }
 
         File file;
+        MemoryMappedFile mmap;
         string etag;
         EncodingConverter converter;
-        void *memory = null;
-        size_t memory_length = 0;
         long okuri_ari_offset;
         long okuri_nasi_offset;
         ArrayList<string> midasi_strings = new ArrayList<string> ();
@@ -344,6 +313,7 @@ namespace Skk {
          */
         public FileDict (string path, string encoding = "EUC-JP") throws GLib.Error {
             this.file = File.new_for_path (path);
+            this.mmap = new MemoryMappedFile (file);
             this.etag = "";
             this.converter = new EncodingConverter (encoding);
             reload ();

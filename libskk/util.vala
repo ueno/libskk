@@ -318,4 +318,59 @@ namespace Skk {
             return str.substring (byte_offset, byte_len);
         }
     }
+
+    class MemoryMappedFile : Object {
+        void *_memory = null;
+        public void *memory {
+            get {
+                return _memory;
+            }
+        }
+
+        size_t _length = 0;
+        public size_t length {
+            get {
+                return _length;
+            }
+        }
+
+        File file;
+
+        public MemoryMappedFile (File file) {
+            this.file = file;
+        }
+
+        public void remap () throws SkkDictError {
+            if (_memory != null) {
+                Posix.munmap (_memory, _length);
+                _memory = null;
+            }
+            map ();
+        }
+
+        void map () throws SkkDictError {
+            int fd = Posix.open (file.get_path (), Posix.O_RDONLY, 0);
+            if (fd < 0) {
+                throw new SkkDictError.NOT_READABLE ("can't open %s",
+                                                     file.get_path ());
+            }
+
+            Posix.Stat stat;
+            int retval = Posix.fstat (fd, out stat);
+            if (fd < 0) {
+                throw new SkkDictError.NOT_READABLE ("can't stat fd");
+            }
+
+            _memory = Posix.mmap (null,
+                                  stat.st_size,
+                                  Posix.PROT_READ,
+                                  Posix.MAP_SHARED,
+                                  fd,
+                                  0);
+            if (_memory == Posix.MAP_FAILED) {
+                throw new SkkDictError.NOT_READABLE ("mmap failed");
+            }
+            _length = stat.st_size;
+        }
+    }
 }
