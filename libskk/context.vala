@@ -26,6 +26,7 @@ namespace Skk {
      * Must be called before using any functions in libskk.
      */
     public static void init () {
+        // needed to use static methods defined in Util class
         typeof (Util).class_ref ();
     }
 

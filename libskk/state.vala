@@ -90,7 +90,10 @@ namespace Skk {
                 okuri_rom_kana_converter.rule = value;
             }
         }
-        
+
+        Regex numeric_regex;
+        Regex numeric_ref_regex;
+
         internal State (ArrayList<Dict> dictionaries,
                         CandidateList candidates)
         {
@@ -100,6 +103,19 @@ namespace Skk {
             this.rom_kana_converter = new RomKanaConverter ();
             this.okuri_rom_kana_converter = new RomKanaConverter ();
             this.auto_start_henkan_keywords = AUTO_START_HENKAN_KEYWORDS;
+
+            try {
+                numeric_regex = new Regex ("[0-9]+");
+            } catch (GLib.RegexError e) {
+                assert_not_reached ();
+            }
+
+            try {
+                numeric_ref_regex = new Regex ("#([0-9])");
+            } catch (GLib.RegexError e) {
+                assert_not_reached ();
+            }
+
             reset ();
         }
 
@@ -126,23 +142,24 @@ namespace Skk {
             auto_start_henkan_keyword = null;
         }
 
-        string extract_numerics (string midasi, out int[] _numerics) throws GLib.RegexError {
-            Regex? numeric_regex = null;
-            try {
-                numeric_regex = new Regex ("[0-9]+");
-            } catch (GLib.RegexError e) {
-                return_val_if_reached (null);
-            }
+        string extract_numerics (string midasi, out int[] _numerics) {
             MatchInfo info = null;
             int start_pos = 0;
             var numeric_list = new ArrayList<int> ();
             var builder = new StringBuilder ();
-            while (numeric_regex.match_full (midasi,
-                                             -1,
-                                             start_pos,
-                                             0,
-                                             out info))
-            {
+            while (true) {
+                try {
+                    if (!numeric_regex.match_full (midasi,
+                                                   -1,
+                                                   start_pos,
+                                                   0,
+                                                   out info)) {
+                        break;
+                    }
+                } catch (GLib.RegexError e) {
+                    return_val_if_reached (midasi);
+                }
+
                 string numeric = info.fetch (0);
                 int match_start_pos, match_end_pos;
                 info.fetch_pos (0,
@@ -158,27 +175,27 @@ namespace Skk {
             return builder.str;
         }
 
-        void expand_numeric_references (Candidate[] candidates) throws GLib.RegexError {
-            Regex? numeric_ref_regex = null;
-            try {
-                numeric_ref_regex = new Regex ("#([0-9])");
-            } catch (GLib.RegexError e) {
-                return_if_reached ();
-            }
-
+        void expand_numeric_references (Candidate[] candidates) {
             foreach (var candidate in candidates) {
                 var builder = new StringBuilder ();
                 MatchInfo info = null;
                 int start_pos = 0;
                 for (int numeric_index = 0;
-                     numeric_index < numerics.length &&
-                         numeric_ref_regex.match_full (candidate.text,
-                                                       -1,
-                                                       start_pos,
-                                                       0,
-                                                       out info);
+                     numeric_index < numerics.length;
                      numeric_index++)
                 {
+                    try {
+                        if (!numeric_ref_regex.match_full (candidate.text,
+                                                           -1,
+                                                           start_pos,
+                                                           0,
+                                                           out info)) {
+                            break;
+                        }
+                    } catch (GLib.RegexError e) {
+                        return_if_reached ();
+                    }
+                            
                     int match_start_pos, match_end_pos;
                     info.fetch_pos (0,
                                     out match_start_pos,
@@ -215,20 +232,12 @@ namespace Skk {
         }
 
         internal void lookup (string midasi, bool okuri = false) {
-            try {
-                this.midasi = extract_numerics (midasi, out numerics);
-            } catch (GLib.RegexError e) {
-                this.midasi = midasi;
-            }
+            this.midasi = extract_numerics (midasi, out numerics);
             candidates.clear ();
             candidates.add_candidates_start (okuri);
             foreach (var dict in dictionaries) {
                 var _candidates = dict.lookup (this.midasi, okuri);
-                try {
-                    expand_numeric_references (_candidates);
-                } catch (GLib.RegexError e) {
-                    this.midasi = midasi;
-                }
+                expand_numeric_references (_candidates);
                 candidates.add_candidates (_candidates);
             }
             candidates.add_candidates_end ();
