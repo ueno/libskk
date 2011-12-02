@@ -261,9 +261,6 @@ namespace Skk {
                                 "\"define\" array member must have two to four elements");
                         }
                         break;
-                    case Json.NodeType.STRING:
-                        // FIXME: not implemented
-                        break;
                     default:
                         throw new RomKanaRuleParseError.FAILED (
                             "\"define\" member must be either an array or null");
