@@ -1,3 +1,9 @@
 romkanadir = $(pkgdatadir)/rom-kana
-dist_romkana_DATA = standard.json azik.json kzik.json
+dist_romkana_DATA = \
+	standard.json \
+	azik.json \
+	kzik.json \
+	act.json \
+	tut-code.json \
+	tut-code-touch16.json
 EXTRA_DIST = README.rom-kana
