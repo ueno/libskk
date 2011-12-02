@@ -193,7 +193,52 @@ namespace Skk {
             return filename;
         }
 
-        void load_rule (RomKanaNode node, string name) throws RomKanaRuleParseError {
+        void parse_rom_kana (RomKanaNode node, Json.Object rom_kana) throws RomKanaRuleParseError {
+            var keys = rom_kana.get_members ();
+            foreach (var key in keys) {
+                var value = rom_kana.get_member (key);
+                switch (value.get_node_type ()) {
+                case Json.NodeType.NULL:
+                    node.remove (key);
+                    break;
+                case Json.NodeType.ARRAY:
+                    var components = value.get_array ();
+                    var length = components.get_length ();
+                    if (2 <= length && length <= 4) {
+                        var carryover = components.get_string_element (0);
+                        var hiragana = components.get_string_element (1);
+                        var katakana = length >= 3 ?
+                            components.get_string_element (2) :
+                            Util.get_katakana (hiragana);
+                        var hankaku_katakana = length == 4 ?
+                            components.get_string_element (3) :
+                            Util.get_hankaku_katakana (katakana);
+
+                        RomKanaEntry entry = {
+                            key,
+                            carryover,
+                            hiragana,
+                            katakana,
+                            hankaku_katakana
+                        };
+                        node.insert (key, entry);
+                    }
+                    else {
+                        throw new RomKanaRuleParseError.FAILED (
+                            "\"define\" array member must have two to four elements");
+                    }
+                    break;
+                default:
+                    throw new RomKanaRuleParseError.FAILED (
+                        "\"define\" member must be either an array or null");
+                }
+            }
+        }
+
+        void load_rule (RomKanaNode node,
+                        string name,
+                        Set<string> included) throws RomKanaRuleParseError
+        {
             string? filename = locate_rule_file (name);
             if (filename == null) {
                 warning ("can't find rom-kana rule %s", name);
@@ -215,59 +260,40 @@ namespace Skk {
             }
             var object = root.get_object ();
 
-            // FIXME: check circular include
+            Json.Node member;
             if (object.has_member ("include")) {
-                var include = object.get_array_member ("include");
+                member = object.get_member ("include");
+                if (member.get_node_type () != Json.NodeType.ARRAY) {
+                    throw new RomKanaRuleParseError.FAILED (
+                        "\"include\" element must be an array");
+                }
+                var include = member.get_array ();
                 var elements = include.get_elements ();
                 foreach (var element in elements) {
                     var parent = element.get_string ();
-                    load_rule (node, parent);
+                    if (parent in included) {
+                        throw new RomKanaRuleParseError.FAILED (
+                            "found circular include of %s", parent);
+                    }
+                    load_rule (node, parent, included);
+                    included.add (parent);
                 }
             }
 
             if (object.has_member ("define")) {
-                var define = object.get_object_member ("define");
+                member = object.get_member ("define");
+                if (member.get_node_type () != Json.NodeType.OBJECT) {
+                    throw new RomKanaRuleParseError.FAILED (
+                        "\"define\" element must be an array");
+                }
+                var define = member.get_object ();
                 if (define.has_member ("rom-kana")) {
-                    var rom_kana = define.get_object_member ("rom-kana");
-                    var keys = rom_kana.get_members ();
-                    foreach (var key in keys) {
-                        var value = rom_kana.get_member (key);
-                        switch (value.get_node_type ()) {
-                        case Json.NodeType.NULL:
-                            node.remove (key);
-                            break;
-                        case Json.NodeType.ARRAY:
-                            var components = value.get_array ();
-                            var length = components.get_length ();
-                            if (2 <= length && length <= 4) {
-                                var carryover = components.get_string_element (0);
-                                var hiragana = components.get_string_element (1);
-                                var katakana = length >= 3 ?
-                                    components.get_string_element (2) :
-                                    Util.get_katakana (hiragana);
-                                var hankaku_katakana = length == 4 ?
-                                    components.get_string_element (3) :
-                                    Util.get_hankaku_katakana (katakana);
-
-                                RomKanaEntry entry = {
-                                    key,
-                                    carryover,
-                                    hiragana,
-                                    katakana,
-                                    hankaku_katakana
-                                };
-                                node.insert (key, entry);
-                            }
-                            else {
-                                throw new RomKanaRuleParseError.FAILED (
-                                    "\"define\" array member must have two to four elements");
-                            }
-                            break;
-                        default:
-                            throw new RomKanaRuleParseError.FAILED (
-                                "\"define\" member must be either an array or null");
-                        }
+                    member = define.get_member ("rom-kana");
+                    if (member.get_node_type () != Json.NodeType.OBJECT) {
+                        throw new RomKanaRuleParseError.FAILED (
+                            "\"rom-kana\" element must be an array");
                     }
+                    parse_rom_kana (node, member.get_object ());
                 }
             }
         }
@@ -280,8 +306,9 @@ namespace Skk {
             set {
                 if (_rule != value) {
                     try {
+                        Set<string> included = new HashSet<string> ();
                         RomKanaNode node = new RomKanaNode (null);
-                        load_rule (node, value);
+                        load_rule (node, value, included);
                         root_node = node;
                         _rule = value;
                     } catch (RomKanaRuleParseError e) {
@@ -293,8 +320,9 @@ namespace Skk {
 
         public RomKanaConverter () {
             try {
+                Set<string> included = new HashSet<string> ();
                 RomKanaNode node = new RomKanaNode (null);
-                load_rule (node, _rule);
+                load_rule (node, _rule, included);
                 current_node = root_node = node;
             } catch (RomKanaRuleParseError e) {
                 warning ("can't load rule %s: %s", _rule, e.message);
