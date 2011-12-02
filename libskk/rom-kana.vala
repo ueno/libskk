@@ -193,7 +193,9 @@ namespace Skk {
             return filename;
         }
 
-        void parse_rom_kana (RomKanaNode node, Json.Object rom_kana) throws RomKanaRuleParseError {
+        void parse_rom_kana (RomKanaNode node,
+                             Json.Object rom_kana) throws RomKanaRuleParseError
+        {
             var keys = rom_kana.get_members ();
             foreach (var key in keys) {
                 var value = rom_kana.get_member (key);
@@ -225,7 +227,7 @@ namespace Skk {
                     }
                     else {
                         throw new RomKanaRuleParseError.FAILED (
-                            "\"define\" array member must have two to four elements");
+                            "\"define\" must have two to four elements");
                     }
                     break;
                 default:
