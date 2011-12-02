@@ -352,6 +352,7 @@ numeric (void)
 int
 main (int argc, char **argv) {
   g_type_init ();
+  skk_init ();
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/libskk/context", context);
   g_test_add_func ("/libskk/input-mode", input_mode);

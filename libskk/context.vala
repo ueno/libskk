@@ -21,6 +21,15 @@ using Gee;
 
 namespace Skk {
     /**
+     * Initialize libskk.
+     *
+     * Must be called before using any functions in libskk.
+     */
+    public static void init () {
+        typeof (Util).class_ref ();
+    }
+
+    /**
      * Type to specify input modes.
      */
     public enum InputMode {
@@ -136,6 +145,9 @@ namespace Skk {
             }
         }
 
+        /**
+         * The name of romaji-to-kana conversion table.
+         */
         public string rom_kana_rule {
             get {
                 return state_stack.data.rom_kana_rule;

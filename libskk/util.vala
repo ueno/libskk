@@ -35,7 +35,7 @@ namespace Skk {
         SHOGI
     }
 
-    class Util {
+    class Util : Object {
         static const string[] WideLatinTable = {
             "　", "！", "”", "＃", "＄", "％", "＆", "’", 
             "（", "）", "＊", "＋", "，", "−", "．", "／", 
@@ -298,7 +298,7 @@ namespace Skk {
         }
     }
 
-    class UnicodeString {
+    class UnicodeString : Object {
         string str;
         internal int length;
 
