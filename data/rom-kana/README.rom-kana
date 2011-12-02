@@ -7,22 +7,19 @@ included before evaluating the rule defined with "define".  The value
 associated with "define" is an object of actual mappings from
 romaji sequences to kana sequences.
 
-Each value associated with "define" is either an array, a string, or
-null.
+Each key in the "define" object is a string, and each value is either
+an array or null.
 
-If it is an array, a new mapping is defined.  In that case each array
-consists of 2 to 4 elements.  The first two elements are <carryover>
-and <hiragana>.  <carryover> is a string which will be added to
-preedit for the next transition (for example, when "bb" is typed, "b"
-is added to preedit).  <hiragana> is an output in hiragana.  The rest
-of elements are <katakana> and <hankaku-katakana>, which are optional
-output strings in katakana and hankaku-katakana and in most case they
-will be directly derived from <hiragana>.
+If the value is an array, a new mapping is defined.  In that case each
+array consists of 2 to 4 elements.  The first two elements are
+<carryover> and <hiragana>.  <carryover> is a string which will be
+added to preedit after the transition (for example, when "bb" is
+typed, "b" will be added to preedit).  <hiragana> is an output in
+hiragana.  The rest of elements are <katakana> and <hankaku-katakana>,
+which are optional output strings in katakana and hankaku-katakana.
 
-If it is a string, it refers to an internal command.
-
-If it is null, existing mapping of the corresponding key is removed
-from the parent rule.
+If the value is null, existing mapping of the corresponding key is
+removed from the parent rule.
 
 Example:
 
@@ -34,10 +31,8 @@ Example:
         "xka": ["", "か", "ヵ", "ｶ"],
         "b.": [ "", "ぶ" ],
 	"dha": null,
-	"'": "abbrev"
     },
 }
 
-This rule includes "standard" rule first, and then defines new
-mappings for "xka" and "b.", removes a mapping "dha" from the current
-rule, maps "'" as an abbrev mode trigger.
+This rule includes "standard" rule first, defines new mappings for
+"xka" and "b.", and removes a mapping "dha" from the current rule.
