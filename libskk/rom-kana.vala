@@ -227,43 +227,46 @@ namespace Skk {
 
             if (object.has_member ("define")) {
                 var define = object.get_object_member ("define");
-                var keys = define.get_members ();
-                foreach (var key in keys) {
-                    var value = define.get_member (key);
-                    switch (value.get_node_type ()) {
-                    case Json.NodeType.NULL:
-                        node.remove (key);
-                        break;
-                    case Json.NodeType.ARRAY:
-                        var components = value.get_array ();
-                        var length = components.get_length ();
-                        if (2 <= length && length <= 4) {
-                            var carryover = components.get_string_element (0);
-                            var hiragana = components.get_string_element (1);
-                            var katakana = length >= 3 ?
-                                components.get_string_element (2) :
-                                Util.get_katakana (hiragana);
-                            var hankaku_katakana = length == 4 ?
-                                components.get_string_element (3) :
-                                Util.get_hankaku_katakana (katakana);
+                if (define.has_member ("rom-kana")) {
+                    var rom_kana = define.get_object_member ("rom-kana");
+                    var keys = rom_kana.get_members ();
+                    foreach (var key in keys) {
+                        var value = rom_kana.get_member (key);
+                        switch (value.get_node_type ()) {
+                        case Json.NodeType.NULL:
+                            node.remove (key);
+                            break;
+                        case Json.NodeType.ARRAY:
+                            var components = value.get_array ();
+                            var length = components.get_length ();
+                            if (2 <= length && length <= 4) {
+                                var carryover = components.get_string_element (0);
+                                var hiragana = components.get_string_element (1);
+                                var katakana = length >= 3 ?
+                                    components.get_string_element (2) :
+                                    Util.get_katakana (hiragana);
+                                var hankaku_katakana = length == 4 ?
+                                    components.get_string_element (3) :
+                                    Util.get_hankaku_katakana (katakana);
 
-                            RomKanaEntry entry = {
-                                key,
-                                carryover,
-                                hiragana,
-                                katakana,
-                                hankaku_katakana
-                            };
-                            node.insert (key, entry);
-                        }
-                        else {
+                                RomKanaEntry entry = {
+                                    key,
+                                    carryover,
+                                    hiragana,
+                                    katakana,
+                                    hankaku_katakana
+                                };
+                                node.insert (key, entry);
+                            }
+                            else {
+                                throw new RomKanaRuleParseError.FAILED (
+                                    "\"define\" array member must have two to four elements");
+                            }
+                            break;
+                        default:
                             throw new RomKanaRuleParseError.FAILED (
-                                "\"define\" array member must have two to four elements");
+                                "\"define\" member must be either an array or null");
                         }
-                        break;
-                    default:
-                        throw new RomKanaRuleParseError.FAILED (
-                            "\"define\" member must be either an array or null");
                     }
                 }
             }

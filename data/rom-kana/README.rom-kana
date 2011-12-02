@@ -4,11 +4,12 @@ Each file contains only one toplevel JSON object (i.e. a dictionary),
 which may contain two kind of keys "include" and "define".  The value
 associated with "include" is an array of parent rules, which will be
 included before evaluating the rule defined with "define".  The value
-associated with "define" is an object of actual mappings from
-romaji sequences to kana sequences.
+associated with "define" is an object which binds some variables to
+values.  Currently "rom-kana" and "property" are available.
 
-Each key in the "define" object is a string, and each value is either
-an array or null.
+The variable "rom-kana" is used to define romaji-to-kana conversion
+rules.  The value is an object which maps a string to either an array
+or null.
 
 If the value is an array, a new mapping is defined.  In that case each
 array consists of 2 to 4 elements.  The first two elements are
@@ -21,6 +22,9 @@ which are optional output strings in katakana and hankaku-katakana.
 If the value is null, existing mapping of the corresponding key is
 removed from the parent rule.
 
+The variable "property" is used to define arbitrary properties used
+internally.
+
 Example:
 
 {
@@ -28,11 +32,17 @@ Example:
         "standard"
     ],
     "define": {
-        "xka": ["", "か", "ヵ", "ｶ"],
-        "b.": [ "", "ぶ" ],
-	"dha": null,
+        "rom-kana": {
+            "xka": ["", "か", "ヵ", "ｶ"],
+            "b.": [ "", "ぶ" ],
+	    "dha": null,
+        },
+        "property": {
+            "start-henkan": ["C-@"],
+        }
     },
 }
 
 This rule includes "standard" rule first, defines new mappings for
 "xka" and "b.", and removes a mapping "dha" from the current rule.
+Also sets "start-henkan" property to an array including "C-@".
