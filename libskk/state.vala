@@ -126,7 +126,7 @@ namespace Skk {
             auto_start_henkan_keyword = null;
         }
 
-        string extract_numerics (string midasi, out int[] _numerics) {
+        string extract_numerics (string midasi, out int[] _numerics) throws GLib.RegexError {
             Regex? numeric_regex = null;
             try {
                 numeric_regex = new Regex ("[0-9]+");
@@ -158,7 +158,7 @@ namespace Skk {
             return builder.str;
         }
 
-        void expand_numeric_references (Candidate[] candidates) {
+        void expand_numeric_references (Candidate[] candidates) throws GLib.RegexError {
             Regex? numeric_ref_regex = null;
             try {
                 numeric_ref_regex = new Regex ("#([0-9])");
@@ -215,12 +215,20 @@ namespace Skk {
         }
 
         internal void lookup (string midasi, bool okuri = false) {
-            this.midasi = extract_numerics (midasi, out numerics);
+            try {
+                this.midasi = extract_numerics (midasi, out numerics);
+            } catch (GLib.RegexError e) {
+                this.midasi = midasi;
+            }
             candidates.clear ();
             candidates.add_candidates_start (okuri);
             foreach (var dict in dictionaries) {
                 var _candidates = dict.lookup (this.midasi, okuri);
-                expand_numeric_references (_candidates);
+                try {
+                    expand_numeric_references (_candidates);
+                } catch (GLib.RegexError e) {
+                    this.midasi = midasi;
+                }
                 candidates.add_candidates (_candidates);
             }
             candidates.add_candidates_end ();

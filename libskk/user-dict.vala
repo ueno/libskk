@@ -31,7 +31,7 @@ namespace Skk {
             { "ISO-2022-JP", "iso-2022-jp" }
         };
 
-        void load () throws SkkDictError {
+        void load () throws SkkDictError, GLib.IOError {
             uint8[] contents;
             try {
                 file.load_contents (null, out contents, out etag);
@@ -139,6 +139,9 @@ namespace Skk {
                     load ();
                 } catch (SkkDictError e) {
                     warning ("error parsing user dictionary %s: %s",
+                             file.get_path (), e.message);
+                } catch (GLib.IOError e) {
+                    warning ("error reading user dictionary %s: %s",
                              file.get_path (), e.message);
                 }
             }

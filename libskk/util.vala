@@ -357,7 +357,7 @@ namespace Skk {
 
             Posix.Stat stat;
             int retval = Posix.fstat (fd, out stat);
-            if (fd < 0) {
+            if (retval < 0) {
                 throw new SkkDictError.NOT_READABLE ("can't stat fd");
             }
 
