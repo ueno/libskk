@@ -6,4 +6,7 @@ See:
 * http://du-a.org/docs/libskk/libskk/ for Vala binding reference
 * http://du-a.org/docs/gtk-doc/libskk/ for C binding reference
 
+Test:
 
+$ echo "A i SPC" | skk
+{ "input": "A i SPC", "output": "", "preedit": "▼愛" }

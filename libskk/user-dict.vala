@@ -337,7 +337,9 @@ namespace Skk {
          * @return a new UserDict
          * @throws GLib.Error if opening the file is failed
          */
-        public UserDict (string path, string encoding) throws GLib.Error {
+        public UserDict (string path,
+                         string encoding = "UTF-8") throws GLib.Error
+        {
             this.file = File.new_for_path (path);
             this.etag = "";
             this.converter = new EncodingConverter (encoding);

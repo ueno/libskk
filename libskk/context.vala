@@ -281,6 +281,12 @@ namespace Skk {
             foreach (var key in _keys) {
                 if (key == "SPC")
                     key = " ";
+                else if (key == "TAB")
+                    key = "\t";
+                else if (key == "RET")
+                    key = "\n";
+                else if (key == "DEL")
+                    key = "\x7F";
                 if (process_key_event (key) && !retval)
                     retval = true;
             }

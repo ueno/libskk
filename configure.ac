@@ -49,7 +49,6 @@ AC_SUBST(VALAFLAGS)
 GETTEXT_PACKAGE=libskk
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Define to the read-only architecture-independent data directory.])
-AM_GLIB_GNU_GETTEXT
 
 AC_ARG_ENABLE([docs],
               AS_HELP_STRING([--enable-docs],[Enable documentation generation]),
@@ -75,6 +74,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile
 libskk/Makefile
 libskk/libskk.pc
+tools/Makefile
 tests/Makefile
 docs/Makefile
 data/Makefile

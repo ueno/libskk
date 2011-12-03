@@ -4,5 +4,8 @@ namespace Config
     public const string PACKAGE_DATADIR;
     public const string PACKAGE_NAME;
     public const string PACKAGE_VERSION;
+    public const string DATADIR;
     public const string PKGDATADIR;
+    public const string LOCALEDIR;
+    public const string GETTEXT_PACKAGE;
 }
