@@ -311,7 +311,7 @@ namespace Skk {
                         Set<string> included = new HashSet<string> ();
                         RomKanaNode node = new RomKanaNode (null);
                         load_rule (node, value, included);
-                        root_node = node;
+                        current_node = root_node = node;
                         _rule = value;
                     } catch (RomKanaRuleParseError e) {
                         warning ("can't load rule %s: %s", value, e.message);
