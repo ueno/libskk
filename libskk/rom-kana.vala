@@ -50,6 +50,8 @@ namespace Skk {
         internal RomKanaEntry? entry;
         internal RomKanaNode parent;
         internal RomKanaNode children[128];
+        internal char c;
+        internal uint n_children = 0;
 
         internal RomKanaNode (RomKanaEntry? entry) {
             this.entry = entry;
@@ -65,29 +67,42 @@ namespace Skk {
                     var child = node.children[key[i]] = new RomKanaNode (null);
                     child.parent = node;
                 }
+                node.n_children++;
                 node = node.children[key[i]];
             }
             node.entry = entry;
         }
 
-        internal RomKanaEntry? lookup (string key) {
+        RomKanaNode? lookup_node (string key) {
             var node = this;
             for (var i = 0; i < key.length; i++) {
                 node = node.children[key[i]];
                 if (node == null)
                     return null;
             }
+            return node;
+        }
+
+        internal RomKanaEntry? lookup (string key) {
+            var node = lookup_node (key);
+            if (node == null)
+                return null;
             return node.entry;
         }
 
-        internal void @remove (string key) {
-            var node = this;
-            for (var i = 0; i < key.length; i++) {
-                node = node.children[key[i]];
-                if (node == null)
-                    return;
+        void remove_child (RomKanaNode node) {
+            children[node.c] = null;
+            if (--n_children == 0 && parent != null) {
+                parent.remove_child (this);
             }
-            node.entry = null;
+        }
+
+        internal void @remove (string key) {
+            var node = lookup_node (key);
+            if (node != null) {
+                return_if_fail (node.parent != null);
+                node.parent.remove_child (node);
+            }
         }
     }
 
@@ -424,9 +439,8 @@ namespace Skk {
             var child_node = current_node.children[uc];
             if (child_node == null)
                 return false;
-            if (child_node.entry == null)
-                return false;
-            if (no_carryover && child_node.entry.carryover != "")
+            if (no_carryover &&
+                child_node.entry != null && child_node.entry.carryover != "")
                 return false;
             return true;
         }
