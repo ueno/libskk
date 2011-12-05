@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace Skk {
-    enum ModifierType {
+    public enum ModifierType {
         NONE = 0,
         SHIFT_MASK = 1 << 0,
         LOCK_MASK = 1 << 1,
@@ -31,11 +31,16 @@ namespace Skk {
         META_MASK = 1 << 28
     }
 
-    class KeyEvent {
-        internal unichar code;
-        internal ModifierType modifiers;
+    public class KeyEvent {
+        public unichar code;
+        public ModifierType modifiers;
 
-        internal KeyEvent (string key) {
+        public KeyEvent (unichar code, ModifierType modifiers) {
+            this.code = code;
+            this.modifiers = modifiers;
+        }
+
+        public KeyEvent.from_string (string key) {
             int index = key.last_index_of ("-");
             if (index > 0) {
                 string[] modifiers = key.substring (0, index).split ("-");

@@ -285,7 +285,8 @@ namespace Skk {
                     key = "\n";
                 else if (key == "DEL")
                     key = "\x7F";
-                if (process_key_event (key) && !retval)
+                var ev = new KeyEvent.from_string (key);
+                if (process_key_event (ev) && !retval)
                     retval = true;
             }
             return retval;
@@ -294,17 +295,16 @@ namespace Skk {
         /**
          * Pass one key event to the context.
          *
-         * @param key a string representing a key event
+         * @param key a key event
          *
          * @return `true` if the key event is handled, `false` otherwise
          */
-        public bool process_key_event (string key) {
+        public bool process_key_event (KeyEvent key) {
             var state = state_stack.data;
-            var ev = new KeyEvent (key);
             while (true) {
                 var handler_type = state.handler_type;
                 var handler = handlers.get (handler_type);
-                if (handler.process_key_event (state, ev)) {
+                if (handler.process_key_event (state, key)) {
                     // FIXME should do this only when preedit is really changed
                     update_preedit ();
                     return true;
