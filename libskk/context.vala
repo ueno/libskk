@@ -156,6 +156,19 @@ namespace Skk {
             }
         }
 
+        KeyEventFilter _filter = new SimpleKeyEventFilter ();
+        public KeyEventFilter filter {
+            get {
+                return _filter;
+            }
+            set {
+                _filter = value;
+                _filter.forwarded.connect ((key) => {
+                        process_key_event_internal (key);
+                    });
+            }
+        }
+
         /**
          * Create a new Context.
          *
@@ -300,6 +313,13 @@ namespace Skk {
          * @return `true` if the key event is handled, `false` otherwise
          */
         public bool process_key_event (KeyEvent key) {
+            KeyEvent? _key = filter.filter_key_event (key);
+            if (_key == null)
+                return true;
+            return process_key_event_internal (_key);
+        }
+
+        bool process_key_event_internal (KeyEvent key) {
             var state = state_stack.data;
             while (true) {
                 var handler_type = state.handler_type;

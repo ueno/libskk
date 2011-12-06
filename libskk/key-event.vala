@@ -16,6 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace Skk {
+    /**
+     * A set of bit-flags to indicate the state of modifier keys.
+     */
     public enum ModifierType {
         NONE = 0,
         SHIFT_MASK = 1 << 0,
@@ -28,18 +31,48 @@ namespace Skk {
         MOD5_MASK = 1 << 7,
         SUPER_MASK = 1 << 26,
         HYPER_MASK = 1 << 27,
-        META_MASK = 1 << 28
+        META_MASK = 1 << 28,
+        RELEASE_MASK = 1 << 30
     }
 
+    /**
+     * Object representing a key event.
+     */
     public class KeyEvent {
-        public unichar code;
+        public uint keyval;
+        public uint keycode;
         public ModifierType modifiers;
 
-        public KeyEvent (unichar code, ModifierType modifiers) {
-            this.code = code;
+        public unichar code;
+
+        /**
+         * Create a key event.
+         *
+         * @param keyval a keysym value
+         * @param keycode a key code value
+         * @param modifiers state of modifier keys
+         *
+         * @return a new KeyEvent
+         */
+        public KeyEvent (uint keyval, uint keycode, ModifierType modifiers) {
+            this.keyval = keyval;
+            this.keycode = keycode;
             this.modifiers = modifiers;
+
+            // FIXME: should add more precise mapping functions
+            // between keyval and code
+            if (0x20 <= keyval && keyval < 0x7F) {
+                code = (unichar) keyval;
+            }
         }
 
+        /**
+         * Create a key event from string.
+         *
+         * @param key a string representation of a key event
+         *
+         * @return a new KeyEvent
+         */
         public KeyEvent.from_string (string key) {
             int index = key.last_index_of ("-");
             if (index > 0) {
@@ -60,6 +93,43 @@ namespace Skk {
                 this.modifiers = ModifierType.NONE;
                 this.code = key.get_char ();
             }
+        }
+    }
+
+    /**
+     * Base class of a key event filter.
+     */
+    public abstract class KeyEventFilter : Object {
+        /**
+         * Convert a key event to another.
+         *
+         * @param key a key event
+         *
+         * @return a KeyEvent or `null` if the result cannot be
+         * fetched immediately
+         */
+        public abstract KeyEvent? filter_key_event (KeyEvent key);
+
+        /**
+         * Signal emitted when a new key event is generated in the filter.
+         *
+         * @param a key event
+         */
+        public signal void forwarded (KeyEvent key);
+    }
+
+    /**
+     * Simple implementation of a key event filter.
+     */
+    public class SimpleKeyEventFilter : KeyEventFilter {
+        /**
+         * {@inheritDoc}
+         */
+        public override KeyEvent? filter_key_event (KeyEvent key) {
+            // ignore key release event
+            if ((key.modifiers & ModifierType.RELEASE_MASK) != 0)
+                return null;
+            return key;
         }
     }
 }
