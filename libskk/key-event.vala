@@ -29,6 +29,13 @@ namespace Skk {
         MOD3_MASK = 1 << 5,
         MOD4_MASK = 1 << 6,
         MOD5_MASK = 1 << 7,
+
+        // dummy modifiers for NICOLA
+        NICOLA_MASK = 1 << 21,
+        LSHIFT_MASK = 1 << 22,
+        RSHIFT_MASK = 1 << 23,
+        USLEEP_MASK = 1 << 24,
+
         SUPER_MASK = 1 << 26,
         HYPER_MASK = 1 << 27,
         META_MASK = 1 << 28,
@@ -39,31 +46,26 @@ namespace Skk {
      * Object representing a key event.
      */
     public class KeyEvent {
-        public uint keyval;
-        public uint keycode;
-        public ModifierType modifiers;
-
+        public string name;
         public unichar code;
+        public ModifierType modifiers;
 
         /**
          * Create a key event.
          *
-         * @param keyval a keysym value
-         * @param keycode a key code value
+         * @param name a key name
+         * @param option a key option value
+         * @param code a character code
          * @param modifiers state of modifier keys
          *
          * @return a new KeyEvent
          */
-        public KeyEvent (uint keyval, uint keycode, ModifierType modifiers) {
-            this.keyval = keyval;
-            this.keycode = keycode;
+        public KeyEvent (string name,
+                         unichar code,
+                         ModifierType modifiers) {
+            this.name = name;
+            this.code = code;
             this.modifiers = modifiers;
-
-            // FIXME: should add more precise mapping functions
-            // between keyval and code
-            if (0x20 <= keyval && keyval < 0x7F) {
-                code = (unichar) keyval;
-            }
         }
 
         /**
@@ -74,30 +76,53 @@ namespace Skk {
          * @return a new KeyEvent
          */
         public KeyEvent.from_string (string key) {
-            int index = key.last_index_of ("-");
-            if (index > 0) {
-                string[] modifiers = key.substring (0, index).split ("-");
-                foreach (var mod in modifiers) {
-                    if (mod == "C") {
+            if (key.has_prefix ("(") && key.has_suffix (")")) {
+                var strv = key[1:-1].split (" ");
+                int index = 0;
+                for (; index < strv.length - 1; index++) {
+                    if (strv[index] == "control") {
                         this.modifiers |= ModifierType.CONTROL_MASK;
-                    } else if (mod == "A") {
-                        this.modifiers |= ModifierType.MOD1_MASK;
-                    } else if (mod == "M") {
+                    } else if (strv[index] == "meta") {
                         this.modifiers |= ModifierType.META_MASK;
-                    } else if (mod == "G") {
-                        this.modifiers |= ModifierType.MOD5_MASK;
-                    } else if (mod == "S") {
-                        this.modifiers |= ModifierType.SUPER_MASK;
-                    } else if (mod == "H") {
+                    } else if (strv[index] == "hyper") {
                         this.modifiers |= ModifierType.HYPER_MASK;
-                    } else if (mod == "R") {
+                    } else if (strv[index] == "super") {
+                        this.modifiers |= ModifierType.SUPER_MASK;
+                    } else if (strv[index] == "alt") {
+                        this.modifiers |= ModifierType.MOD1_MASK;
+                    } else if (strv[index] == "lshift") {
+                        this.modifiers |= ModifierType.LSHIFT_MASK;
+                    } else if (strv[index] == "rshift") {
+                        this.modifiers |= ModifierType.RSHIFT_MASK;
+                    } else if (strv[index] == "usleep") {
+                        this.modifiers |= ModifierType.USLEEP_MASK;
+                    } else if (strv[index] == "release") {
                         this.modifiers |= ModifierType.RELEASE_MASK;
                     }
                 }
-                this.code = key.substring (index + 1).get_char ();
-            } else {
-                this.modifiers = ModifierType.NONE;
-                this.code = key.get_char ();
+                this.name = strv[index];
+            }
+            else {
+                int index = key.last_index_of ("-");
+                if (index > 0) {
+                    // support only limited modifiers in this form
+                    string[] modifiers = key.substring (0, index).split ("-");
+                    foreach (var mod in modifiers) {
+                        if (mod == "C") {
+                            this.modifiers |= ModifierType.CONTROL_MASK;
+                        } else if (mod == "A") {
+                            this.modifiers |= ModifierType.MOD1_MASK;
+                        } else if (mod == "M") {
+                            this.modifiers |= ModifierType.META_MASK;
+                        } else if (mod == "G") {
+                            this.modifiers |= ModifierType.MOD5_MASK;
+                        }
+                    }
+                    this.code = key.substring (index + 1).get_char ();
+                } else {
+                    this.modifiers = ModifierType.NONE;
+                    this.code = key.get_char ();
+                }
             }
         }
     }

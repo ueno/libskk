@@ -156,14 +156,14 @@ namespace Skk {
             }
         }
 
-        KeyEventFilter _filter = new SimpleKeyEventFilter ();
-        public KeyEventFilter filter {
+        KeyEventFilter _key_event_filter = new SimpleKeyEventFilter ();
+        public KeyEventFilter key_event_filter {
             get {
-                return _filter;
+                return _key_event_filter;
             }
             set {
-                _filter = value;
-                _filter.forwarded.connect ((key) => {
+                _key_event_filter = value;
+                _key_event_filter.forwarded.connect ((key) => {
                         process_key_event_internal (key);
                     });
             }
@@ -313,7 +313,7 @@ namespace Skk {
          * @return `true` if the key event is handled, `false` otherwise
          */
         public bool process_key_event (KeyEvent key) {
-            KeyEvent? _key = filter.filter_key_event (key);
+            KeyEvent? _key = key_event_filter.filter_key_event (key);
             if (_key == null)
                 return true;
             return process_key_event_internal (_key);
