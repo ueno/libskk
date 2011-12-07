@@ -86,6 +86,12 @@ namespace Skk {
                         this.modifiers |= ModifierType.META_MASK;
                     } else if (mod == "G") {
                         this.modifiers |= ModifierType.MOD5_MASK;
+                    } else if (mod == "S") {
+                        this.modifiers |= ModifierType.SUPER_MASK;
+                    } else if (mod == "H") {
+                        this.modifiers |= ModifierType.HYPER_MASK;
+                    } else if (mod == "R") {
+                        this.modifiers |= ModifierType.RELEASE_MASK;
                     }
                 }
                 this.code = key.substring (index + 1).get_char ();
