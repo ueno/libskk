@@ -320,11 +320,12 @@ namespace Skk {
         }
 
         bool process_key_event_internal (KeyEvent key) {
+            KeyEvent _key = key.copy ();
             var state = state_stack.data;
             while (true) {
                 var handler_type = state.handler_type;
                 var handler = handlers.get (handler_type);
-                if (handler.process_key_event (state, key)) {
+                if (handler.process_key_event (state, ref _key)) {
                     // FIXME should do this only when preedit is really changed
                     update_preedit ();
                     return true;

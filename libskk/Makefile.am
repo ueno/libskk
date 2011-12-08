@@ -39,6 +39,7 @@ libskk_la_SOURCES = \
 	user-dict.vala \
 	skkserv.vala \
 	key-event.vala \
+	keymap.vala \
 	state.vala \
 	context.vala \
 	candidate.vala \

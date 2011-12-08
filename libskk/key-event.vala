@@ -46,7 +46,7 @@ namespace Skk {
      * Object representing a key event.
      */
     public class KeyEvent {
-        public string name;
+        public string? name;
         public unichar code;
         public ModifierType modifiers;
 
@@ -60,12 +60,16 @@ namespace Skk {
          *
          * @return a new KeyEvent
          */
-        public KeyEvent (string name,
+        public KeyEvent (string? name,
                          unichar code,
                          ModifierType modifiers) {
             this.name = name;
             this.code = code;
             this.modifiers = modifiers;
+        }
+
+        public KeyEvent copy () {
+            return new KeyEvent (name, code, modifiers);
         }
 
         /**
