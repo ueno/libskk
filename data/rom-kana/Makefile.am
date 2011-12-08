@@ -1,6 +1,6 @@
 romkanadir = $(pkgdatadir)/rom-kana
 dist_romkana_DATA = \
-	standard.json \
+	default.json \
 	azik.json \
 	kzik.json \
 	act.json \

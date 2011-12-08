@@ -29,7 +29,7 @@ Example:
 
 {
     "include": [
-        "standard"
+        "default"
     ],
     "define": {
         "rom-kana": {
@@ -43,6 +43,6 @@ Example:
     },
 }
 
-This rule includes "standard" rule first, defines new mappings for
+This rule includes "default" rule first, defines new mappings for
 "xka" and "b.", and removes a mapping "dha" from the current rule.
 Also sets "start-henkan" property to an array including "C-@".
