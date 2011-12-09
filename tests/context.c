@@ -181,9 +181,9 @@ delete (void)
 {
   SkkContext *context;
   SkkTransition transitions[] = {
-    { SKK_INPUT_MODE_HIRAGANA, "A \x7F", "▽", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "A \x7F \x7F", "", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "A i s a t s u SPC \x7F", "", "挨", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A DEL", "▽", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A DEL DEL", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A i s a t s u SPC DEL", "", "挨", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A C-h", "▽", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A C-h C-h", "", "", SKK_INPUT_MODE_HIRAGANA },
   };
@@ -286,7 +286,7 @@ kuten (void)
   SkkContext *context;
   SkkTransition transitions[] = {
     { SKK_INPUT_MODE_HIRAGANA, "\\", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "\\ a \x7F", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\ a DEL", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "\\ a 1 a 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
     // Don't start KUTEN input on latin input modes.
     { SKK_INPUT_MODE_LATIN, "\\", "", "\\", SKK_INPUT_MODE_LATIN },

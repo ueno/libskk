@@ -297,7 +297,7 @@ namespace Skk {
                 else if (key == "RET")
                     key = "\n";
                 else if (key == "DEL")
-                    key = "\x7F";
+                    key = "\b";
                 var ev = new KeyEvent.from_string (key);
                 if (process_key_event (ev) && !retval)
                     retval = true;

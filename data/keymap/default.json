@@ -5,7 +5,7 @@
             "\n": "enter",
             "C-m": "enter",
             "Q": "start-preedit",
-            "\u007f": "delete",
+            "\b": "delete",
             "C-h": "delete",
             "/": "abbrev",
             "\\": "kuten",
