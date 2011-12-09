@@ -1,6 +1,6 @@
 {
     "include": [
-        "tut-code"
+        "default"
     ],
     "define": {
         "rom-kana": {

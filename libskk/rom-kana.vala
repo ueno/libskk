@@ -231,7 +231,7 @@ namespace Skk {
             set {
                 if (_rule != value) {
                     try {
-                        var r = new Rule ("rom-kana", value);
+                        var r = new Rule (value, "rom-kana/default");
                         if (r.has_map ("rom-kana")) {
                             var node = parse_rule (r.get ("rom-kana"));
                             current_node = root_node = node;
@@ -249,7 +249,7 @@ namespace Skk {
 
         public RomKanaConverter () {
             try {
-                var r = new Rule ("rom-kana", _rule);
+                var r = new Rule (_rule, "rom-kana/default");
                 if (r.has_map ("rom-kana")) {
                     var node = parse_rule (r.get ("rom-kana"));
                     current_node = root_node = node;

@@ -119,15 +119,15 @@ namespace Skk {
             this.auto_start_henkan_keywords = AUTO_START_HENKAN_KEYWORDS;
             try {
                 this.keymaps.set (InputMode.HIRAGANA,
-                                  new Keymap ("hiragana"));
+                                  new Keymap ("default", "hiragana"));
                 this.keymaps.set (InputMode.KATAKANA,
-                                  new Keymap ("katakana"));
+                                  new Keymap ("default", "katakana"));
                 this.keymaps.set (InputMode.HANKAKU_KATAKANA,
-                                  new Keymap ("hankaku-katakana"));
+                                  new Keymap ("default", "hankaku-katakana"));
                 this.keymaps.set (InputMode.LATIN,
-                                  new Keymap ("latin"));
+                                  new Keymap ("default", "latin"));
                 this.keymaps.set (InputMode.WIDE_LATIN,
-                                  new Keymap ("wide-latin"));
+                                  new Keymap ("default", "wide-latin"));
             } catch (RuleParseError e) {
                 warning ("can't parse rule: %s", e.message);
             } catch (KeymapRuleParseError e) {

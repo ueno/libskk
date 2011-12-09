@@ -22,6 +22,30 @@ will be included before evaluating the rule to be defined with
 "define".  The value associated with "define" is an object which binds
 some variables to values.
 
+** Path name resolution
+
+Each element in "include" may be either a relative or absolute path.
+
+A relative path does not include "/" but  absolute does.
+
+If path is relative, the rule is located under the same directory of
+the current rule file.  Otherwise, libskk looks for the file outside
+of the diretory where the current rule file is located.
+
+Example:
+
+If the current rule file is .../foo/rom-kana/foo.json and it contains:
+
+  "include": [ "default" ]
+
+it looks for .../foo/rom-kana/default.json.
+
+If the current rule file is .../foo/rom-kana/bar.json and it contains:
+
+  "include": [ "default/default" ]
+
+it looks for .../default/rom-kana/default.json.
+
 ** Format of keymap rule files
 
 The map name "keymap" is used to associate a key event to a command name.

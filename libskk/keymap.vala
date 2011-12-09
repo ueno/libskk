@@ -25,9 +25,9 @@ namespace Skk {
     class Keymap : Object {
         Map<string,string> entries = new HashMap<string,string> ();
         
-        public Keymap (string name) throws KeymapRuleParseError, RuleParseError
+        public Keymap (string type, string name) throws KeymapRuleParseError, RuleParseError
         {
-            var rule = new Rule ("keymap", name);
+            var rule = new Rule (type, @"keymap/$name");
             if (rule.has_map ("keymap")) {
                 var map = rule.get ("keymap");
                 foreach (var key in map.keys) {

@@ -26,23 +26,23 @@ namespace Skk {
         Map<string,Map<string,Json.Node>> maps =
             new HashMap<string,Map<string,Json.Node>> ();
 
-        static string[] build_path (string type) {
+        static string[] build_path () {
             ArrayList<string> dirs = new ArrayList<string> ();
             string? path = Environment.get_variable ("LIBSKK_DATA_PATH");
             if (path != null) {
                 string[] elements = path.split (":");
                 foreach (var element in elements) {
-                    dirs.add (Path.build_filename (element, type));
+                    dirs.add (Path.build_filename (element, "rules"));
                 }
             }
-            dirs.add (Path.build_filename (Config.PKGDATADIR, type));
+            dirs.add (Path.build_filename (Config.PKGDATADIR, "rules"));
             return dirs.to_array ();
         }
 
-        static string? locate (string[] path, string name) {
+        static string? locate (string[] path, string type, string name) {
             string? filename = null;
             foreach (var dir in path) {
-                var _filename = Path.build_filename (dir, name + ".json");
+                var _filename = Path.build_filename (dir, type, name + ".json");
                 if (FileUtils.test (_filename, FileTest.EXISTS)) {
                     filename = _filename;
                     break;
@@ -63,13 +63,22 @@ namespace Skk {
             }
         }
 
+        static string get_dirname (string name) {
+            var index = name.last_index_of ("/");
+            if (index < 0) {
+                return name;
+            }
+            return name[0:index];
+        }
+
         void load (string[] path,
+                   string type,
                    string name,
                    Set<string> included) throws RuleParseError
         {
-            string? filename = locate (path, name);
+            string? filename = locate (path, type, name);
             if (filename == null) {
-                warning ("can't find rom-kana rule %s", name);
+                warning ("can't find rule %s under %s", name, type);
                 return;
             }
 
@@ -95,6 +104,7 @@ namespace Skk {
                     throw new RuleParseError.FAILED (
                         "\"include\" element must be an array");
                 }
+                var dirname = get_dirname (name);
                 var include = member.get_array ();
                 var elements = include.get_elements ();
                 foreach (var element in elements) {
@@ -103,7 +113,15 @@ namespace Skk {
                         throw new RuleParseError.FAILED (
                             "found circular include of %s", parent);
                     }
-                    load (path, parent, included);
+                    var index = parent.index_of ("/");
+                    if (index < 0) {
+                        load (path, type, dirname + "/" + parent, included);
+                    } else {
+                        load (path,
+                              parent[0:index],
+                              dirname + "/" + parent[index + 1:parent.length],
+                              included);
+                    }
                     included.add (parent);
                 }
             }
@@ -132,9 +150,9 @@ namespace Skk {
         }
 
         public Rule (string type, string name) throws RuleParseError {
-            string[] path = build_path (type);
+            string[] path = build_path ();
             Set<string> included = new HashSet<string> ();
-            load (path, name, included);
+            load (path, type, name, included);
         }
 
         public bool has_map (string name) {

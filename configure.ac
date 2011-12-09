@@ -74,11 +74,9 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile
 libskk/Makefile
 libskk/libskk.pc
+rules/Makefile
 tools/Makefile
 tests/Makefile
 docs/Makefile
-data/Makefile
-data/keymap/Makefile
-data/rom-kana/Makefile
 po/Makefile.in])
 AC_OUTPUT
