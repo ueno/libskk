@@ -87,47 +87,52 @@ namespace Skk {
                 int index = 0;
                 for (; index < strv.length - 1; index++) {
                     if (strv[index] == "control") {
-                        this.modifiers |= ModifierType.CONTROL_MASK;
+                        modifiers |= ModifierType.CONTROL_MASK;
                     } else if (strv[index] == "meta") {
-                        this.modifiers |= ModifierType.META_MASK;
+                        modifiers |= ModifierType.META_MASK;
                     } else if (strv[index] == "hyper") {
-                        this.modifiers |= ModifierType.HYPER_MASK;
+                        modifiers |= ModifierType.HYPER_MASK;
                     } else if (strv[index] == "super") {
-                        this.modifiers |= ModifierType.SUPER_MASK;
+                        modifiers |= ModifierType.SUPER_MASK;
                     } else if (strv[index] == "alt") {
-                        this.modifiers |= ModifierType.MOD1_MASK;
+                        modifiers |= ModifierType.MOD1_MASK;
+                    } else if (strv[index] == "nicola") {
+                        modifiers |= ModifierType.NICOLA_MASK;
                     } else if (strv[index] == "lshift") {
-                        this.modifiers |= ModifierType.LSHIFT_MASK;
+                        modifiers |= ModifierType.LSHIFT_MASK;
                     } else if (strv[index] == "rshift") {
-                        this.modifiers |= ModifierType.RSHIFT_MASK;
+                        modifiers |= ModifierType.RSHIFT_MASK;
                     } else if (strv[index] == "usleep") {
-                        this.modifiers |= ModifierType.USLEEP_MASK;
+                        modifiers |= ModifierType.USLEEP_MASK;
                     } else if (strv[index] == "release") {
-                        this.modifiers |= ModifierType.RELEASE_MASK;
+                        modifiers |= ModifierType.RELEASE_MASK;
                     }
                 }
-                this.name = strv[index];
+                name = strv[index];
+                code = name.char_count () == 1 ? name.get_char () : '\0';
             }
             else {
                 int index = key.last_index_of ("-");
                 if (index > 0) {
                     // support only limited modifiers in this form
-                    string[] modifiers = key.substring (0, index).split ("-");
-                    foreach (var mod in modifiers) {
+                    string[] mods = key.substring (0, index).split ("-");
+                    foreach (var mod in mods) {
                         if (mod == "C") {
-                            this.modifiers |= ModifierType.CONTROL_MASK;
+                            modifiers |= ModifierType.CONTROL_MASK;
                         } else if (mod == "A") {
-                            this.modifiers |= ModifierType.MOD1_MASK;
+                            modifiers |= ModifierType.MOD1_MASK;
                         } else if (mod == "M") {
-                            this.modifiers |= ModifierType.META_MASK;
+                            modifiers |= ModifierType.META_MASK;
                         } else if (mod == "G") {
-                            this.modifiers |= ModifierType.MOD5_MASK;
+                            modifiers |= ModifierType.MOD5_MASK;
                         }
                     }
-                    this.code = key.substring (index + 1).get_char ();
+                    name = key.substring (index + 1);
+                    code = name.char_count () == 1 ? name.get_char () : '\0';
                 } else {
-                    this.modifiers = ModifierType.NONE;
-                    this.code = key.get_char ();
+                    modifiers = ModifierType.NONE;
+                    name = key;
+                    code = name.char_count () == 1 ? name.get_char () : '\0';
                 }
             }
         }
@@ -150,6 +155,9 @@ namespace Skk {
                 }
                 if ((modifiers & ModifierType.MOD1_MASK) != 0) {
                     elements.add ("alt");
+                }
+                if ((modifiers & ModifierType.NICOLA_MASK) != 0) {
+                    elements.add ("nicola");
                 }
                 if ((modifiers & ModifierType.LSHIFT_MASK) != 0) {
                     elements.add ("lshift");
