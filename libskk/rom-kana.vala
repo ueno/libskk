@@ -48,7 +48,7 @@ namespace Skk {
 
     class RomKanaNode {
         internal RomKanaEntry? entry;
-        internal RomKanaNode parent;
+        internal weak RomKanaNode parent;
         internal RomKanaNode children[128];
         internal char c;
         internal uint n_children = 0;
@@ -223,7 +223,7 @@ namespace Skk {
             return node;
         }
 
-        string _rule = "standard";
+        string _rule = "default";
         public string rule {
             get {
                 return _rule;
