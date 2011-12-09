@@ -172,6 +172,7 @@ namespace Skk {
                     elements.add ("release");
                 }
                 elements.add (_base);
+                elements.add (null); // make sure that strv ends with null
                 return "(" + string.joinv (" ", elements.to_array ()) + ")";
             } else {
                 return _base;
