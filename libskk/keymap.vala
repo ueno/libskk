@@ -15,91 +15,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+using Gee;
+
 namespace Skk {
-    static const KeymapEntry[] KEYMAP = {
-        { null, 'g', ModifierType.CONTROL_MASK, "abort" },
-        { null, '\n', ModifierType.NONE, "enter" },
-        { null, 'm', ModifierType.CONTROL_MASK, "enter" },
-        { null, 'Q', ModifierType.NONE, "start-preedit" },
-        { null, '\x7f', ModifierType.NONE, "delete" },
-        { null, 'h', ModifierType.CONTROL_MASK, "delete" },
-        // { null, 'A', ModifierType.NONE, "start-and-insert-preedit" },
-        { null, '/', ModifierType.NONE, "abbrev" },
-        { null, '\\', ModifierType.NONE, "kuten" },
-        { null, ' ', ModifierType.NONE, "next-candidate" },
-        { null, '\t', ModifierType.NONE, "complete" },
-        { null, 'i', ModifierType.CONTROL_MASK, "complete" },
-        { null, '>', ModifierType.NONE, "special-midasi" },
-        { null, 'x', ModifierType.NONE, "previous-candidate" },
-        { null, 'X', ModifierType.NONE, "purge-candidate" }
-    };
-
-    static const KeymapEntry[] HIRAGANA_KEYMAP = {
-        { null, 'q', ModifierType.NONE, "set-input-mode-katakana" },
-        { null, 'L', ModifierType.NONE, "set-input-mode-wide-latin" },
-        { null, 'l', ModifierType.NONE, "set-input-mode-latin" },
-        { null, 'q', ModifierType.CONTROL_MASK,
-          "set-input-mode-hankaku-katakana" }
-    };
-
-    static const KeymapEntry[] KATAKANA_KEYMAP = {
-        { null, 'q', ModifierType.NONE, "set-input-mode-hiragana" },
-        { null, 'L', ModifierType.NONE, "set-input-mode-wide-latin" },
-        { null, 'l', ModifierType.NONE, "set-input-mode-latin" },
-        { null, 'q', ModifierType.CONTROL_MASK,
-          "set-input-mode-hankaku-katakana" }
-    };
-
-    static const KeymapEntry[] HANKAKU_KATAKANA_KEYMAP = {
-        { null, 'q', ModifierType.NONE, "set-input-mode-hiragana" },
-        { null, 'L', ModifierType.NONE, "set-input-mode-wide-latin" },
-        { null, 'l', ModifierType.NONE, "set-input-mode-latin" },
-        { null, 'q', ModifierType.CONTROL_MASK, "set-input-mode-hiragana" }
-    };
-
-    static const KeymapEntry[] WIDE_LATIN_KEYMAP = {
-        { null, 'j', ModifierType.CONTROL_MASK, "set-input-mode-hiragana" }
-    };
-
-    static const KeymapEntry[] LATIN_KEYMAP = {
-        { null, 'j', ModifierType.CONTROL_MASK, "set-input-mode-hiragana" }
-    };
-
-    struct KeymapEntry {
-        string name;
-        unichar code;
-        ModifierType modifiers;
-
-        string command;
-
-        public KeyEvent to_key_event () {
-            return new KeyEvent (name, code, modifiers);
-        }
-    }
-
     class Keymap : Object {
-        KeymapEntry[] entries;
-
-        public Keymap (KeymapEntry[] entries) {
-            this.entries = entries;
+        Map<string,string> entries = new HashMap<string,string> ();
+        
+        public Keymap (string name) {
+            var rule = new Rule ("keymap", name);
+            if (rule.has_map ("keymap")) {
+                var map = rule.get ("keymap");
+                foreach (var key in map.keys) {
+                    var value = map.get (key);
+                    var _key = new KeyEvent.from_string (key);
+                    entries.set (_key.to_string (), value.get_string ());
+                }
+            }
         }
 
         public string? lookup_key (KeyEvent key) {
-            foreach (var entry in entries) {
-                if ((entry.name == null || entry.name == key.name) &&
-                    (entry.code == '\0' || entry.code == key.code) &&
-                    entry.modifiers == key.modifiers) {
-                    return entry.command;
-                }
-            }
-            return null;
+            return entries.get (key.to_string ());
         }
 
         public KeyEvent? where_is (string command) {
-            foreach (var entry in entries) {
-                if (entry.command == command) {
-                    return entry.to_key_event ();
-                }
+            var iter = entries.map_iterator ();
+            if (iter.first ()) {
+                do {
+                    if (iter.get_value () == command) {
+                        return new KeyEvent.from_string (iter.get_key ());
+                    }
+                } while (iter.next ());
             }
             return null;
         }

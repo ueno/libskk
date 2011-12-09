@@ -1,1 +1,2 @@
-SUBDIRS = rom-kana
+SUBDIRS = keymap rom-kana
+EXTRA_DIST = README.rules

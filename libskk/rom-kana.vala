@@ -184,39 +184,12 @@ namespace Skk {
             }
         }
 
-        string? locate_rule_file (string name) {
-            ArrayList<string> dirs = new ArrayList<string> ();
-            string? path = Environment.get_variable ("LIBSKK_DATA_PATH");
-            if (path != null) {
-                string[] elements = path.split (":");
-                foreach (var element in elements) {
-                    dirs.add (Path.build_filename (element, "rom-kana"));
-                }
-            }
-            dirs.add (Path.build_filename (Config.PKGDATADIR, "rom-kana"));
-
-            string? filename = null;
-            foreach (var dir in dirs) {
-                var _filename = Path.build_filename (dir, name + ".json");
-                if (FileUtils.test (_filename, FileTest.EXISTS)) {
-                    filename = _filename;
-                    break;
-                }
-            }
-            return filename;
-        }
-
-        void parse_rom_kana (RomKanaNode node,
-                             Json.Object rom_kana) throws RomKanaRuleParseError
+        RomKanaNode parse_rule (Map<string,Json.Node> map) throws RomKanaRuleParseError
         {
-            var keys = rom_kana.get_members ();
-            foreach (var key in keys) {
-                var value = rom_kana.get_member (key);
-                switch (value.get_node_type ()) {
-                case Json.NodeType.NULL:
-                    node.remove (key);
-                    break;
-                case Json.NodeType.ARRAY:
+            var node = new RomKanaNode (null);
+            foreach (var key in map.keys) {
+                var value = map.get (key);
+                if (value.get_node_type () == Json.NodeType.ARRAY) {
                     var components = value.get_array ();
                     var length = components.get_length ();
                     if (2 <= length && length <= 4) {
@@ -240,77 +213,14 @@ namespace Skk {
                     }
                     else {
                         throw new RomKanaRuleParseError.FAILED (
-                            "\"define\" must have two to four elements");
+                            "\"rom-kana\" must have two to four elements");
                     }
-                    break;
-                default:
+                } else {
                     throw new RomKanaRuleParseError.FAILED (
-                        "\"define\" member must be either an array or null");
+                        "\"rom-kana\" member must be either an array or null");
                 }
             }
-        }
-
-        void load_rule (RomKanaNode node,
-                        string name,
-                        Set<string> included) throws RomKanaRuleParseError
-        {
-            string? filename = locate_rule_file (name);
-            if (filename == null) {
-                warning ("can't find rom-kana rule %s", name);
-                return;
-            }
-
-            Json.Parser parser = new Json.Parser ();
-            try {
-                if (!parser.load_from_file (filename))
-                    throw new RomKanaRuleParseError.FAILED ("");
-            } catch (GLib.Error e) {
-                throw new RomKanaRuleParseError.FAILED (
-                    "%s".printf (e.message));
-            }
-            var root = parser.get_root ();
-            if (root.get_node_type () != Json.NodeType.OBJECT) {
-                throw new RomKanaRuleParseError.FAILED (
-                    "root element must be an object");
-            }
-            var object = root.get_object ();
-
-            Json.Node member;
-            if (object.has_member ("include")) {
-                member = object.get_member ("include");
-                if (member.get_node_type () != Json.NodeType.ARRAY) {
-                    throw new RomKanaRuleParseError.FAILED (
-                        "\"include\" element must be an array");
-                }
-                var include = member.get_array ();
-                var elements = include.get_elements ();
-                foreach (var element in elements) {
-                    var parent = element.get_string ();
-                    if (parent in included) {
-                        throw new RomKanaRuleParseError.FAILED (
-                            "found circular include of %s", parent);
-                    }
-                    load_rule (node, parent, included);
-                    included.add (parent);
-                }
-            }
-
-            if (object.has_member ("define")) {
-                member = object.get_member ("define");
-                if (member.get_node_type () != Json.NodeType.OBJECT) {
-                    throw new RomKanaRuleParseError.FAILED (
-                        "\"define\" element must be an array");
-                }
-                var define = member.get_object ();
-                if (define.has_member ("rom-kana")) {
-                    member = define.get_member ("rom-kana");
-                    if (member.get_node_type () != Json.NodeType.OBJECT) {
-                        throw new RomKanaRuleParseError.FAILED (
-                            "\"rom-kana\" element must be an array");
-                    }
-                    parse_rom_kana (node, member.get_object ());
-                }
-            }
+            return node;
         }
 
         string _rule = "standard";
@@ -321,11 +231,12 @@ namespace Skk {
             set {
                 if (_rule != value) {
                     try {
-                        Set<string> included = new HashSet<string> ();
-                        RomKanaNode node = new RomKanaNode (null);
-                        load_rule (node, value, included);
-                        current_node = root_node = node;
-                        _rule = value;
+                        var r = new Rule ("rom-kana", value);
+                        if (r.has_map ("rom-kana")) {
+                            var node = parse_rule (r.get ("rom-kana"));
+                            current_node = root_node = node;
+                            _rule = value;
+                        }
                     } catch (RomKanaRuleParseError e) {
                         warning ("can't load rule %s: %s", value, e.message);
                     }
@@ -335,10 +246,11 @@ namespace Skk {
 
         public RomKanaConverter () {
             try {
-                Set<string> included = new HashSet<string> ();
-                RomKanaNode node = new RomKanaNode (null);
-                load_rule (node, _rule, included);
-                current_node = root_node = node;
+                var r = new Rule ("rom-kana", _rule);
+                if (r.has_map ("rom-kana")) {
+                    var node = parse_rule (r.get ("rom-kana"));
+                    current_node = root_node = node;
+                }
             } catch (RomKanaRuleParseError e) {
                 warning ("can't load rule %s: %s", _rule, e.message);
             }

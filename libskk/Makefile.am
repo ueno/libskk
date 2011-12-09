@@ -40,6 +40,7 @@ libskk_la_SOURCES = \
 	skkserv.vala \
 	key-event.vala \
 	keymap.vala \
+	rule.vala \
 	state.vala \
 	context.vala \
 	candidate.vala \

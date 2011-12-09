@@ -1,0 +1,80 @@
+* Format of rule files
+
+Each file under keymaps/ and rom-kana/ directories is in the following
+format:
+
+{
+  "include": [
+    <parent>,
+    ...
+  ],
+  "define": {
+    <map>: {
+      <key>: <value>,
+      ...
+    },
+    ...
+  }
+}
+
+The value associated with "include" is an array of parent rules, which
+will be included before evaluating the rule to be defined with
+"define".  The value associated with "define" is an object which binds
+some variables to values.
+
+** Format of keymap rule files
+
+The map name "keymap" is used to associate a key event to a command name.
+
+Example:
+
+{
+  "include": [
+    "default"
+  ],
+  "define": {
+    "keymap": {
+      "Q": null,
+      "C-@": "start-preedit"
+    }
+  }
+}
+
+This rule includes "default" rule first, replace mapping of
+"start-preedit" from "Q" to "C-@" (control + "@").
+
+** Format of rom-kana rule files
+
+The map name "rom-kana" is used to define romaji-to-kana conversion
+rules.  The value is an object which maps a string to either an array
+or null.
+
+If the value is an array, a new mapping is defined.  In that case each
+array consists of 2 to 4 elements.  The first two elements are
+<carryover> and <hiragana>.  <carryover> is a string which will be
+added to preedit after the transition (for example, when "bb" is
+typed, "b" is <carryover> which will be added to preedit).  <hiragana>
+is an output in hiragana.  The rest of elements are <katakana> and
+<hankaku-katakana>, which are optional output strings in katakana and
+hankaku-katakana.
+
+If the value is null, existing mapping of the corresponding key is
+removed from the parent rule.
+
+Example:
+
+{
+  "include": [
+    "default"
+  ],
+  "define": {
+    "rom-kana": {
+      "xka": [ "", "か", "ヵ", "ｶ" ],
+      "b.": [ "", "ぶ" ],
+      "dha": null,
+    }
+  }
+}
+
+This rule includes "default" rule first, defines new mappings for
+"xka" and "b.", and removes a mapping "dha" from the current rule.

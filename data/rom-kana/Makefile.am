@@ -6,4 +6,3 @@ dist_romkana_DATA = \
 	act.json \
 	tut-code.json \
 	tut-code-touch16plus.json
-EXTRA_DIST = README.rom-kana

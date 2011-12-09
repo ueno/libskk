@@ -1,0 +1,20 @@
+{
+    "define": {
+        "keymap": {
+            "C-g": "abort",
+            "\n": "enter",
+            "C-m": "enter",
+            "Q": "start-preedit",
+            "\u007f": "delete",
+            "C-h": "delete",
+            "/": "abbrev",
+            "\\": "kuten",
+            " ": "next-candidate",
+            "\t": "complete",
+            "C-i": "complete",
+            ">": "special-midasi",
+            "x": "previous-candidate",
+            "X": "purge-candidate"
+        }
+    }
+}

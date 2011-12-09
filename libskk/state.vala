@@ -90,26 +90,19 @@ namespace Skk {
             }
         }
 
-        public Keymap global_keymap;
-        public Map<InputMode,Keymap> input_mode_keymaps =
+        public Map<InputMode,Keymap> keymaps =
             new HashMap<InputMode,Keymap> ();
 
         internal string? lookup_key (KeyEvent key) {
-            var input_mode_keymap = input_mode_keymaps.get (input_mode);
-            var command = input_mode_keymap.lookup_key (key);
-            if (command == null) {
-                command = global_keymap.lookup_key (key);
-            }
-            return command;
+            var keymap = keymaps.get (input_mode);
+            return_val_if_fail (keymap != null, null);
+            return keymap.lookup_key (key);
         }
 
         internal KeyEvent? where_is (string command) {
-            var input_mode_keymap = input_mode_keymaps.get (input_mode);
-            var key = input_mode_keymap.where_is (command);
-            if (key == null) {
-                key = global_keymap.where_is (command);
-            }
-            return key;
+            var keymap = keymaps.get (input_mode);
+            return_val_if_fail (keymap != null, null);
+            return keymap.where_is (command);
         }
 
         Regex numeric_regex;
@@ -124,17 +117,16 @@ namespace Skk {
             this.rom_kana_converter = new RomKanaConverter ();
             this.okuri_rom_kana_converter = new RomKanaConverter ();
             this.auto_start_henkan_keywords = AUTO_START_HENKAN_KEYWORDS;
-            this.global_keymap = new Keymap (KEYMAP);
-            this.input_mode_keymaps.set (InputMode.HIRAGANA,
-                                         new Keymap (HIRAGANA_KEYMAP));
-            this.input_mode_keymaps.set (InputMode.KATAKANA,
-                                         new Keymap (KATAKANA_KEYMAP));
-            this.input_mode_keymaps.set (InputMode.HANKAKU_KATAKANA,
-                                         new Keymap (HANKAKU_KATAKANA_KEYMAP));
-            this.input_mode_keymaps.set (InputMode.LATIN,
-                                         new Keymap (LATIN_KEYMAP));
-            this.input_mode_keymaps.set (InputMode.WIDE_LATIN,
-                                         new Keymap (WIDE_LATIN_KEYMAP));
+            this.keymaps.set (InputMode.HIRAGANA,
+                              new Keymap ("hiragana"));
+            this.keymaps.set (InputMode.KATAKANA,
+                              new Keymap ("katakana"));
+            this.keymaps.set (InputMode.HANKAKU_KATAKANA,
+                              new Keymap ("hankaku-katakana"));
+            this.keymaps.set (InputMode.LATIN,
+                              new Keymap ("latin"));
+            this.keymaps.set (InputMode.WIDE_LATIN,
+                              new Keymap ("wide-latin"));
 
             try {
                 numeric_regex = new Regex ("[0-9]+");

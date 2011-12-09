@@ -78,6 +78,7 @@ tools/Makefile
 tests/Makefile
 docs/Makefile
 data/Makefile
+data/keymap/Makefile
 data/rom-kana/Makefile
 po/Makefile.in])
 AC_OUTPUT

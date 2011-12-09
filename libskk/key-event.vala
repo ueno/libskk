@@ -15,6 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+using Gee;
+
 namespace Skk {
     /**
      * A set of bit-flags to indicate the state of modifier keys.
@@ -127,6 +129,44 @@ namespace Skk {
                     this.modifiers = ModifierType.NONE;
                     this.code = key.get_char ();
                 }
+            }
+        }
+
+        public string to_string () {
+            string _base = name != null ? name : code.to_string ();
+            if (modifiers != 0) {
+                ArrayList<string> elements = new ArrayList<string> ();
+                if ((modifiers & ModifierType.CONTROL_MASK) != 0) {
+                    elements.add ("control");
+                }
+                if ((modifiers & ModifierType.META_MASK) != 0) {
+                    elements.add ("meta");
+                }
+                if ((modifiers & ModifierType.HYPER_MASK) != 0) {
+                    elements.add ("hyper");
+                }
+                if ((modifiers & ModifierType.SUPER_MASK) != 0) {
+                    elements.add ("super");
+                }
+                if ((modifiers & ModifierType.MOD1_MASK) != 0) {
+                    elements.add ("alt");
+                }
+                if ((modifiers & ModifierType.LSHIFT_MASK) != 0) {
+                    elements.add ("lshift");
+                }
+                if ((modifiers & ModifierType.RSHIFT_MASK) != 0) {
+                    elements.add ("rshift");
+                }
+                if ((modifiers & ModifierType.USLEEP_MASK) != 0) {
+                    elements.add ("usleep");
+                }
+                if ((modifiers & ModifierType.RELEASE_MASK) != 0) {
+                    elements.add ("release");
+                }
+                elements.add (_base);
+                return "(" + string.joinv (" ", elements.to_array ()) + ")";
+            } else {
+                return _base;
             }
         }
     }
