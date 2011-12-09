@@ -237,8 +237,11 @@ namespace Skk {
                             current_node = root_node = node;
                             _rule = value;
                         }
+                    } catch (RuleParseError e) {
+                        warning ("can't parse rule %s: %s", value, e.message);
                     } catch (RomKanaRuleParseError e) {
-                        warning ("can't load rule %s: %s", value, e.message);
+                        warning ("can't parse rom-kana rule %s: %s",
+                                 value, e.message);
                     }
                 }
             }
@@ -251,8 +254,10 @@ namespace Skk {
                     var node = parse_rule (r.get ("rom-kana"));
                     current_node = root_node = node;
                 }
+            } catch (RuleParseError e) {
+                warning ("can't parse rule %s: %s", _rule, e.message);
             } catch (RomKanaRuleParseError e) {
-                warning ("can't load rule %s: %s", _rule, e.message);
+                warning ("can't parse rom-kana rule %s: %s", _rule, e.message);
             }
         }
 

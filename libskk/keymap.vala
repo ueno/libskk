@@ -18,10 +18,15 @@
 using Gee;
 
 namespace Skk {
+    errordomain KeymapRuleParseError {
+        FAILED
+    }
+
     class Keymap : Object {
         Map<string,string> entries = new HashMap<string,string> ();
         
-        public Keymap (string name) {
+        public Keymap (string name) throws KeymapRuleParseError, RuleParseError
+        {
             var rule = new Rule ("keymap", name);
             if (rule.has_map ("keymap")) {
                 var map = rule.get ("keymap");

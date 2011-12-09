@@ -131,7 +131,7 @@ namespace Skk {
             }
         }
 
-        public Rule (string type, string name) {
+        public Rule (string type, string name) throws RuleParseError {
             string[] path = build_path (type);
             Set<string> included = new HashSet<string> ();
             load (path, name, included);
@@ -141,7 +141,7 @@ namespace Skk {
             return maps.has_key (name);
         }
 
-        public Map<string,Json.Node> @get (string name) {
+        public new Map<string,Json.Node> @get (string name) {
             return maps.get (name);
         }
     }

@@ -117,16 +117,22 @@ namespace Skk {
             this.rom_kana_converter = new RomKanaConverter ();
             this.okuri_rom_kana_converter = new RomKanaConverter ();
             this.auto_start_henkan_keywords = AUTO_START_HENKAN_KEYWORDS;
-            this.keymaps.set (InputMode.HIRAGANA,
-                              new Keymap ("hiragana"));
-            this.keymaps.set (InputMode.KATAKANA,
-                              new Keymap ("katakana"));
-            this.keymaps.set (InputMode.HANKAKU_KATAKANA,
-                              new Keymap ("hankaku-katakana"));
-            this.keymaps.set (InputMode.LATIN,
-                              new Keymap ("latin"));
-            this.keymaps.set (InputMode.WIDE_LATIN,
-                              new Keymap ("wide-latin"));
+            try {
+                this.keymaps.set (InputMode.HIRAGANA,
+                                  new Keymap ("hiragana"));
+                this.keymaps.set (InputMode.KATAKANA,
+                                  new Keymap ("katakana"));
+                this.keymaps.set (InputMode.HANKAKU_KATAKANA,
+                                  new Keymap ("hankaku-katakana"));
+                this.keymaps.set (InputMode.LATIN,
+                                  new Keymap ("latin"));
+                this.keymaps.set (InputMode.WIDE_LATIN,
+                                  new Keymap ("wide-latin"));
+            } catch (RuleParseError e) {
+                warning ("can't parse rule: %s", e.message);
+            } catch (KeymapRuleParseError e) {
+                warning ("can't parse keymap rule: %s", e.message);
+            }
 
             try {
                 numeric_regex = new Regex ("[0-9]+");
