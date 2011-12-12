@@ -80,27 +80,30 @@ namespace Skk {
             }
         }
 
-        internal string rom_kana_rule {
+        internal TypingRule _typing_rule;
+        internal string typing_rule {
             get {
-                return rom_kana_converter.rule;
+                return _typing_rule.name;
             }
             set {
-                rom_kana_converter.rule = value;
-                okuri_rom_kana_converter.rule = value;
+                try {
+                    _typing_rule = new TypingRule (value);
+                    rom_kana_converter.rule = _typing_rule.rom_kana_rule;
+                    okuri_rom_kana_converter.rule = _typing_rule.rom_kana_rule;
+                } catch (RuleParseError e) {
+                    // 
+                }
             }
         }
 
-        public Map<InputMode,Keymap> keymaps =
-            new HashMap<InputMode,Keymap> ();
-
         internal string? lookup_key (KeyEvent key) {
-            var keymap = keymaps.get (input_mode);
+            var keymap = _typing_rule.keymap_rules[input_mode].keymap;
             return_val_if_fail (keymap != null, null);
             return keymap.lookup_key (key);
         }
 
         internal KeyEvent? where_is (string command) {
-            var keymap = keymaps.get (input_mode);
+            var keymap = _typing_rule.keymap_rules[input_mode].keymap;
             return_val_if_fail (keymap != null, null);
             return keymap.where_is (command);
         }
@@ -114,24 +117,15 @@ namespace Skk {
             this.dictionaries = dictionaries;
             this.candidates = candidates;
             this.candidates.selected.connect (candidate_selected);
-            this.rom_kana_converter = new RomKanaConverter ();
-            this.okuri_rom_kana_converter = new RomKanaConverter ();
-            this.auto_start_henkan_keywords = AUTO_START_HENKAN_KEYWORDS;
+
+            rom_kana_converter = new RomKanaConverter ();
+            okuri_rom_kana_converter = new RomKanaConverter ();
+            auto_start_henkan_keywords = AUTO_START_HENKAN_KEYWORDS;
+
             try {
-                this.keymaps.set (InputMode.HIRAGANA,
-                                  new Keymap ("default", "hiragana"));
-                this.keymaps.set (InputMode.KATAKANA,
-                                  new Keymap ("default", "katakana"));
-                this.keymaps.set (InputMode.HANKAKU_KATAKANA,
-                                  new Keymap ("default", "hankaku-katakana"));
-                this.keymaps.set (InputMode.LATIN,
-                                  new Keymap ("default", "latin"));
-                this.keymaps.set (InputMode.WIDE_LATIN,
-                                  new Keymap ("default", "wide-latin"));
+                _typing_rule = new TypingRule ("default");
             } catch (RuleParseError e) {
-                warning ("can't parse rule: %s", e.message);
-            } catch (KeymapRuleParseError e) {
-                warning ("can't parse keymap rule: %s", e.message);
+                assert_not_reached ();
             }
 
             try {

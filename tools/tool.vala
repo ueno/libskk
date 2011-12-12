@@ -22,7 +22,7 @@ namespace Skk {
         static string file_dict;
         static string user_dict;
         static string skkserv;
-        static string rom_kana;
+        static string typing_rule;
 
         const OptionEntry[] options = {
             {"file-dict", 'f', 0, OptionArg.STRING, ref file_dict,
@@ -31,8 +31,8 @@ namespace Skk {
              N_("Path to a user dictionary"), null },
             {"skkserv", 's', 0, OptionArg.STRING, ref skkserv,
              N_("Host and port running skkserv (HOST:PORT)"), null }, 
-            {"rom-kana", 'r', 0, OptionArg.STRING, ref rom_kana,
-             N_("Romaji-to-kana conversion table (default: standard)"), null },
+            {"rule", 'r', 0, OptionArg.STRING, ref typing_rule,
+             N_("Typing rule (default: \"default\")"), null },
             { null }
         };
 
@@ -88,8 +88,8 @@ namespace Skk {
 
             var context = new Skk.Context (dictionaries.to_array ());
 
-            if (rom_kana != null) {
-                context.rom_kana_rule = rom_kana;
+            if (typing_rule != null) {
+                context.typing_rule = typing_rule;
             }
 
             string? line;

@@ -18,24 +18,12 @@
 using Gee;
 
 namespace Skk {
-    errordomain KeymapRuleParseError {
-        FAILED
-    }
-
     class Keymap : Object {
         Map<string,string> entries = new HashMap<string,string> ();
-        
-        public Keymap (string type, string name) throws KeymapRuleParseError, RuleParseError
-        {
-            var rule = new Rule (type, @"keymap/$name");
-            if (rule.has_map ("keymap")) {
-                var map = rule.get ("keymap");
-                foreach (var key in map.keys) {
-                    var value = map.get (key);
-                    var _key = new KeyEvent.from_string (key);
-                    entries.set (_key.to_string (), value.get_string ());
-                }
-            }
+
+        public new void @set (string key, string command) {
+            entries.set (new KeyEvent.from_string (key).to_string (),
+                         command);
         }
 
         public string? lookup_key (KeyEvent key) {

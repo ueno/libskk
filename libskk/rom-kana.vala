@@ -19,10 +19,6 @@
 using Gee;
 
 namespace Skk {
-    errordomain RomKanaRuleParseError {
-        FAILED
-    }
-
     struct RomKanaEntry {
         string rom;
         string carryover;
@@ -155,7 +151,17 @@ namespace Skk {
      * Romaji-to-kana converter.
      */
     public class RomKanaConverter : Object {
-        RomKanaNode root_node;
+        RomKanaRule _rule;
+        internal RomKanaRule rule {
+            get {
+                return _rule;
+            }
+            set {
+                _rule = value;
+                current_node = _rule.root_node;
+            }
+        }
+
         RomKanaNode current_node;
 
         public KanaMode kana_mode { get; set; default = KanaMode.HIRAGANA; }
@@ -184,84 +190,16 @@ namespace Skk {
             }
         }
 
-        RomKanaNode parse_rule (Map<string,Json.Node> map) throws RomKanaRuleParseError
-        {
-            var node = new RomKanaNode (null);
-            foreach (var key in map.keys) {
-                var value = map.get (key);
-                if (value.get_node_type () == Json.NodeType.ARRAY) {
-                    var components = value.get_array ();
-                    var length = components.get_length ();
-                    if (2 <= length && length <= 4) {
-                        var carryover = components.get_string_element (0);
-                        var hiragana = components.get_string_element (1);
-                        var katakana = length >= 3 ?
-                            components.get_string_element (2) :
-                            Util.get_katakana (hiragana);
-                        var hankaku_katakana = length == 4 ?
-                            components.get_string_element (3) :
-                            Util.get_hankaku_katakana (katakana);
-
-                        RomKanaEntry entry = {
-                            key,
-                            carryover,
-                            hiragana,
-                            katakana,
-                            hankaku_katakana
-                        };
-                        node.insert (key, entry);
-                    }
-                    else {
-                        throw new RomKanaRuleParseError.FAILED (
-                            "\"rom-kana\" must have two to four elements");
-                    }
-                } else {
-                    throw new RomKanaRuleParseError.FAILED (
-                        "\"rom-kana\" member must be either an array or null");
-                }
-            }
-            return node;
-        }
-
-        string _rule = "default";
-        public string rule {
-            get {
-                return _rule;
-            }
-            set {
-                if (_rule != value) {
-                    try {
-                        var r = new Rule (value, "rom-kana/default");
-                        if (r.has_map ("rom-kana")) {
-                            var node = parse_rule (r.get ("rom-kana"));
-                            current_node = root_node = node;
-                            _rule = value;
-                        }
-                    } catch (RuleParseError e) {
-                        warning ("can't parse rule %s: %s", value, e.message);
-                    } catch (RomKanaRuleParseError e) {
-                        warning ("can't parse rom-kana rule %s: %s",
-                                 value, e.message);
-                    }
-                }
-            }
-        }
+        static const string[] NN = { "ん", "ン", "ﾝ" };
 
         public RomKanaConverter () {
             try {
-                var r = new Rule (_rule, "rom-kana/default");
-                if (r.has_map ("rom-kana")) {
-                    var node = parse_rule (r.get ("rom-kana"));
-                    current_node = root_node = node;
-                }
+                _rule = new RomKanaRule ("default");
+                current_node = _rule.root_node;
             } catch (RuleParseError e) {
-                warning ("can't parse rule %s: %s", _rule, e.message);
-            } catch (RomKanaRuleParseError e) {
-                warning ("can't parse rom-kana rule %s: %s", _rule, e.message);
+                assert_not_reached ();
             }
         }
-
-        static const string[] NN = { "ん", "ン", "ﾝ" };
 
         /**
          * Output "nn" if preedit ends with "n".
@@ -306,19 +244,19 @@ namespace Skk {
                     _input.append_unichar (uc);
                     _output.append_unichar (period);
                     _preedit.erase ();
-                    current_node = root_node;
+                    current_node = rule.root_node;
                     return true;
-                } else if (root_node.children[uc] == null) {
+                } else if (rule.root_node.children[uc] == null) {
                     _input.append_unichar (uc);
                     _output.append_unichar (uc);
                     _preedit.erase ();
-                    current_node = root_node;
+                    current_node = rule.root_node;
                     return false;
                 } else {
                     // abondon current preedit and restart lookup from
                     // the root with uc
                     _preedit.erase ();
-                    current_node = root_node;
+                    current_node = rule.root_node;
                     return append (uc);
                 }
             } else if (child_node.entry == null) {
@@ -331,7 +269,7 @@ namespace Skk {
                 _input.append_unichar (uc);
                 _output.append (child_node.entry.get_kana (kana_mode));
                 _preedit.erase ();
-                current_node = root_node;
+                current_node = rule.root_node;
                 for (int i = 0; i < child_node.entry.carryover.length; i++) {
                     append (child_node.entry.carryover[i]);
                 }
@@ -369,7 +307,7 @@ namespace Skk {
             _input.erase ();
             _output.erase ();
             _preedit.erase ();
-            current_node = root_node;
+            current_node = rule.root_node;
         }
 
         /**
@@ -381,7 +319,7 @@ namespace Skk {
             if (_preedit.len > 0) {
                 current_node = current_node.parent;
                 if (current_node == null)
-                    current_node = root_node;
+                    current_node = rule.root_node;
                 _preedit.truncate (
                     _preedit.str.index_of_nth_char (
                         _preedit.str.char_count () - 1));

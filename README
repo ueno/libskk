@@ -14,3 +14,7 @@ $ echo "K a p a SPC K a SPC" | skk
 { "input": "K a p a SPC K a SPC", "output": "", "preedit": "[辞書登録] かぱ ▼蚊" }
 $ echo "r k" | skk -r tut-code
 { "input": "r k", "output": "あ", "preedit": "" }
+
+License:
+
+GPLv3+

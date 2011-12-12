@@ -57,10 +57,12 @@ namespace Skk {
          */
         WIDE_LATIN,
 
+        LAST,
+
         /**
          * The default.
          */
-        DEFAULT = HIRAGANA
+        DEFAULT = HIRAGANA,
     }
 
     /**
@@ -145,14 +147,14 @@ namespace Skk {
         }
 
         /**
-         * The name of romaji-to-kana conversion table.
+         * The name of typing rule.
          */
-        public string rom_kana_rule {
+        public string typing_rule {
             get {
-                return state_stack.data.rom_kana_rule;
+                return state_stack.data.typing_rule;
             }
             set {
-                state_stack.data.rom_kana_rule = value;
+                state_stack.data.typing_rule = value;
             }
         }
 

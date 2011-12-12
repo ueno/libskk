@@ -5,7 +5,7 @@ bin_PROGRAMS = skk
 
 skk_VALAFLAGS = \
 	--vapidir=$(top_srcdir)/libskk \
-	--pkg config --pkg gee-1.0 --pkg skk-1.0 \
+	--pkg config --pkg skk-1.0 \
 	$(VALAFLAGS)
 
 skk_CFLAGS = \

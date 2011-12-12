@@ -22,7 +22,7 @@ namespace Skk {
         FAILED
     }
 
-    class Rule : Object {
+    abstract class Rule : Object {
         Map<string,Map<string,Json.Node>> maps =
             new HashMap<string,Map<string,Json.Node>> ();
 
@@ -149,17 +149,17 @@ namespace Skk {
             }
         }
 
-        public Rule (string type, string name) throws RuleParseError {
+        internal Rule (string typing_rule, string name) throws RuleParseError {
             string[] path = build_path ();
             Set<string> included = new HashSet<string> ();
-            load (path, type, name, included);
+            load (path, typing_rule, name, included);
         }
 
-        public bool has_map (string name) {
+        internal bool has_map (string name) {
             return maps.has_key (name);
         }
 
-        public new Map<string,Json.Node> @get (string name) {
+        internal new Map<string,Json.Node> @get (string name) {
             return maps.get (name);
         }
     }

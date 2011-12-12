@@ -324,7 +324,7 @@ kzik (void)
   };
 
   context = create_context ();
-  skk_context_set_rom_kana_rule (context, "kzik");
+  skk_context_set_typing_rule (context, "kzik");
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
   g_object_unref (context);
 }

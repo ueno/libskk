@@ -20,6 +20,9 @@ using Gee;
 namespace Skk {
     public delegate int64 GetTime ();
 
+    /**
+     * A key event filter implementing NICOLA (thumb shift) input
+     */
     public class NicolaKeyEventFilter : KeyEventFilter {
         static int64 get_time () {
             var tv = TimeVal ();
@@ -213,6 +216,9 @@ namespace Skk {
             return false;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override KeyEvent? filter_key_event (KeyEvent key) {
             KeyEvent? output = null;
             int64 time = get_time_func ();

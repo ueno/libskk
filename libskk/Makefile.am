@@ -45,6 +45,7 @@ libskk_la_SOURCES = \
 	context.vala \
 	candidate.vala \
 	nicola.vala \
+	typing-rule.vala \
 	util.vala
 
 if HAVE_INTROSPECTION
