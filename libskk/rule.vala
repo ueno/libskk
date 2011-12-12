@@ -22,6 +22,15 @@ namespace Skk {
         FAILED
     }
 
+    /**
+     * Object describes rule.
+     */
+    public struct RuleMetadata {
+        string name;
+        string label;
+        string description;
+    }
+
     abstract class Rule : Object {
         Map<string,Map<string,Json.Node>> maps =
             new HashMap<string,Map<string,Json.Node>> ();
@@ -30,11 +39,11 @@ namespace Skk {
             ArrayList<string> dirs = new ArrayList<string> ();
             string? path = Environment.get_variable ("LIBSKK_DATA_PATH");
             if (path == null) {
-                dirs.add (Path.build_filename (Config.PKGDATADIR, "rules"));
                 dirs.add (Path.build_filename (
                               Environment.get_user_config_dir (),
                               Config.PACKAGE_NAME,
                               "rules"));
+                dirs.add (Path.build_filename (Config.PKGDATADIR, "rules"));
             } else {
                 string[] elements = path.split (":");
                 foreach (var element in elements) {
@@ -166,6 +175,70 @@ namespace Skk {
 
         internal new Map<string,Json.Node> @get (string name) {
             return maps.get (name);
+        }
+
+        static bool load_metadata (string filename, out RuleMetadata metadata) {
+            Json.Parser parser = new Json.Parser ();
+            try {
+                if (!parser.load_from_file (filename)) {
+                    return false;
+                }
+                var root = parser.get_root ();
+                if (root.get_node_type () != Json.NodeType.OBJECT) {
+                    return false;
+                }
+
+                var object = root.get_object ();
+                Json.Node member;
+
+                if (!object.has_member ("name")) {
+                    return false;
+                }
+
+                member = object.get_member ("name");
+                var name = member.get_string ();
+
+                if (!object.has_member ("description")) {
+                    return false;
+                }
+
+                member = object.get_member ("description");
+                var description = member.get_string ();
+
+                metadata = RuleMetadata () { label = name,
+                                             description = description };
+                return true;
+            } catch (GLib.Error e) {
+                return false;
+            }
+        }
+
+        internal static RuleMetadata[] list () {
+            SortedSet<string> names = new TreeSet<string> ();
+            RuleMetadata[] rules = {};
+            string[] path = build_path ();
+            foreach (var dir in path) {
+                Dir handle;
+                try {
+                    handle = Dir.open (dir);
+                } catch (GLib.Error e) {
+                    continue;
+                }
+                string? name;
+                while ((name = handle.read_name ()) != null) {
+                    var metadata_filename =
+                        Path.build_filename (dir, name, "metadata.json");
+                    RuleMetadata? metadata = null;
+                    if (FileUtils.test (metadata_filename, FileTest.EXISTS) &&
+                        load_metadata (metadata_filename, out metadata)) {
+                        if (!(metadata.name in names)) {
+                            metadata.name = name;
+                            rules += metadata;
+                        }
+                    }
+                }
+            }
+            return rules;
         }
     }
 }

@@ -29,6 +29,16 @@ namespace Skk {
     }
 
     /**
+     * Return the list of typing rules installed on the system.
+     *
+     * @return an array of RuleMetadata
+     */
+    public static RuleMetadata[] list_typing_rules () {
+        return Rule.list ();
+    }
+
+
+    /**
      * Type to specify input modes.
      */
     public enum InputMode {

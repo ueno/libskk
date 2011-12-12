@@ -23,6 +23,7 @@ namespace Skk {
         static string user_dict;
         static string skkserv;
         static string typing_rule;
+        static bool list_typing_rules;
 
         const OptionEntry[] options = {
             {"file-dict", 'f', 0, OptionArg.STRING, ref file_dict,
@@ -33,6 +34,8 @@ namespace Skk {
              N_("Host and port running skkserv (HOST:PORT)"), null }, 
             {"rule", 'r', 0, OptionArg.STRING, ref typing_rule,
              N_("Typing rule (default: \"default\")"), null },
+            {"list-rules", 'l', 0, OptionArg.NONE, ref list_typing_rules,
+             N_("List typing rules"), null },
             { null }
         };
 
@@ -52,6 +55,17 @@ namespace Skk {
             }
 
             Skk.init ();
+
+            if (list_typing_rules) {
+                var rules = Skk.list_typing_rules ();
+                foreach (var rule in rules) {
+                    stdout.printf ("%s - %s: %s\n",
+                                   rule.name,
+                                   rule.label,
+                                   rule.description);
+                }
+                return 0;
+            }
 
             ArrayList<Skk.Dict> dictionaries = new ArrayList<Skk.Dict> ();
             if (user_dict != null) {
