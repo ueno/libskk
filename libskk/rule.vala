@@ -29,13 +29,18 @@ namespace Skk {
         static string[] build_path () {
             ArrayList<string> dirs = new ArrayList<string> ();
             string? path = Environment.get_variable ("LIBSKK_DATA_PATH");
-            if (path != null) {
+            if (path == null) {
+                dirs.add (Path.build_filename (Config.PKGDATADIR, "rules"));
+                dirs.add (Path.build_filename (
+                              Environment.get_user_config_dir (),
+                              Config.PACKAGE_NAME,
+                              "rules"));
+            } else {
                 string[] elements = path.split (":");
                 foreach (var element in elements) {
                     dirs.add (Path.build_filename (element, "rules"));
                 }
             }
-            dirs.add (Path.build_filename (Config.PKGDATADIR, "rules"));
             return dirs.to_array ();
         }
 

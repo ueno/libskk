@@ -1,6 +1,6 @@
 INCLUDES = -I$(top_srcdir) $(LIBSKK_CFLAGS)
 
-TESTS_ENVIRONMENT = LIBSKK_DATA_PATH=$(top_srcdir)/data
+TESTS_ENVIRONMENT = LIBSKK_DATA_PATH=$(top_srcdir)
 TESTS = rom-kana file-dict user-dict context
 noinst_PROGRAMS = $(TESTS)
 noinst_HEADERS = common.h
