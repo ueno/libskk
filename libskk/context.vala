@@ -159,7 +159,7 @@ namespace Skk {
         /**
          * The name of typing rule.
          */
-        public string typing_rule {
+        public Rule typing_rule {
             get {
                 return state_stack.data.typing_rule;
             }

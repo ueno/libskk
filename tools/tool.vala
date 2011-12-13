@@ -103,7 +103,13 @@ namespace Skk {
             var context = new Skk.Context (dictionaries.to_array ());
 
             if (typing_rule != null) {
-                context.typing_rule = typing_rule;
+                try {
+                    context.typing_rule = new Rule (typing_rule);
+                } catch (RuleParseError e) {
+                    stderr.printf ("can't load rule \"%s\"\n",
+                                   typing_rule);
+                    return 1;
+                }
             }
 
             string? line;

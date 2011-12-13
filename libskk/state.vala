@@ -80,19 +80,15 @@ namespace Skk {
             }
         }
 
-        internal Rule _typing_rule;
-        internal string typing_rule {
+        Rule _typing_rule;
+        internal Rule typing_rule {
             get {
-                return _typing_rule.name;
+                return _typing_rule;
             }
             set {
-                try {
-                    _typing_rule = new Rule (value);
-                    rom_kana_converter.rule = _typing_rule.rom_kana;
-                    okuri_rom_kana_converter.rule = _typing_rule.rom_kana;
-                } catch (RuleParseError e) {
-                    // 
-                }
+                _typing_rule = value;
+                rom_kana_converter.rule = _typing_rule.rom_kana;
+                okuri_rom_kana_converter.rule = _typing_rule.rom_kana;
             }
         }
 

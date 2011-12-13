@@ -89,7 +89,7 @@ namespace Skk {
         }
     }
 
-    errordomain RuleParseError {
+    public errordomain RuleParseError {
         FAILED
     }
 
@@ -104,23 +104,43 @@ namespace Skk {
     }
 
     // A rule is a set of MapFiles and a RuleMetadata
-    class Rule : Object {
-        internal string name;
-
+    public class Rule : Object {
+        internal RuleMetadata metadata;
         internal KeymapMapFile[] keymaps = new KeymapMapFile[InputMode.LAST];
         internal RomKanaMapFile rom_kana;
 
-        internal Rule (string name) throws RuleParseError {
-            keymaps[InputMode.HIRAGANA] =
-                new KeymapMapFile (name, "hiragana");
-            keymaps[InputMode.KATAKANA] =
-                new KeymapMapFile (name, "katakana");
-            keymaps[InputMode.HANKAKU_KATAKANA] =
-                new KeymapMapFile (name, "hankaku-katakana");
-            keymaps[InputMode.LATIN] =
-                new KeymapMapFile (name, "latin");
-            keymaps[InputMode.WIDE_LATIN] =
-                new KeymapMapFile (name, "wide-latin");
+        static const Entry<InputMode,string>[] keymap_entries = {
+            { InputMode.HIRAGANA, "hiragana" },
+            { InputMode.KATAKANA, "katakana" },
+            { InputMode.HANKAKU_KATAKANA, "hankaku-katakana" },
+            { InputMode.LATIN, "latin" },
+            { InputMode.WIDE_LATIN, "wide-latin" }
+        };
+
+        static Map<string,Type> filter_types = new HashMap<string,Type> ();
+        static construct {
+            filter_types.set ("simple", typeof (SimpleKeyEventFilter));
+            filter_types.set ("nicola", typeof (NicolaKeyEventFilter));
+        }
+
+        internal KeyEventFilter get_filter () {
+            var type = filter_types.get (metadata.filter);
+            return (KeyEventFilter) new Object (type);
+        }
+
+        public Rule (string name) throws RuleParseError {
+            var metadata = get_metadata (name);
+            if (metadata == null) {
+                throw new RuleParseError.FAILED (
+                    "can't find metadata for \"%s\"",
+                    name);
+            }
+            this.metadata = metadata;
+
+            foreach (var entry in keymap_entries) {
+                keymaps[entry.key] = new KeymapMapFile (name, entry.value);
+            }
+
             rom_kana = new RomKanaMapFile (name);
         }
 
@@ -164,6 +184,8 @@ namespace Skk {
                 if (object.has_member ("filter")) {
                     member = object.get_member ("filter");
                     metadata.filter = member.get_string ();
+                } else {
+                    metadata.filter = "simple";
                 }
 
                 return true;

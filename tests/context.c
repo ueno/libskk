@@ -317,6 +317,8 @@ static void
 kzik (void)
 {
   SkkContext *context;
+  GError *error;
+  SkkRule *rule;
   SkkTransition transitions[] = {
     { SKK_INPUT_MODE_HIRAGANA, "b g d", "", "びぇん", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "s q", "", "さい", SKK_INPUT_MODE_HIRAGANA },
@@ -324,9 +326,13 @@ kzik (void)
   };
 
   context = create_context ();
-  skk_context_set_typing_rule (context, "kzik");
+  error = NULL;
+  rule = skk_rule_new ("kzik", &error);
+  g_assert_no_error (error);
+  skk_context_set_typing_rule (context, rule);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
   g_object_unref (context);
+  g_object_unref (rule);
 }
 
 static void
