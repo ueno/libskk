@@ -239,7 +239,8 @@ namespace Skk {
             if (child_node == null) {
                 // no such transition path in trie
                 output_nn_if_any ();
-                var index = ".,".index_of_char ((char)uc);
+                // XXX: index_of_char does not work with '\0'
+                var index = uc != '\0' ? ".,".index_of_char (uc) : -1;
                 if (index >= 0) {
                     index = PERIOD_RULE[period_style].index_of_nth_char (index);
                     unichar period = PERIOD_RULE[period_style].get_char (index);
