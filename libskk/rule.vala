@@ -242,6 +242,7 @@ namespace Skk {
             return null;
         }
 
+        // FIXME: cache the result
         static bool find_rule (string name,
                                out string? base_dir,
                                out RuleMetadata? metadata)
@@ -252,16 +253,16 @@ namespace Skk {
                 var metadata_filename = Path.build_filename (base_dir_filename,
                                                              "metadata.json");
                 if (!FileUtils.test (metadata_filename, FileTest.EXISTS)) {
-                    warning ("no metadata.json in %s - ignoring", 
-                             base_dir_filename);
+//                    warning ("no metadata.json in %s - ignoring", 
+//                             base_dir_filename);
                     continue;
                 }
 
                 try {
                     metadata = load_metadata (metadata_filename);
                 } catch (RuleParseError e) {
-                    warning ("can't read %s - ignoring", 
-                             metadata_filename);
+//                    warning ("can't read %s - ignoring", 
+//                             metadata_filename);
                     continue;
                 }
 

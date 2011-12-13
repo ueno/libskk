@@ -106,8 +106,9 @@ namespace Skk {
                 try {
                     context.typing_rule = new Rule (typing_rule);
                 } catch (RuleParseError e) {
-                    stderr.printf ("can't load rule \"%s\"\n",
-                                   typing_rule);
+                    stderr.printf ("can't load rule \"%s\": %s\n",
+                                   typing_rule,
+                                   e.message);
                     return 1;
                 }
             }

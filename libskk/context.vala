@@ -26,6 +26,7 @@ namespace Skk {
     public static void init () {
         // needed to use static methods defined in Util class
         typeof (Util).class_ref ();
+        typeof (Rule).class_ref ();
     }
 
     /**
@@ -291,14 +292,69 @@ namespace Skk {
          * Pass key events (separated by spaces) to the context.  This
          * function is rarely used in programs but in unit tests.
          *
-         * @param keys a string representing key events, seperated by " "
+         * @param keyseq a string representing key events, seperated by " "
          *
          * @return `true` if any of key events are handled, `false` otherwise
          */
-        public bool process_key_events (string keys) {
-            var _keys = keys.split (" ");
+        public bool process_key_events (string keyseq) {
+            ArrayList<string> keys = new ArrayList<string> ();
+            var builder = new StringBuilder ();
+            bool complex = false;
+            bool escaped = false;
+            int index = 0;
+            unichar uc;
+            while (keyseq.get_next_char (ref index, out uc)) {
+                if (escaped) {
+                    builder.append_unichar (uc);
+                    escaped = false;
+                    continue;
+                }
+                switch (uc) {
+                case '\\':
+                    escaped = true;
+                    break;
+                case '(':
+                    if (complex) {
+                        warning ("bare '(' is not allowed in complex keyseq");
+                        return false;
+                    }
+                    complex = true;
+                    builder.append_unichar (uc);
+                    break;
+                case ')':
+                    if (!complex) {
+                        warning ("bare ')' is not allowed in simple keyseq");
+                        return false;
+                    }
+                    complex = false;
+                    builder.append_unichar (uc);
+                    keys.add (builder.str);
+                    builder.erase ();
+                    break;
+                case ' ':
+                    if (complex) {
+                        builder.append_unichar (uc);
+                    }
+                    else if (builder.len > 0) {
+                        keys.add (builder.str);
+                        builder.erase ();
+                    }
+                    break;
+                default:
+                    builder.append_unichar (uc);
+                    break;
+                }
+            }
+            if (complex) {
+                warning ("premature end of key events");
+                return false;
+            }
+            if (builder.len > 0) {
+                keys.add (builder.str);
+            }
+
             bool retval = false;
-            foreach (var key in _keys) {
+            foreach (var key in keys) {
                 if (key == "SPC")
                     key = " ";
                 else if (key == "TAB")
@@ -380,7 +436,7 @@ namespace Skk {
         /**
          * Current preedit string.
          */
-        public string preedit { get; private set; }
+        public string preedit { get; private set; default = ""; }
 
         void update_preedit () {
             var state = state_stack.data;

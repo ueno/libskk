@@ -238,7 +238,7 @@ abbrev (void)
     { SKK_INPUT_MODE_HIRAGANA, "z /", "", "・", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ ]", "▽]", "", SKK_INPUT_MODE_HIRAGANA },
     // Ignore "" in abbrev mode (Issue#16).
-    { SKK_INPUT_MODE_HIRAGANA, "/ (", "▽(", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ \\(", "▽(", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ A", "▽A", "", SKK_INPUT_MODE_HIRAGANA },
     // Convert latin to wide latin with ctrl+q (Issue#17).
     { SKK_INPUT_MODE_HIRAGANA, "/ a a C-q", "", "ａａ", SKK_INPUT_MODE_HIRAGANA },
@@ -285,12 +285,12 @@ kuten (void)
 {
   SkkContext *context;
   SkkTransition transitions[] = {
-    { SKK_INPUT_MODE_HIRAGANA, "\\", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "\\ a DEL", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "\\ a 1 a 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ a DEL", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ a 1 a 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
     // Don't start KUTEN input on latin input modes.
-    { SKK_INPUT_MODE_LATIN, "\\", "", "\\", SKK_INPUT_MODE_LATIN },
-    { SKK_INPUT_MODE_WIDE_LATIN, "\\", "", "＼", SKK_INPUT_MODE_WIDE_LATIN },
+    { SKK_INPUT_MODE_LATIN, "\\\\", "", "\\", SKK_INPUT_MODE_LATIN },
+    { SKK_INPUT_MODE_WIDE_LATIN, "\\\\", "", "＼", SKK_INPUT_MODE_WIDE_LATIN },
   };
 
   context = create_context ();
@@ -355,6 +355,46 @@ numeric (void)
   g_object_unref (context);
 }
 
+static void
+nicola (void)
+{
+  SkkContext *context;
+  SkkRule *rule;
+  SkkTransition transitions[] = {
+    // single key - timeout
+    { SKK_INPUT_MODE_HIRAGANA, "a (usleep 200000)", "", "う", SKK_INPUT_MODE_HIRAGANA },
+    // single key - release
+    { SKK_INPUT_MODE_HIRAGANA, "a (release a)", "", "う", SKK_INPUT_MODE_HIRAGANA },
+    // single key - overlap
+    { SKK_INPUT_MODE_HIRAGANA, "a (usleep 50000) b", "", "う", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "a (usleep 50000) b (usleep 200000)", "", "うへ", SKK_INPUT_MODE_HIRAGANA },
+    // double key - shifted
+    { SKK_INPUT_MODE_HIRAGANA, "a (usleep 10000) (lshift) (usleep 200000)", "", "を", SKK_INPUT_MODE_HIRAGANA },
+    // double key - shifted reverse
+    { SKK_INPUT_MODE_HIRAGANA, "(lshift) (usleep 10000) a (usleep 200000)", "", "を", SKK_INPUT_MODE_HIRAGANA },
+    // double key - shifted expired
+    { SKK_INPUT_MODE_HIRAGANA, "a (usleep 60000) (lshift)", "", "う", SKK_INPUT_MODE_HIRAGANA },
+    // double key - skk-nicola
+    { SKK_INPUT_MODE_HIRAGANA, "f (usleep 30000) j", "▽", "", SKK_INPUT_MODE_HIRAGANA },
+    // double key - skk-nicola reverse
+    { SKK_INPUT_MODE_HIRAGANA, "j (usleep 30000) f", "▽", "", SKK_INPUT_MODE_HIRAGANA },
+    // double key - skk-nicola (shift only)
+    { SKK_INPUT_MODE_HIRAGANA, "(lshift) (usleep 30000) (rshift)", "", "", SKK_INPUT_MODE_LATIN },
+    // triple key t1 <= t2
+    { SKK_INPUT_MODE_HIRAGANA, "a (usleep 10000) (lshift) (usleep 20000) b", "", "を", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "a (usleep 20000) (lshift) (usleep 10000) b", "", "うぃ", SKK_INPUT_MODE_HIRAGANA },
+  };
+  GError *error;
+
+  context = create_context ();
+  error = NULL;
+  rule = skk_rule_new ("nicola", &error);
+  g_assert_no_error (error);
+  skk_context_set_typing_rule (context, rule);
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
 int
 main (int argc, char **argv) {
   g_type_init ();
@@ -374,5 +414,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/auto-conversion", auto_conversion);
   g_test_add_func ("/libskk/kzik", kzik);
   g_test_add_func ("/libskk/numeric", numeric);
+  g_test_add_func ("/libskk/nicola", nicola);
   return g_test_run ();
 }

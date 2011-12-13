@@ -48,11 +48,22 @@ tut_code_files =				\
 	tut-code/rom-kana/default.json		\
 	tut-code/rom-kana/touch16+.json
 
+nicola_files =					\
+	nicola/metadata.json			\
+	nicola/keymap/kana.json			\
+	nicola/keymap/latin.json		\
+	nicola/keymap/katakana.json		\
+	nicola/keymap/hankaku-katakana.json	\
+	nicola/keymap/wide-latin.json		\
+	nicola/keymap/hiragana.json		\
+	nicola/rom-kana/default.json
+
 nobase_dist_rules_DATA =			\
 	$(default_files)			\
 	$(act_files)				\
 	$(azik_files)				\
 	$(kzik_files)				\
 	$(tut_code_files)			\
+	$(nicola_files)				\
 	README.rules
 

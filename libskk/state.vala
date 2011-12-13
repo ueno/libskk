@@ -155,6 +155,7 @@ namespace Skk {
             _input_mode = InputMode.DEFAULT;
             rom_kana_converter.reset ();
             okuri_rom_kana_converter.reset ();
+            _typing_rule.get_filter ().reset ();
             completion_iterator = null;
             candidates.clear ();
             abbrev.erase ();
@@ -350,7 +351,6 @@ namespace Skk {
                 state.handler_type = typeof (StartStateHandler);
                 return true;
             }
-
             // check mode switch events
             if (!((state.input_mode == InputMode.HIRAGANA ||
                    state.input_mode == InputMode.KATAKANA ||
@@ -403,6 +403,14 @@ namespace Skk {
                         state.handler_type = typeof (KutenStateHandler);
                         return true;
                     }
+                }
+                var command = state.lookup_key (key);
+                if (command != null && command.has_prefix ("insert-kana")) {
+                    var index = command.index_of (" ");
+                    if (index < 0)
+                        return false;
+                    state.output.append (command[index + 1:command.length]);
+                    return true;
                 }
                 if (key.modifiers == 0) {
                     if (state.rom_kana_converter.append (key.code)) {

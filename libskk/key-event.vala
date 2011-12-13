@@ -33,7 +33,6 @@ namespace Skk {
         MOD5_MASK = 1 << 7,
 
         // dummy modifiers for NICOLA
-        NICOLA_MASK = 1 << 21,
         LSHIFT_MASK = 1 << 22,
         RSHIFT_MASK = 1 << 23,
         USLEEP_MASK = 1 << 24,
@@ -96,8 +95,6 @@ namespace Skk {
                         modifiers |= ModifierType.SUPER_MASK;
                     } else if (strv[index] == "alt") {
                         modifiers |= ModifierType.MOD1_MASK;
-                    } else if (strv[index] == "nicola") {
-                        modifiers |= ModifierType.NICOLA_MASK;
                     } else if (strv[index] == "lshift") {
                         modifiers |= ModifierType.LSHIFT_MASK;
                     } else if (strv[index] == "rshift") {
@@ -156,9 +153,6 @@ namespace Skk {
                 if ((modifiers & ModifierType.MOD1_MASK) != 0) {
                     elements.add ("alt");
                 }
-                if ((modifiers & ModifierType.NICOLA_MASK) != 0) {
-                    elements.add ("nicola");
-                }
                 if ((modifiers & ModifierType.LSHIFT_MASK) != 0) {
                     elements.add ("lshift");
                 }
@@ -177,6 +171,10 @@ namespace Skk {
             } else {
                 return _base;
             }
+        }
+
+        public bool base_equal (KeyEvent key) {
+            return code == key.code && name == key.name;
         }
     }
 
@@ -200,6 +198,9 @@ namespace Skk {
          * @param a key event
          */
         public signal void forwarded (KeyEvent key);
+
+        public virtual void reset () {
+        }
     }
 
     /**

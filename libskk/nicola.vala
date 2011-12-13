@@ -37,7 +37,7 @@ namespace Skk {
         static const string[] SPECIAL_DOUBLES = {
             "[fj]", "[gh]", "[dk]", "[LR]"
         };
-        public string[] special_doubles = SPECIAL_DOUBLES;
+        public string[] special_doubles;
 
         class TimedEntry<T> {
             public T data;
@@ -50,6 +50,12 @@ namespace Skk {
         }
 
         LinkedList<TimedEntry<KeyEvent>> pending = new LinkedList<TimedEntry<KeyEvent>> ();
+
+        // we can't use normal constructor here since KeyEventFilter
+        // is constructed with Object.new (type).
+        construct {
+            special_doubles = SPECIAL_DOUBLES;
+        }
 
         static bool is_char (KeyEvent key) {
             return key.code != 0;
@@ -71,8 +77,15 @@ namespace Skk {
             if (is_shift (a) && is_shift (b)) {
                 return "[LR]";
             } else if (is_char (a) && is_char (b)) {
-                return "[%s%s]".printf (a.code.to_string (),
-                                        b.code.to_string ());
+                unichar ac, bc;
+                if (a.code < b.code) {
+                    ac = a.code;
+                    bc = b.code;
+                } else {
+                    ac = b.code;
+                    bc = a.code;
+                }
+                return @"[$ac$bc]";
             } else {
                 return_val_if_reached (null);
             }
@@ -81,15 +94,16 @@ namespace Skk {
         KeyEvent? queue (KeyEvent key, int64 time, out int64 wait) {
             // press/release a same key
             if ((key.modifiers & ModifierType.RELEASE_MASK) != 0) {
-                if (pending.size > 0 && pending.get (0).data.code == key.code) {
+                if (pending.size > 0 && pending.get (0).data.base_equal (key)) {
+                    var entry = pending.get (0);
                     wait = get_next_wait (key, time);
                     pending.clear ();
-                    return key;
+                    return entry.data;
                 }
             }
             // ignore key repeat
             else {
-                if (pending.size > 0 && pending.get (0).data.code == key.code) {
+                if (pending.size > 0 && pending.get (0).data.base_equal (key)) {
                     pending.get (0).time = time;
                     wait = get_next_wait (key, time);
                     return key;
@@ -146,26 +160,29 @@ namespace Skk {
 
         KeyEvent? dispatch (int64 time) {
             if (pending.size == 3) {
-                var b = pending.poll ();
-                var s = pending.poll ();
-                var a = pending.poll ();
+                var b = pending.get (0);
+                var s = pending.get (1);
+                var a = pending.get (2);
                 var t1 = s.time - a.time;
                 var t2 = b.time - s.time;
                 if (t1 <= t2) {
+                    pending.clear ();
                     pending.offer_head (b);
                     var r = dispatch_single (time);
                     apply_shift (s.data, a.data);
                     forward (a.data);
                     return r;
                 } else {
+                    pending.clear ();
                     apply_shift (s.data, b.data);
                     forward (a.data);
                     return b.data;
                 }
             } else if (pending.size == 2) {
-                var b = pending.poll ();
-                var a = pending.poll ();
+                var b = pending.get (0);
+                var a = pending.get (1);
                 if (b.time - a.time > overlap) {
+                    pending.clear ();
                     pending.offer_head (b);
                     var r = dispatch_single (time);
                     forward (a.data);
@@ -176,16 +193,19 @@ namespace Skk {
                     // keys ([fj], [gh], etc.) and 2 shift keys ([LR]).
                     var name = get_special_double_name (b.data, a.data);
                     if (name in special_doubles) {
+                        pending.clear ();
                         return new KeyEvent (name,
                                              (unichar) 0,
                                              ModifierType.NONE);
                     } else {
+                        pending.clear ();
                         pending.offer_head (b);
                         var r = dispatch_single (time);
                         forward (a.data);
                         return r;
                     }
                 } else if (time - a.time > timeout) {
+                    pending.clear ();
                     if (is_shift (b.data)) {
                         apply_shift (b.data, a.data);
                         return a.data;
@@ -196,15 +216,12 @@ namespace Skk {
                 }
             } else if (pending.size == 1) {
                 return dispatch_single (time);
-            } else {
-                return_val_if_reached (null);
             }
-            
+
             return null;
         }
 
         void forward (KeyEvent key) {
-            key.modifiers |= ModifierType.NICOLA_MASK;
             forwarded (key);
         }
 
@@ -217,33 +234,36 @@ namespace Skk {
             return false;
         }
 
+        uint timeout_id = 0;
+
         /**
          * {@inheritDoc}
          */
         public override KeyEvent? filter_key_event (KeyEvent key) {
             KeyEvent? output = null;
-            int64 time = get_time_func ();
+            int64 time;
             if ((key.modifiers & ModifierType.USLEEP_MASK) != 0) {
-                var wait = (long) int.parse (key.name);
-                Thread.usleep (wait);
-                time += wait;
+                Thread.usleep ((long) int.parse (key.name));
+                time = get_time_func ();
             } else {
+                time = get_time_func ();
                 int64 wait;
                 output = queue (key, time, out wait);
                 if (wait > 0) {
-                    Timeout.add ((uint) wait, timeout_func);
+                    if (timeout_id > 0) {
+                        Source.remove (timeout_id);
+                    }
+                    timeout_id = Timeout.add ((uint) wait, timeout_func);
                 }
             }
             if (output == null) {
                 output = dispatch (time);
             }
-
-            // mark the output event is handled as NICOLA
-            if (output != null) {
-                output.modifiers |= ModifierType.NICOLA_MASK;
-            }
-
             return output;
+        }
+
+        public override void reset () {
+            pending.clear ();
         }
     }
 }
