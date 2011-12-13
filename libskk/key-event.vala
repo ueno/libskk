@@ -140,7 +140,7 @@ namespace Skk {
         public string to_string () {
             string _base = name != null ? name : code.to_string ();
             if (modifiers != 0) {
-                ArrayList<string> elements = new ArrayList<string> ();
+                ArrayList<string?> elements = new ArrayList<string?> ();
                 if ((modifiers & ModifierType.CONTROL_MASK) != 0) {
                     elements.add ("control");
                 }

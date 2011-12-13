@@ -80,16 +80,16 @@ namespace Skk {
             }
         }
 
-        internal TypingRule _typing_rule;
+        internal Rule _typing_rule;
         internal string typing_rule {
             get {
                 return _typing_rule.name;
             }
             set {
                 try {
-                    _typing_rule = new TypingRule (value);
-                    rom_kana_converter.rule = _typing_rule.rom_kana_rule;
-                    okuri_rom_kana_converter.rule = _typing_rule.rom_kana_rule;
+                    _typing_rule = new Rule (value);
+                    rom_kana_converter.rule = _typing_rule.rom_kana;
+                    okuri_rom_kana_converter.rule = _typing_rule.rom_kana;
                 } catch (RuleParseError e) {
                     // 
                 }
@@ -97,13 +97,13 @@ namespace Skk {
         }
 
         internal string? lookup_key (KeyEvent key) {
-            var keymap = _typing_rule.keymap_rules[input_mode].keymap;
+            var keymap = _typing_rule.keymaps[input_mode].keymap;
             return_val_if_fail (keymap != null, null);
             return keymap.lookup_key (key);
         }
 
         internal KeyEvent? where_is (string command) {
-            var keymap = _typing_rule.keymap_rules[input_mode].keymap;
+            var keymap = _typing_rule.keymaps[input_mode].keymap;
             return_val_if_fail (keymap != null, null);
             return keymap.where_is (command);
         }
@@ -123,7 +123,7 @@ namespace Skk {
             auto_start_henkan_keywords = AUTO_START_HENKAN_KEYWORDS;
 
             try {
-                _typing_rule = new TypingRule ("default");
+                _typing_rule = new Rule ("default");
             } catch (RuleParseError e) {
                 assert_not_reached ();
             }

@@ -18,6 +18,77 @@
 using Gee;
 
 namespace Skk {
+    class KeymapMapFile : MapFile {
+        internal Keymap keymap;
+
+        internal KeymapMapFile (string name, string mode) throws RuleParseError
+        {
+            base (name, "keymap", mode);
+            if (has_map ("keymap")) {
+                var map = get ("keymap");
+                keymap = new Keymap ();
+                foreach (var key in map.keys) {
+                    var value = map.get (key);
+                    keymap.set (key, value.get_string ());
+                }
+            } else {
+                throw new RuleParseError.FAILED ("no keymap entry");
+            }
+        }
+    }
+
+    class RomKanaMapFile : MapFile {
+        internal RomKanaNode root_node;
+
+        RomKanaNode parse_rule (Map<string,Json.Node> map) throws RuleParseError
+        {
+            var node = new RomKanaNode (null);
+            foreach (var key in map.keys) {
+                var value = map.get (key);
+                if (value.get_node_type () == Json.NodeType.ARRAY) {
+                    var components = value.get_array ();
+                    var length = components.get_length ();
+                    if (2 <= length && length <= 4) {
+                        var carryover = components.get_string_element (0);
+                        var hiragana = components.get_string_element (1);
+                        var katakana = length >= 3 ?
+                            components.get_string_element (2) :
+                            Util.get_katakana (hiragana);
+                        var hankaku_katakana = length == 4 ?
+                            components.get_string_element (3) :
+                            Util.get_hankaku_katakana (katakana);
+
+                        RomKanaEntry entry = {
+                            key,
+                            carryover,
+                            hiragana,
+                            katakana,
+                            hankaku_katakana
+                        };
+                        node.insert (key, entry);
+                    }
+                    else {
+                        throw new RuleParseError.FAILED (
+                            "\"rom-kana\" must have two to four elements");
+                    }
+                } else {
+                    throw new RuleParseError.FAILED (
+                        "\"rom-kana\" member must be either an array or null");
+                }
+            }
+            return node;
+        }
+
+        public RomKanaMapFile (string name) throws RuleParseError {
+            base (name, "rom-kana", "default");
+            if (has_map ("rom-kana")) {
+                root_node = parse_rule (get ("rom-kana"));
+            } else {
+                throw new RuleParseError.FAILED ("no rom-kana entry");
+            }
+        }
+    }
+
     errordomain RuleParseError {
         FAILED
     }
@@ -29,162 +100,42 @@ namespace Skk {
         string name;
         string label;
         string description;
+        string filter;
     }
 
-    abstract class Rule : Object {
-        Map<string,Map<string,Json.Node>> maps =
-            new HashMap<string,Map<string,Json.Node>> ();
+    // A rule is a set of MapFiles and a RuleMetadata
+    class Rule : Object {
+        internal string name;
 
-        static string[] build_path () {
-            ArrayList<string> dirs = new ArrayList<string> ();
-            string? path = Environment.get_variable ("LIBSKK_DATA_PATH");
-            if (path == null) {
-                dirs.add (Path.build_filename (
-                              Environment.get_user_config_dir (),
-                              Config.PACKAGE_NAME,
-                              "rules"));
-                dirs.add (Path.build_filename (Config.PKGDATADIR, "rules"));
-            } else {
-                string[] elements = path.split (":");
-                foreach (var element in elements) {
-                    dirs.add (Path.build_filename (element, "rules"));
-                }
-            }
-            return dirs.to_array ();
+        internal KeymapMapFile[] keymaps = new KeymapMapFile[InputMode.LAST];
+        internal RomKanaMapFile rom_kana;
+
+        internal Rule (string name) throws RuleParseError {
+            keymaps[InputMode.HIRAGANA] =
+                new KeymapMapFile (name, "hiragana");
+            keymaps[InputMode.KATAKANA] =
+                new KeymapMapFile (name, "katakana");
+            keymaps[InputMode.HANKAKU_KATAKANA] =
+                new KeymapMapFile (name, "hankaku-katakana");
+            keymaps[InputMode.LATIN] =
+                new KeymapMapFile (name, "latin");
+            keymaps[InputMode.WIDE_LATIN] =
+                new KeymapMapFile (name, "wide-latin");
+            rom_kana = new RomKanaMapFile (name);
         }
 
-        static string? locate (string[] path, string type, string name) {
-            string? filename = null;
-            foreach (var dir in path) {
-                var _filename = Path.build_filename (dir, type, name + ".json");
-                if (FileUtils.test (_filename, FileTest.EXISTS)) {
-                    filename = _filename;
-                    break;
-                }
-            }
-            return filename;
-        }
-
-        void load_map (Map<string,Json.Node> map, Json.Object object) {
-            var keys = object.get_members ();
-            foreach (var key in keys) {
-                var value = object.get_member (key);
-                if (value.get_node_type () == Json.NodeType.NULL) {
-                    map.unset (key);
-                } else {
-                    map.set (key, value);
-                }
-            }
-        }
-
-        static string get_dirname (string name) {
-            var index = name.last_index_of ("/");
-            if (index < 0) {
-                return name;
-            }
-            return name[0:index];
-        }
-
-        void load (string[] path,
-                   string type,
-                   string name,
-                   Set<string> included) throws RuleParseError
+        static bool load_metadata (string filename,
+                                   out RuleMetadata? metadata)
         {
-            string? filename = locate (path, type, name);
-            if (filename == null) {
-                warning ("can't find rule %s under %s", name, type);
-                return;
-            }
-
-            Json.Parser parser = new Json.Parser ();
-            try {
-                if (!parser.load_from_file (filename))
-                    throw new RuleParseError.FAILED ("");
-            } catch (GLib.Error e) {
-                throw new RuleParseError.FAILED (
-                    "%s".printf (e.message));
-            }
-            var root = parser.get_root ();
-            if (root.get_node_type () != Json.NodeType.OBJECT) {
-                throw new RuleParseError.FAILED (
-                    "root element must be an object");
-            }
-            var object = root.get_object ();
-
-            Json.Node member;
-            if (object.has_member ("include")) {
-                member = object.get_member ("include");
-                if (member.get_node_type () != Json.NodeType.ARRAY) {
-                    throw new RuleParseError.FAILED (
-                        "\"include\" element must be an array");
-                }
-                var dirname = get_dirname (name);
-                var include = member.get_array ();
-                var elements = include.get_elements ();
-                foreach (var element in elements) {
-                    var parent = element.get_string ();
-                    if (parent in included) {
-                        throw new RuleParseError.FAILED (
-                            "found circular include of %s", parent);
-                    }
-                    var index = parent.index_of ("/");
-                    if (index < 0) {
-                        load (path, type, dirname + "/" + parent, included);
-                    } else {
-                        load (path,
-                              parent[0:index],
-                              dirname + "/" + parent[index + 1:parent.length],
-                              included);
-                    }
-                    included.add (parent);
-                }
-            }
-
-            if (object.has_member ("define")) {
-                member = object.get_member ("define");
-                if (member.get_node_type () != Json.NodeType.OBJECT) {
-                    throw new RuleParseError.FAILED (
-                        "\"define\" element must be an object");
-                }
-                var define = member.get_object ();
-                var keys = define.get_members ();
-                foreach (var key in keys) {
-                    if (!maps.has_key (key)) {
-                        var map = new HashMap<string,Json.Node> ();
-                        maps.set (key, map);
-                    }
-                    member = define.get_member (key);
-                    if (member.get_node_type () != Json.NodeType.OBJECT) {
-                        throw new RuleParseError.FAILED (
-                            "map element must be an object");
-                    }
-                    load_map (maps.get (key), member.get_object ());
-                }
-            }
-        }
-
-        internal Rule (string typing_rule, string name) throws RuleParseError {
-            string[] path = build_path ();
-            Set<string> included = new HashSet<string> ();
-            load (path, typing_rule, name, included);
-        }
-
-        internal bool has_map (string name) {
-            return maps.has_key (name);
-        }
-
-        internal new Map<string,Json.Node> @get (string name) {
-            return maps.get (name);
-        }
-
-        static bool load_metadata (string filename, out RuleMetadata metadata) {
             Json.Parser parser = new Json.Parser ();
             try {
                 if (!parser.load_from_file (filename)) {
+                    metadata = null;
                     return false;
                 }
                 var root = parser.get_root ();
                 if (root.get_node_type () != Json.NodeType.OBJECT) {
+                    metadata = null;
                     return false;
                 }
 
@@ -192,6 +143,7 @@ namespace Skk {
                 Json.Node member;
 
                 if (!object.has_member ("name")) {
+                    metadata = null;
                     return false;
                 }
 
@@ -199,6 +151,7 @@ namespace Skk {
                 var name = member.get_string ();
 
                 if (!object.has_member ("description")) {
+                    metadata = null;
                     return false;
                 }
 
@@ -207,17 +160,69 @@ namespace Skk {
 
                 metadata = RuleMetadata () { label = name,
                                              description = description };
+
+                if (object.has_member ("filter")) {
+                    member = object.get_member ("filter");
+                    metadata.filter = member.get_string ();
+                }
+
                 return true;
             } catch (GLib.Error e) {
+                metadata = null;
                 return false;
             }
+        }
+
+        internal static string? get_base_dir (string name) {
+            string? base_dir = null;
+            RuleMetadata? metadata = null;
+            if (find_rule (name, out base_dir, out metadata)) {
+                return base_dir;
+            }
+            return null;
+        }
+
+        internal static RuleMetadata? get_metadata (string name) {
+            string? base_dir = null;
+            RuleMetadata? metadata = null;
+            if (find_rule (name, out base_dir, out metadata)) {
+                return metadata;
+            }
+            return null;
+        }
+
+        static bool find_rule (string name,
+                               out string? base_dir,
+                               out RuleMetadata? metadata)
+        {
+            var dirs = Util.build_data_path ("rules");
+            foreach (var dir in dirs) {
+                var base_dir_filename = Path.build_filename (dir, name);
+                var metadata_filename = Path.build_filename (base_dir_filename,
+                                                             "metadata.json");
+                if (!FileUtils.test (metadata_filename, FileTest.EXISTS)) {
+                    warning ("no metadata.json in %s - ignoring", 
+                             base_dir_filename);
+                }
+                else if (!load_metadata (metadata_filename, out metadata)) {
+                    warning ("can't read %s - ignoring", 
+                             metadata_filename);
+                }
+                else {
+                    base_dir = base_dir_filename;
+                    return true;
+                }
+            }
+            base_dir = null;
+            metadata = null;
+            return false;
         }
 
         internal static RuleMetadata[] list () {
             SortedSet<string> names = new TreeSet<string> ();
             RuleMetadata[] rules = {};
-            string[] path = build_path ();
-            foreach (var dir in path) {
+            var dirs = Util.build_data_path ("rules");
+            foreach (var dir in dirs) {
                 Dir handle;
                 try {
                     handle = Dir.open (dir);

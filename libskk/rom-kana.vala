@@ -151,8 +151,8 @@ namespace Skk {
      * Romaji-to-kana converter.
      */
     public class RomKanaConverter : Object {
-        RomKanaRule _rule;
-        internal RomKanaRule rule {
+        RomKanaMapFile _rule;
+        internal RomKanaMapFile rule {
             get {
                 return _rule;
             }
@@ -194,9 +194,11 @@ namespace Skk {
 
         public RomKanaConverter () {
             try {
-                _rule = new RomKanaRule ("default");
+                _rule = new RomKanaMapFile ("default");
                 current_node = _rule.root_node;
             } catch (RuleParseError e) {
+                warning ("can't find default rom-kana rule: %s",
+                         e.message);
                 assert_not_reached ();
             }
         }

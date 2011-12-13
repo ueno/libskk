@@ -294,6 +294,24 @@ namespace Skk {
                 _HankakuKatakanaSubstitutes.set (entry.key, entry.value);
             }
         }
+
+        internal static string[] build_data_path (string subdir) {
+            ArrayList<string> dirs = new ArrayList<string> ();
+            string? path = Environment.get_variable ("LIBSKK_DATA_PATH");
+            if (path == null) {
+                dirs.add (Path.build_filename (
+                              Environment.get_user_config_dir (),
+                              Config.PACKAGE_NAME,
+                              subdir));
+                dirs.add (Path.build_filename (Config.PKGDATADIR, subdir));
+            } else {
+                string[] elements = path.split (":");
+                foreach (var element in elements) {
+                    dirs.add (Path.build_filename (element, subdir));
+                }
+            }
+            return dirs.to_array ();
+        }
     }
 
     class UnicodeString : Object {

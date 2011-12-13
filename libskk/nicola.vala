@@ -105,6 +105,7 @@ namespace Skk {
                     pending.insert (0, new TimedEntry<KeyEvent> (key, time));
                 }
             }
+            wait = maxwait;
             return null;
         }
 

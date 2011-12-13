@@ -41,11 +41,11 @@ libskk_la_SOURCES = \
 	key-event.vala \
 	keymap.vala \
 	rule.vala \
+	map-file.vala \
 	state.vala \
 	context.vala \
 	candidate.vala \
 	nicola.vala \
-	typing-rule.vala \
 	util.vala
 
 if HAVE_INTROSPECTION
