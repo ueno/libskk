@@ -97,9 +97,24 @@ namespace Skk {
      * Object describes rule.
      */
     public struct RuleMetadata {
+        /**
+         * Name of the rule.
+         */
         string name;
+
+        /**
+         * Label string of the rule.
+         */
         string label;
+
+        /**
+         * Description of the rule.
+         */
         string description;
+
+        /**
+         * Name of key event filter.
+         */
         string filter;
     }
 
@@ -117,15 +132,80 @@ namespace Skk {
             { InputMode.WIDE_LATIN, "wide-latin" }
         };
 
-        static Map<string,Type> filter_types = new HashMap<string,Type> ();
+        static Map<string,Type> filter_types = 
+            new HashMap<string,Type> ();
+
+        static Map<string,KeyEventFilter> filter_instances =
+            new HashMap<string,KeyEventFilter> ();
+
         static construct {
             filter_types.set ("simple", typeof (SimpleKeyEventFilter));
             filter_types.set ("nicola", typeof (NicolaKeyEventFilter));
         }
 
+        static RuleMetadata load_metadata (string filename) throws RuleParseError
+        {
+            Json.Parser parser = new Json.Parser ();
+            try {
+                if (!parser.load_from_file (filename)) {
+                    throw new RuleParseError.FAILED ("can't load %s",
+                                                     filename);
+                }
+                var root = parser.get_root ();
+                if (root.get_node_type () != Json.NodeType.OBJECT) {
+                    throw new RuleParseError.FAILED (
+                        "metadata must be a JSON object");
+                }
+
+                var object = root.get_object ();
+                Json.Node member;
+
+                if (!object.has_member ("name")) {
+                    throw new RuleParseError.FAILED (
+                        "name is not defined in metadata");
+                }
+
+                member = object.get_member ("name");
+                var name = member.get_string ();
+
+                if (!object.has_member ("description")) {
+                    throw new RuleParseError.FAILED (
+                        "description is not defined in metadata");
+                }
+
+                member = object.get_member ("description");
+                var description = member.get_string ();
+
+                string? filter;
+                if (object.has_member ("filter")) {
+                    member = object.get_member ("filter");
+                    filter = member.get_string ();
+                    if (!filter_types.has_key (filter)) {
+                        throw new RuleParseError.FAILED (
+                            "unknown filter type %s",
+                            filter);
+                    }
+                } else {
+                    filter = "simple";
+                }
+
+                return RuleMetadata () { label = name,
+                        description = description,
+                        filter = filter };
+
+            } catch (GLib.Error e) {
+                throw new RuleParseError.FAILED ("can't load rule: %s",
+                                                 e.message);
+            }
+        }
+
         internal KeyEventFilter get_filter () {
-            var type = filter_types.get (metadata.filter);
-            return (KeyEventFilter) new Object (type);
+            if (!filter_instances.has_key (metadata.filter)) {
+                var type = filter_types.get (metadata.filter);
+                var filter = (KeyEventFilter) Object.new (type);
+                filter_instances.set (metadata.filter, filter);
+            }
+            return filter_instances.get (metadata.filter);
         }
 
         public Rule (string name) throws RuleParseError {
@@ -142,57 +222,6 @@ namespace Skk {
             }
 
             rom_kana = new RomKanaMapFile (name);
-        }
-
-        static bool load_metadata (string filename,
-                                   out RuleMetadata? metadata)
-        {
-            Json.Parser parser = new Json.Parser ();
-            try {
-                if (!parser.load_from_file (filename)) {
-                    metadata = null;
-                    return false;
-                }
-                var root = parser.get_root ();
-                if (root.get_node_type () != Json.NodeType.OBJECT) {
-                    metadata = null;
-                    return false;
-                }
-
-                var object = root.get_object ();
-                Json.Node member;
-
-                if (!object.has_member ("name")) {
-                    metadata = null;
-                    return false;
-                }
-
-                member = object.get_member ("name");
-                var name = member.get_string ();
-
-                if (!object.has_member ("description")) {
-                    metadata = null;
-                    return false;
-                }
-
-                member = object.get_member ("description");
-                var description = member.get_string ();
-
-                metadata = RuleMetadata () { label = name,
-                                             description = description };
-
-                if (object.has_member ("filter")) {
-                    member = object.get_member ("filter");
-                    metadata.filter = member.get_string ();
-                } else {
-                    metadata.filter = "simple";
-                }
-
-                return true;
-            } catch (GLib.Error e) {
-                metadata = null;
-                return false;
-            }
         }
 
         internal static string? get_base_dir (string name) {
@@ -225,15 +254,19 @@ namespace Skk {
                 if (!FileUtils.test (metadata_filename, FileTest.EXISTS)) {
                     warning ("no metadata.json in %s - ignoring", 
                              base_dir_filename);
+                    continue;
                 }
-                else if (!load_metadata (metadata_filename, out metadata)) {
+
+                try {
+                    metadata = load_metadata (metadata_filename);
+                } catch (RuleParseError e) {
                     warning ("can't read %s - ignoring", 
                              metadata_filename);
+                    continue;
                 }
-                else {
-                    base_dir = base_dir_filename;
-                    return true;
-                }
+
+                base_dir = base_dir_filename;
+                return true;
             }
             base_dir = null;
             metadata = null;
@@ -255,12 +288,14 @@ namespace Skk {
                 while ((name = handle.read_name ()) != null) {
                     var metadata_filename =
                         Path.build_filename (dir, name, "metadata.json");
-                    RuleMetadata? metadata = null;
-                    if (FileUtils.test (metadata_filename, FileTest.EXISTS) &&
-                        load_metadata (metadata_filename, out metadata)) {
-                        if (!(metadata.name in names)) {
-                            metadata.name = name;
-                            rules += metadata;
+                    if (FileUtils.test (metadata_filename, FileTest.EXISTS)) {
+                        try {
+                            var metadata = load_metadata (metadata_filename);
+                            if (!(metadata.name in names)) {
+                                metadata.name = name;
+                                rules += metadata;
+                            }
+                        } catch (RuleParseError e) {
                         }
                     }
                 }

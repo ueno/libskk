@@ -164,20 +164,17 @@ namespace Skk {
                 return state_stack.data.typing_rule;
             }
             set {
-                state_stack.data.typing_rule = value;
+                var rule = state_stack.data.typing_rule = value;
+                var filter = rule.get_filter ();
+                filter.forwarded.connect ((key) => {
+                        process_key_event_internal (key);
+                    });
             }
         }
 
-        KeyEventFilter _key_event_filter = new SimpleKeyEventFilter ();
         public KeyEventFilter key_event_filter {
-            get {
-                return _key_event_filter;
-            }
-            set {
-                _key_event_filter = value;
-                _key_event_filter.forwarded.connect ((key) => {
-                        process_key_event_internal (key);
-                    });
+            owned get {
+                return state_stack.data.typing_rule.get_filter ();
             }
         }
 
