@@ -50,6 +50,7 @@ tut_code_files =				\
 
 nicola_files =					\
 	nicola/metadata.json			\
+	nicola/keymap/default.json		\
 	nicola/keymap/kana.json			\
 	nicola/keymap/latin.json		\
 	nicola/keymap/katakana.json		\
@@ -66,4 +67,3 @@ nobase_dist_rules_DATA =			\
 	$(tut_code_files)			\
 	$(nicola_files)				\
 	README.rules
-

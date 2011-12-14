@@ -1,4 +1,7 @@
 {
+    "include": [
+        "default"
+    ],
     "define": {
         "keymap": {
             "q": "insert-kana 。",

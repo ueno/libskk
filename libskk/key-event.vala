@@ -199,6 +199,9 @@ namespace Skk {
          */
         public signal void forwarded (KeyEvent key);
 
+        /**
+         * Reset the filter.
+         */
         public virtual void reset () {
         }
     }
@@ -214,6 +217,8 @@ namespace Skk {
             // ignore key release event
             if ((key.modifiers & ModifierType.RELEASE_MASK) != 0)
                 return null;
+            // clear shift mask
+            key.modifiers &= ~ModifierType.SHIFT_MASK;
             return key;
         }
     }

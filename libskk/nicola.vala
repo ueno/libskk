@@ -240,12 +240,16 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override KeyEvent? filter_key_event (KeyEvent key) {
+            // clear shift mask
+            key.modifiers &= ~ModifierType.SHIFT_MASK;
             KeyEvent? output = null;
             int64 time;
             if ((key.modifiers & ModifierType.USLEEP_MASK) != 0) {
                 Thread.usleep ((long) int.parse (key.name));
                 time = get_time_func ();
-            } else {
+            } else if ((key.modifiers & ~ModifierType.RELEASE_MASK) == 0 &&
+                       (is_shift (key) ||
+                        (0x20 <= key.code && key.code <= 0x7E))) {
                 time = get_time_func ();
                 int64 wait;
                 output = queue (key, time, out wait);
@@ -255,6 +259,11 @@ namespace Skk {
                     }
                     timeout_id = Timeout.add ((uint) wait, timeout_func);
                 }
+            } else {
+                if ((key.modifiers & ModifierType.RELEASE_MASK) == 0) {
+                    return key;
+                }
+                return null;
             }
             if (output == null) {
                 output = dispatch (time);
