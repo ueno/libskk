@@ -59,6 +59,24 @@ nicola_files =					\
 	nicola/keymap/hiragana.json		\
 	nicola/rom-kana/default.json
 
+tcode_files =					\
+	tcode/rom-kana/default.json		\
+	tcode/metadata.json			\
+	tcode/keymap/latin.json			\
+	tcode/keymap/katakana.json		\
+	tcode/keymap/hankaku-katakana.json	\
+	tcode/keymap/wide-latin.json		\
+	tcode/keymap/hiragana.json
+
+trycode_files =					\
+	trycode/rom-kana/default.json		\
+	trycode/metadata.json			\
+	trycode/keymap/latin.json		\
+	trycode/keymap/katakana.json		\
+	trycode/keymap/hankaku-katakana.json	\
+	trycode/keymap/wide-latin.json		\
+	trycode/keymap/hiragana.json
+
 nobase_dist_rules_DATA =			\
 	$(default_files)			\
 	$(act_files)				\
@@ -66,4 +84,6 @@ nobase_dist_rules_DATA =			\
 	$(kzik_files)				\
 	$(tut_code_files)			\
 	$(nicola_files)				\
+	$(tcode_files)				\
+	$(trycode_files)			\
 	README.rules
