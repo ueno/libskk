@@ -73,37 +73,6 @@ namespace Skk {
             {"ヴ", "ｳﾞ"}
         };
 
-        static const Entry<string,string>[] HankakuToZenkakuAsciiTable = {
-            {" ", "　"},
-            {":", "："}, {";", "；"}, {"?", "？"}, {"!", "！"},
-            {"\'", "´"}, {"`", "｀"}, {"^", "＾"}, {"_", "＿"}, {"-", "ー"},
-            {"-", "—"},
-            {"-", "‐"},
-            {"/", "／"}, {"\\", "＼"}, {"~", "〜"}, {"|", "｜"}, {"`", "‘"},
-            {"\'", "’"}, {"\"", "“"}, {"\"", "”"},
-            {"(", "（"}, {")", "）"}, {"[", "［"}, {"]", "］"}, {"{", "｛"},
-            {"}", "｝"}, 
-            {"<", "〈"}, {">", "〉"}, {"｢", "「"}, {"｣", "」"}, 
-            {"+", "＋"}, {"-", "−"}, {"=", "＝"}, {"<", "＜"}, {">", "＞"},
-            {"\'", "′"}, {"\"", "″"}, {"\\", "￥"}, {"$", "＄"}, {"%", "％"},
-            {"#", "＃"}, {"&", "＆"}, {"*", "＊"},
-            {"@", "＠"},
-            {"0", "０"}, {"1", "１"}, {"2", "２"}, {"3", "３"}, {"4", "４"}, 
-            {"5", "５"}, {"6", "６"}, {"7", "７"}, {"8", "８"}, {"9", "９"}, 
-            {"A", "Ａ"}, {"B", "Ｂ"}, {"C", "Ｃ"}, {"D", "Ｄ"}, {"E", "Ｅ"}, 
-            {"F", "Ｆ"}, {"G", "Ｇ"}, {"H", "Ｈ"}, {"I", "Ｉ"}, {"J", "Ｊ"}, 
-            {"K", "Ｋ"}, {"L", "Ｌ"}, {"M", "Ｍ"}, {"N", "Ｎ"}, {"O", "Ｏ"}, 
-            {"P", "Ｐ"}, {"Q", "Ｑ"}, {"R", "Ｒ"}, {"S", "Ｓ"}, {"T", "Ｔ"}, 
-            {"U", "Ｕ"}, {"V", "Ｖ"}, {"W", "Ｗ"}, {"X", "Ｘ"}, {"Y", "Ｙ"},
-            {"Z", "Ｚ"}, 
-            {"a", "ａ"}, {"b", "ｂ"}, {"c", "ｃ"}, {"d", "ｄ"}, {"e", "ｅ"}, 
-            {"f", "ｆ"}, {"g", "ｇ"}, {"h", "ｈ"}, {"i", "ｉ"}, {"j", "ｊ"}, 
-            {"k", "ｋ"}, {"l", "ｌ"}, {"m", "ｍ"}, {"n", "ｎ"}, {"o", "ｏ"}, 
-            {"p", "ｐ"}, {"q", "ｑ"}, {"r", "ｒ"}, {"s", "ｓ"}, {"t", "ｔ"}, 
-            {"u", "ｕ"}, {"v", "ｖ"}, {"w", "ｗ"}, {"x", "ｘ"}, {"y", "ｙ"},
-            {"z", "ｚ"}
-        };
-
         static const Entry<string,string>[] HankakuKatakanaSubstitutes = {
             {"ヵ", "ｶ"},
             {"ヶ", "ｹ"}
@@ -140,6 +109,8 @@ namespace Skk {
             new HashMap<string,string> ();
         static HashMap<string,string> _HankakuKatakanaSonants =
             new HashMap<string,string> ();
+        static HashMap<string,char> _WideLatinToLatinTable =
+            new HashMap<string,char> ();
 
         internal static unichar get_wide_latin_char (char c) {
             return WideLatinTable[c - 32].get_char ();
@@ -154,6 +125,21 @@ namespace Skk {
                     builder.append_unichar (get_wide_latin_char ((char)uc));
                 } else {
                     builder.append_unichar (uc);
+                }
+            }
+            return builder.str;
+        }
+
+        internal static string get_latin (string wide_latin) {
+            StringBuilder builder = new StringBuilder ();
+            int index = 0;
+            unichar uc;
+            while (wide_latin.get_next_char (ref index, out uc)) {
+                string str = uc.to_string ();
+                if (_WideLatinToLatinTable.has_key (str)) {
+                    builder.append_c (_WideLatinToLatinTable.get (str));
+                } else {
+                    builder.append (str);
                 }
             }
             return builder.str;
@@ -227,6 +213,25 @@ namespace Skk {
             return builder.str.replace ("ウ゛", "ヴ");
         }
 
+        internal static string convert_by_input_mode (string str,
+                                                      InputMode input_mode)
+        {
+            switch (input_mode) {
+            case InputMode.HIRAGANA:
+                return get_hiragana (str);
+            case InputMode.KATAKANA:
+                return get_katakana (str);
+            case InputMode.HANKAKU_KATAKANA:
+                return get_hankaku_katakana (str);
+            case InputMode.LATIN:
+                return get_latin (str);
+            case InputMode.WIDE_LATIN:
+                return get_wide_latin (str);
+            default:
+                return str;
+            }
+        }
+
         static string get_kanji_numeric (int numeric,
                                          string[] num_table,
                                          string[]? num_pos_table = null)
@@ -292,6 +297,9 @@ namespace Skk {
             }
             foreach (var entry in HankakuKatakanaSubstitutes) {
                 _HankakuKatakanaSubstitutes.set (entry.key, entry.value);
+            }
+            for (var i = 0; i < WideLatinTable.length; i++) {
+                _WideLatinToLatinTable.set (WideLatinTable[i], i + 32);
             }
         }
 

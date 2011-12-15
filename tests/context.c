@@ -383,6 +383,8 @@ nicola (void)
     // triple key t1 <= t2
     { SKK_INPUT_MODE_HIRAGANA, "a (usleep 10000) (lshift) (usleep 20000) b", "", "を", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "a (usleep 20000) (lshift) (usleep 10000) b", "", "うぃ", SKK_INPUT_MODE_HIRAGANA },
+    // preedit
+    { SKK_INPUT_MODE_HIRAGANA, "f (usleep 30000) j a (release a)", "▽う", "", SKK_INPUT_MODE_HIRAGANA },
   };
   GError *error;
 

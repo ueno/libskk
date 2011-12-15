@@ -98,6 +98,11 @@ namespace Skk {
      */
     public struct RuleMetadata {
         /**
+         * Base directory.
+         */
+        string base_dir;
+
+        /**
          * Name of the rule.
          */
         string name;
@@ -132,6 +137,8 @@ namespace Skk {
             { InputMode.WIDE_LATIN, "wide-latin" }
         };
 
+        static string[] rules_path;
+
         static Map<string,Type> filter_types = 
             new HashMap<string,Type> ();
 
@@ -139,6 +146,7 @@ namespace Skk {
             new HashMap<string,KeyEventFilter> ();
 
         static construct {
+            rules_path = Util.build_data_path ("rules");
             filter_types.set ("simple", typeof (SimpleKeyEventFilter));
             filter_types.set ("nicola", typeof (NicolaKeyEventFilter));
         }
@@ -191,7 +199,8 @@ namespace Skk {
 
                 return RuleMetadata () { label = name,
                         description = description,
-                        filter = filter };
+                        filter = filter,
+                        base_dir = Path.get_dirname (filename) };
 
             } catch (GLib.Error e) {
                 throw new RuleParseError.FAILED ("can't load rule: %s",
@@ -225,60 +234,44 @@ namespace Skk {
         }
 
         internal static string? get_base_dir (string name) {
-            string? base_dir = null;
-            RuleMetadata? metadata = null;
-            if (find_rule (name, out base_dir, out metadata)) {
-                return base_dir;
-            }
+            var metadata = find_rule (name);
+            if (metadata != null)
+                return metadata.base_dir;
             return null;
         }
 
         internal static RuleMetadata? get_metadata (string name) {
-            string? base_dir = null;
-            RuleMetadata? metadata = null;
-            if (find_rule (name, out base_dir, out metadata)) {
-                return metadata;
-            }
-            return null;
+            return find_rule (name);
         }
 
-        // FIXME: cache the result
-        static bool find_rule (string name,
-                               out string? base_dir,
-                               out RuleMetadata? metadata)
+        static Map<string,RuleMetadata?> rule_cache = new HashMap<string,RuleMetadata?> ();
+
+        static RuleMetadata? find_rule (string name)
         {
-            var dirs = Util.build_data_path ("rules");
-            foreach (var dir in dirs) {
+            if (rule_cache.has_key (name)) {
+                return rule_cache.get (name);
+            }
+            foreach (var dir in rules_path) {
                 var base_dir_filename = Path.build_filename (dir, name);
                 var metadata_filename = Path.build_filename (base_dir_filename,
                                                              "metadata.json");
-                if (!FileUtils.test (metadata_filename, FileTest.EXISTS)) {
-//                    warning ("no metadata.json in %s - ignoring", 
-//                             base_dir_filename);
-                    continue;
+                if (FileUtils.test (metadata_filename, FileTest.EXISTS)) {
+                    try {
+                        var metadata = load_metadata (metadata_filename);
+                        rule_cache.set (name, metadata);
+                        return metadata;
+                    } catch (RuleParseError e) {
+                        continue;
+                    }
                 }
-
-                try {
-                    metadata = load_metadata (metadata_filename);
-                } catch (RuleParseError e) {
-//                    warning ("can't read %s - ignoring", 
-//                             metadata_filename);
-                    continue;
-                }
-
-                base_dir = base_dir_filename;
-                return true;
             }
-            base_dir = null;
-            metadata = null;
-            return false;
+            return null;
         }
 
         internal static RuleMetadata[] list () {
             SortedSet<string> names = new TreeSet<string> ();
             RuleMetadata[] rules = {};
-            var dirs = Util.build_data_path ("rules");
-            foreach (var dir in dirs) {
+            foreach (var dir in rules_path) {
                 Dir handle;
                 try {
                     handle = Dir.open (dir);
