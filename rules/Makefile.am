@@ -38,19 +38,26 @@ kzik_files =					\
 	kzik/keymap/wide-latin.json		\
 	kzik/rom-kana/default.json
 
-tut_code_files =				\
-	tut-code/metadata.json			\
-	tut-code/keymap/hankaku-katakana.json	\
-	tut-code/keymap/hiragana.json		\
-	tut-code/keymap/katakana.json		\
-	tut-code/keymap/latin.json		\
-	tut-code/keymap/wide-latin.json		\
-	tut-code/rom-kana/default.json		\
-	tut-code/rom-kana/touch16+.json
+tutcode_files =					\
+	tutcode/metadata.json			\
+	tutcode/keymap/hankaku-katakana.json	\
+	tutcode/keymap/hiragana.json		\
+	tutcode/keymap/katakana.json		\
+	tutcode/keymap/latin.json		\
+	tutcode/keymap/wide-latin.json		\
+	tutcode/rom-kana/default.json
+
+tutcode_touch16x_files =				\
+	tutcode-touch16x/metadata.json			\
+	tutcode-touch16x/keymap/hankaku-katakana.json	\
+	tutcode-touch16x/keymap/hiragana.json		\
+	tutcode-touch16x/keymap/katakana.json		\
+	tutcode-touch16x/keymap/latin.json		\
+	tutcode-touch16x/keymap/wide-latin.json		\
+	tutcode-touch16x/rom-kana/default.json
 
 nicola_files =					\
 	nicola/metadata.json			\
-	nicola/keymap/default.json		\
 	nicola/keymap/kana.json			\
 	nicola/keymap/latin.json		\
 	nicola/keymap/katakana.json		\
@@ -82,7 +89,8 @@ nobase_dist_rules_DATA =			\
 	$(act_files)				\
 	$(azik_files)				\
 	$(kzik_files)				\
-	$(tut_code_files)			\
+	$(tutcode_files)			\
+	$(tutcode_touch16x_files)		\
 	$(nicola_files)				\
 	$(tcode_files)				\
 	$(trycode_files)			\

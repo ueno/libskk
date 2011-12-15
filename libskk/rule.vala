@@ -269,7 +269,7 @@ namespace Skk {
         }
 
         internal static RuleMetadata[] list () {
-            SortedSet<string> names = new TreeSet<string> ();
+            Set<string> names = new HashSet<string> ();
             RuleMetadata[] rules = {};
             foreach (var dir in rules_path) {
                 Dir handle;
@@ -285,7 +285,8 @@ namespace Skk {
                     if (FileUtils.test (metadata_filename, FileTest.EXISTS)) {
                         try {
                             var metadata = load_metadata (metadata_filename);
-                            if (!(metadata.name in names)) {
+                            if (!(name in names)) {
+                                names.add (name);
                                 metadata.name = name;
                                 rules += metadata;
                             }
