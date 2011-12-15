@@ -167,15 +167,9 @@ namespace Skk {
         public KanaMode kana_mode { get; set; default = KanaMode.HIRAGANA; }
         public PeriodStyle period_style { get; set; default = PeriodStyle.JA_JA; }
 
-        StringBuilder _input = new StringBuilder ();
         StringBuilder _output = new StringBuilder ();
         StringBuilder _preedit = new StringBuilder ();
 
-        public string input {
-            get {
-                return _input.str;
-            }
-        }
         public string output {
             get {
                 return _output.str;
@@ -208,7 +202,6 @@ namespace Skk {
          */
         public void output_nn_if_any () {
             if (_preedit.str.has_suffix ("n")) {
-                //_input.append ("n");
                 _output.append (NN[kana_mode]);
                 _preedit.truncate (_preedit.len - 1);
             }
@@ -244,13 +237,11 @@ namespace Skk {
                 if (index >= 0) {
                     index = PERIOD_RULE[period_style].index_of_nth_char (index);
                     unichar period = PERIOD_RULE[period_style].get_char (index);
-                    _input.append_unichar (uc);
                     _output.append_unichar (period);
                     _preedit.erase ();
                     current_node = rule.root_node;
                     return true;
                 } else if (rule.root_node.children[uc] == null) {
-                    _input.append_unichar (uc);
                     _output.append_unichar (uc);
                     _preedit.erase ();
                     current_node = rule.root_node;
@@ -265,11 +256,9 @@ namespace Skk {
             } else if (child_node.entry == null) {
                 // node is not a terminal
                 _preedit.append_unichar (uc);
-                _input.append_unichar (uc);
                 current_node = child_node;
                 return true;
             } else {
-                _input.append_unichar (uc);
                 _output.append (child_node.entry.get_kana (kana_mode));
                 _preedit.erase ();
                 current_node = rule.root_node;
@@ -307,7 +296,6 @@ namespace Skk {
          * Reset the internal state of the converter.
          */
         public void reset () {
-            _input.erase ();
             _output.erase ();
             _preedit.erase ();
             current_node = rule.root_node;
@@ -333,11 +321,6 @@ namespace Skk {
                     _output.str.index_of_nth_char (
                         _output.str.char_count () - 1));
                 return true;
-            }
-            if (_input.len > 0) {
-                // _input contains only ASCII characters so no need to
-                // count characters
-                _input.truncate (_input.len - 1);
             }
             return false;
         }

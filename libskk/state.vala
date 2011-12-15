@@ -685,6 +685,9 @@ namespace Skk {
                 state.rom_kana_converter.output = kana;
                 return true;
             }
+            else if (command == "start-preedit") {
+                return true;
+            }
 
             if (key.modifiers == 0 && key.code.isalpha ()) {
                 // okuri_rom_kana_converter is started or being started
@@ -778,12 +781,12 @@ namespace Skk {
                         state.rom_kana_converter.output_nn_if_any ();
                         builder.append (state.rom_kana_converter.output);
                         if (state.okuri_rom_kana_converter.is_active ()) {
-                            var uc = state.okuri_rom_kana_converter.input[0];
-                            if (uc == 'j') {
-                                uc = 'z';
+                            var prefix = Util.get_okurigana_prefix (
+                                state.okuri_rom_kana_converter.output);
+                            if (prefix != null) {
+                                builder.append (prefix);
+                                okuri = true;
                             }
-                            builder.append_unichar (uc);
-                            okuri = true;
                         }
                         midasi = Util.get_hiragana (builder.str);
                     }

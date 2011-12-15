@@ -83,6 +83,34 @@ namespace Skk {
             {"ﾟ", "゚"}
         };
 
+        static const string[] KanaRomTable = {
+            "x", "a", "x", "i", "x", "u", "x", "e", "x", "o", "k",
+            "g", "k", "g", "k", "g", "k", "g", "k", "g", "s", "z",
+            "s", "z", "s", "z", "s", "z", "s", "z", "t", "d", "t",
+            "d", "t", "t", "d", "t", "d", "t", "d", "n", "n", "n",
+            "n", "n", "h", "b", "p", "h", "b", "p", "h", "b", "p",
+            "h", "b", "p", "h", "b", "p", "m", "m", "m", "m", "m",
+            "x", "y", "x", "y", "x", "y", "r", "r", "r", "r", "r",
+            "x", "w", "x", "x", "w", "n"
+        };
+
+        internal static string? get_okurigana_prefix (string okurigana) {
+            var head = okurigana.get_char ();
+            if (head == 'ん') {
+                return "n";
+            }
+            else if (head < 'ぁ' || head > 'ん') {
+                return null;
+            }
+            else if (head == 'っ' && okurigana != "っ") {
+                var next = okurigana.get_char (1);
+                return KanaRomTable[next - 'ぁ'];
+            }
+            else {
+                return KanaRomTable[head - 'ぁ'];
+            }
+        }
+
         static const string[] KanjiNumericTable = {
             "〇", "一", "二", "三", "四", "五", "六", "七", "八", "九"
         };
