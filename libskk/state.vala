@@ -403,11 +403,9 @@ namespace Skk {
                         return true;
                     }
                 }
-                if (command != null && command.has_prefix ("insert-kana")) {
-                    var index = command.index_of (" ");
-                    if (index < 0)
-                        return false;
-                    state.output.append (command[index + 1:command.length]);
+                if (command != null && command.has_prefix ("insert-kana-")) {
+                    var kana = command["insert-kana-".length:command.length];
+                    state.output.append (kana);
                     return true;
                 }
                 if (key.modifiers == 0) {
@@ -677,11 +675,8 @@ namespace Skk {
                     return true;
                 }
             }
-            else if (command != null && command.has_prefix ("insert-kana")) {
-                var index = command.index_of (" ");
-                if (index < 0)
-                    return false;
-                var kana = command[index + 1:command.length];
+            else if (command != null && command.has_prefix ("insert-kana-")) {
+                var kana = command["insert-kana-".length:command.length];
                 state.rom_kana_converter.output = kana;
                 return true;
             }
