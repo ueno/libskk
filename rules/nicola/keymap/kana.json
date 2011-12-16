@@ -170,7 +170,10 @@
 
             "[fj]": "start-preedit-kana",
             "[gh]": "abbrev",
-            "[LR]": "set-input-mode-latin"
+            "[LR]": "set-input-mode-latin",
+            "A": "set-input-mode-latin",
+            "Z": "set-input-mode-wide-latin",
+            "L": "set-input-mode-wide-latin"
         }
     }
 }

@@ -408,7 +408,9 @@ namespace Skk {
                     }
                 }
                 if (command != null && command.has_prefix ("insert-kana-")) {
-                    var kana = command["insert-kana-".length:command.length];
+                    var kana = Util.convert_by_input_mode (
+                        command["insert-kana-".length:command.length],
+                        state.input_mode);
                     state.output.append (kana);
                     return true;
                 }
@@ -676,7 +678,9 @@ namespace Skk {
                 }
             }
             else if (command != null && command.has_prefix ("insert-kana-")) {
-                var kana = command["insert-kana-".length:command.length];
+                var kana = Util.convert_by_input_mode (
+                    command["insert-kana-".length:command.length],
+                    state.input_mode);
                 if (state.okuri) {
                     state.okuri_rom_kana_converter.output = kana;
                     state.handler_type = typeof (SelectStateHandler);

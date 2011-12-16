@@ -390,6 +390,12 @@ nicola (void)
     { SKK_INPUT_MODE_HIRAGANA, "f (usleep 30000) j a (release a) f (usleep 30000) j", "▽う*", "", SKK_INPUT_MODE_HIRAGANA },
     // preedit
     { SKK_INPUT_MODE_HIRAGANA, "f (usleep 30000) j a (release a) f (usleep 30000) j i (release i)", "▼受く", "", SKK_INPUT_MODE_HIRAGANA },
+    // hiragana -> katakana
+    { SKK_INPUT_MODE_HIRAGANA, "d (usleep 30000) k a (release a)", "", "ウ", SKK_INPUT_MODE_KATAKANA },
+    // hiragana -> latin
+    { SKK_INPUT_MODE_HIRAGANA, "A (release A)", "", "", SKK_INPUT_MODE_LATIN },
+    // hiragana -> wide latin
+    { SKK_INPUT_MODE_HIRAGANA, "Z (release Z)", "", "", SKK_INPUT_MODE_WIDE_LATIN },
   };
   GError *error;
 
