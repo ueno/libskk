@@ -34,6 +34,51 @@ namespace Skk {
     }
 
     class Util : Object {
+        struct KanaTableEntry {
+            unichar katakana;
+            string? hiragana;
+            string? hankaku_katakana;
+        }
+
+        static const KanaTableEntry[] KanaTable = {
+            {'ア', "あ", "ｱ"}, {'イ', "い", "ｲ"}, {'ウ', "う", "ｳ"},
+            {'エ', "え", "ｴ"}, {'オ', "お", "ｵ"}, {'カ', "か", "ｶ"},
+            {'キ', "き", "ｷ"}, {'ク', "く", "ｸ"}, {'ケ', "け", "ｹ"},
+            {'コ', "こ", "ｺ"}, {'サ', "さ", "ｻ"}, {'シ', "し", "ｼ"},
+            {'ス', "す", "ｽ"}, {'セ', "せ", "ｾ"}, {'ソ', "そ", "ｿ"},
+            {'タ', "た", "ﾀ"}, {'チ', "ち", "ﾁ"}, {'ツ', "つ", "ﾂ"},
+            {'テ', "て", "ﾃ"}, {'ト', "と", "ﾄ"}, {'ナ', "な", "ﾅ"},
+            {'ニ', "に", "ﾆ"}, {'ヌ', "ぬ", "ﾇ"}, {'ネ', "ね", "ﾈ"},
+            {'ノ', "の", "ﾉ"}, {'ハ', "は", "ﾊ"}, {'ヒ', "ひ", "ﾋ"},
+            {'フ', "ふ", "ﾌ"}, {'ヘ', "へ", "ﾍ"}, {'ホ', "ほ", "ﾎ"},
+            {'マ', "ま", "ﾏ"}, {'ミ', "み", "ﾐ"}, {'ム', "む", "ﾑ"},
+            {'メ', "め", "ﾒ"}, {'モ', "も", "ﾓ"}, {'ヤ', "や", "ﾔ"},
+            {'ユ', "ゆ", "ﾕ"}, {'ヨ', "よ", "ﾖ"}, {'ラ', "ら", "ﾗ"},
+            {'リ', "り", "ﾘ"}, {'ル', "る", "ﾙ"}, {'レ', "れ", "ﾚ"},
+            {'ロ', "ろ", "ﾛ"}, {'ワ', "わ", "ﾜ"}, {'ヰ', "ゐ", "ｲ"},
+            {'ヱ', "ゑ", "ｴ"}, {'ヲ', "を", "ｦ"}, {'ン', "ん", "ﾝ"},
+            {'ガ', "が", "ｶﾞ"}, {'ギ', "ぎ", "ｷﾞ"}, {'グ', "ぐ", "ｸﾞ"},
+            {'ゲ', "げ", "ｹﾞ"}, {'ゴ', "ご", "ｺﾞ"}, {'ザ', "ざ", "ｻﾞ"},
+            {'ジ', "じ", "ｼﾞ"}, {'ズ', "ず", "ｽﾞ"}, {'ゼ', "ぜ", "ｾﾞ"},
+            {'ゾ', "ぞ", "ｿﾞ"}, {'ダ', "だ", "ﾀﾞ"}, {'ヂ', "ぢ", "ﾁﾞ"},
+            {'ヅ', "づ", "ﾂﾞ"}, {'デ', "で", "ﾃﾞ"}, {'ド', "ど", "ﾄﾞ"},
+            {'バ', "ば", "ﾊﾞ"}, {'ビ', "び", "ﾋﾞ"}, {'ブ', "ぶ", "ﾌﾞ"},
+            {'ベ', "べ", "ﾍﾞ"}, {'ボ', "ぼ", "ﾎﾞ"}, {'パ', "ぱ", "ﾊﾟ"},
+            {'ピ', "ぴ", "ﾋﾟ"}, {'プ', "ぷ", "ﾌﾟ"}, {'ペ', "ぺ", "ﾍﾟ"},
+            {'ポ', "ぽ", "ﾎﾟ"}, {'ァ', "ぁ", "ｧ"}, {'ィ', "ぃ", "ｨ"},
+            {'ゥ', "ぅ", "ｩ"}, {'ェ', "ぇ", "ｪ"}, {'ォ', "ぉ", "ｫ"},
+            {'ッ', "っ", "ｯ"},
+            {'ャ', "ゃ", "ｬ"}, {'ュ', "ゅ", "ｭ"}, {'ョ', "ょ", "ｮ"},
+            {'ヮ', "ゎ", null},
+            {'ヴ', "う゛", "ｳﾞ"}, {'ヵ', null, null}, {'ヶ', null, null}
+        };
+
+        static const Entry<unichar,string>[] HankakuKatakanaSubstitute = {
+            {'ヮ', "ﾜ"},
+            {'ヵ', "ｶ"},
+            {'ヶ', "ｹ"}
+        };
+
         static const string[] WideLatinTable = {
             "　", "！", "”", "＃", "＄", "％", "＆", "’", 
             "（", "）", "＊", "＋", "，", "−", "．", "／", 
@@ -47,42 +92,6 @@ namespace Skk {
             "ｈ", "ｉ", "ｊ", "ｋ", "ｌ", "ｍ", "ｎ", "ｏ", 
             "ｐ", "ｑ", "ｒ", "ｓ", "ｔ", "ｕ", "ｖ", "ｗ", 
             "ｘ", "ｙ", "ｚ", "｛", "｜", "｝", "〜"
-        };
-
-        static const Entry<string,string>[] ZenkakuToHankakuKatakanaTable = {
-            {"ア", "ｱ"}, {"イ", "ｲ"}, {"ウ", "ｳ"}, {"エ", "ｴ"}, {"オ", "ｵ"},
-            {"カ", "ｶ"}, {"キ", "ｷ"}, {"ク", "ｸ"}, {"ケ", "ｹ"}, {"コ", "ｺ"},
-            {"サ", "ｻ"}, {"シ", "ｼ"}, {"ス", "ｽ"}, {"セ", "ｾ"}, {"ソ", "ｿ"},
-            {"タ", "ﾀ"}, {"チ", "ﾁ"}, {"ツ", "ﾂ"}, {"テ", "ﾃ"}, {"ト", "ﾄ"},
-            {"ナ", "ﾅ"}, {"ニ", "ﾆ"}, {"ヌ", "ﾇ"}, {"ネ", "ﾈ"}, {"ノ", "ﾉ"},
-            {"ハ", "ﾊ"}, {"ヒ", "ﾋ"}, {"フ", "ﾌ"}, {"ヘ", "ﾍ"}, {"ホ", "ﾎ"},
-            {"マ", "ﾏ"}, {"ミ", "ﾐ"}, {"ム", "ﾑ"}, {"メ", "ﾒ"}, {"モ", "ﾓ"},
-            {"ヤ", "ﾔ"}, {"ユ", "ﾕ"}, {"ヨ", "ﾖ"},
-            {"ラ", "ﾗ"}, {"リ", "ﾘ"}, {"ル", "ﾙ"}, {"レ", "ﾚ"}, {"ロ", "ﾛ"},
-            {"ワ", "ﾜ"}, {"ヲ", "ｦ"},
-            {"ン", "ﾝ"},
-            {"ガ", "ｶﾞ"}, {"ギ", "ｷﾞ"}, {"グ", "ｸﾞ"}, {"ゲ", "ｹﾞ"}, {"ゴ", "ｺﾞ"},
-            {"ザ", "ｻﾞ"}, {"ジ", "ｼﾞ"}, {"ズ", "ｽﾞ"}, {"ゼ", "ｾﾞ"}, {"ゾ", "ｿﾞ"},
-            {"ダ", "ﾀﾞ"}, {"ヂ", "ﾁﾞ"}, {"ヅ", "ﾂﾞ"}, {"デ", "ﾃﾞ"}, {"ド", "ﾄﾞ"},
-            {"バ", "ﾊﾞ"}, {"ビ", "ﾋﾞ"}, {"ブ", "ﾌﾞ"}, {"ベ", "ﾍﾞ"}, {"ボ", "ﾎﾞ"},
-            {"パ", "ﾊﾟ"}, {"ピ", "ﾋﾟ"}, {"プ", "ﾌﾟ"}, {"ペ", "ﾍﾟ"}, {"ポ", "ﾎﾟ"},
-            {"ァ", "ｧ"}, {"ィ", "ｨ"}, {"ゥ", "ｩ"}, {"ェ", "ｪ"}, {"ォ", "ｫ"},
-            {"ッ", "ｯ"},
-            {"ャ", "ｬ"}, {"ュ", "ｭ"}, {"ョ", "ｮ"},
-            {"ヮ", "ﾜ"},
-            {"ヴ", "ｳﾞ"}
-        };
-
-        static const Entry<string,string>[] HankakuKatakanaSubstitutes = {
-            {"ヵ", "ｶ"},
-            {"ヶ", "ｹ"},
-            {"ヰ", "ｲ"},
-            {"ヱ", "ｴ"} 
-        };
-
-        static const Entry<string,string>[] HankakuKatakanaSonants = {
-            {"ﾞ", "゙"},
-            {"ﾟ", "゚"}
         };
 
         static const string[] KanaRomTable = {
@@ -131,15 +140,18 @@ namespace Skk {
             null, null, null, "兆", null, null, null, null, "京"
         };
 
-        static HashMap<string,string> _ZenkakuToHankakuKatakanaTable =
-            new HashMap<string,string> ();
-        static HashMap<string,string> _HankakuToZenkakuKatakanaTable =
-            new HashMap<string,string> ();
-        static HashMap<string,string> _HankakuKatakanaSubstitutes =
-            new HashMap<string,string> ();
-        static HashMap<string,string> _HankakuKatakanaSonants =
-            new HashMap<string,string> ();
-        static HashMap<string,char> _WideLatinToLatinTable =
+        // katakana to hiragana
+        static Map<unichar,string> _HiraganaTable =
+            new HashMap<unichar,string> ();
+        // hiragana or hankaku katakana (not composed) to katakana
+        static Map<unichar,unichar> _KatakanaTable =
+            new HashMap<unichar,unichar> ();
+        // katakana to hankaku katakana
+        static Map<unichar,string> _HankakuKatakanaTable =
+            new HashMap<unichar,string> ();
+        static Map<unichar,Map<unichar,unichar>> _CompositionTable =
+            new HashMap<unichar,HashMap<unichar,unichar>> ();
+        static Map<string,char> _WideLatinToLatinTable =
             new HashMap<string,char> ();
 
         internal static unichar get_wide_latin_char (char c) {
@@ -175,73 +187,69 @@ namespace Skk {
             return builder.str;
         }
 
-        internal static string get_zenkaku_katakana (string kana) {
-            StringBuilder builder = new StringBuilder ();
-            int index = 0;
-            unichar uc;
-            while (kana.get_next_char (ref index, out uc)) {
-                string str = uc.to_string ();
-                if (_HankakuKatakanaSonants.has_key (str)) {
-                    builder.append (_HankakuKatakanaSonants.get (str));
-                } else if (_HankakuToZenkakuKatakanaTable.has_key (str)) {
-                    builder.append (_HankakuToZenkakuKatakanaTable.get (str));
-                } else {
-                    builder.append (str);
-                }
+        static unichar get_katakana_char (unichar uc) {
+            if (_KatakanaTable.has_key (uc)) {
+                return _KatakanaTable.get (uc);
             }
-            return builder.str;
+            return uc;
         }
 
-        internal static string get_hankaku_katakana (string kana) {
-            string katakana = get_katakana (kana);
-            StringBuilder builder = new StringBuilder ();
+        static void foreach_katakana (string kana,
+                                      Func<unichar> func)
+        {
             int index = 0;
-            unichar uc;
-            while (katakana.get_next_char (ref index, out uc)) {
-                string str = uc.to_string ();
-                if (_HankakuKatakanaSubstitutes.has_key (str)) {
-                    builder.append (_HankakuKatakanaSubstitutes.get (str));
-                } else if (_ZenkakuToHankakuKatakanaTable.has_key (str)) {
-                    builder.append (_ZenkakuToHankakuKatakanaTable.get (str));
+            unichar uc0;
+            while (kana.get_next_char (ref index, out uc0)) {
+                if (_CompositionTable.has_key (uc0)) {
+                    var composition = _CompositionTable.get (uc0);
+                    unichar uc1;
+                    if (kana.get_next_char (ref index, out uc1)) {
+                        if (composition.has_key (uc1))
+                            func (composition.get (uc1));
+                        else {
+                            func (get_katakana_char (uc0));
+                            func (get_katakana_char (uc1));
+                        }
+                    } else {
+                        func (get_katakana_char (uc0));
+                        break;
+                    }
                 } else {
-                    builder.append (str);
+                    func (get_katakana_char (uc0));
                 }
             }
+        }
+
+        internal static string get_katakana (string kana) {
+            StringBuilder builder = new StringBuilder ();
+            foreach_katakana (kana, (uc) => {
+                    builder.append_unichar (uc);
+                });
             return builder.str;
         }
 
         internal static string get_hiragana (string kana) {
-            string zenkaku = get_zenkaku_katakana (kana);
-            int diff = 0x30a2 - 0x3042; // ア - あ
-            string str = zenkaku.replace ("ヴ", "ウ゛");
             StringBuilder builder = new StringBuilder ();
-            int index = 0;
-            unichar uc;
-            while (str.get_next_char (ref index, out uc)) {
-                // ァ <= uc && uc <= ン
-                if (0x30a1 <= uc && uc <= 0x30f3) {
-                    builder.append_unichar (uc - diff);
-                } else {
-                    builder.append_unichar (uc);
-                }
-            }
+            foreach_katakana (kana, (uc) => {
+                    if (_HiraganaTable.has_key (uc)) {
+                        builder.append (_HiraganaTable.get (uc));
+                    } else {
+                        builder.append_unichar (uc);
+                    }
+                });
             return builder.str;
         }
 
-        internal static string get_katakana (string kana) {
-            int diff = 0x30a2 - 0x3042; // ア - あ
+        internal static string get_hankaku_katakana (string kana) {
             StringBuilder builder = new StringBuilder ();
-            int index = 0;
-            unichar uc;
-            while (kana.get_next_char (ref index, out uc)) {
-                // ぁ <= uc && uc <= ん
-                if (0x3041 <= uc && uc <= 0x3093) {
-                    builder.append_unichar (uc + diff);
-                } else {
-                    builder.append_unichar (uc);
-                }
-            }
-            return builder.str.replace ("ウ゛", "ヴ");
+            foreach_katakana (kana, (uc) => {
+                    if (_HankakuKatakanaTable.has_key (uc)) {
+                        builder.append (_HankakuKatakanaTable.get (uc));
+                    } else {
+                        builder.append_unichar (uc);
+                    }
+                });
+            return builder.str;
         }
 
         internal static string convert_by_input_mode (string str,
@@ -319,15 +327,55 @@ namespace Skk {
         }
 
         static construct {
-            foreach (var entry in ZenkakuToHankakuKatakanaTable) {
-                _ZenkakuToHankakuKatakanaTable.set (entry.key, entry.value);
-                _HankakuToZenkakuKatakanaTable.set (entry.value, entry.key);
-            }
-            foreach (var entry in HankakuKatakanaSonants) {
-                _HankakuKatakanaSonants.set (entry.key, entry.value);
-            }
-            foreach (var entry in HankakuKatakanaSubstitutes) {
-                _HankakuKatakanaSubstitutes.set (entry.key, entry.value);
+            foreach (var entry in KanaTable) {
+                _HiraganaTable.set (entry.katakana,
+                                    entry.hiragana);
+                _HankakuKatakanaTable.set (entry.katakana,
+                                           entry.hankaku_katakana);
+                foreach (var substitute in HankakuKatakanaSubstitute) {
+                    _HankakuKatakanaTable.set (substitute.key,
+                                               substitute.value);
+                }
+
+                if (entry.hiragana != null) {
+                    if (entry.hiragana.char_count () > 1) {
+                        int index = 0;
+                        unichar uc0, uc1;
+                        entry.hiragana.get_next_char (ref index, out uc0);
+                        entry.hiragana.get_next_char (ref index, out uc1);
+                        if (!_CompositionTable.has_key (uc0)) {
+                            _CompositionTable.set (
+                                uc0,
+                                new HashMap<unichar,unichar> ());
+                        }
+                        var composition = _CompositionTable.get (uc0);
+                        composition.set (uc1, entry.katakana);
+                    } else {
+                        _KatakanaTable.set (entry.hiragana.get_char (),
+                                            entry.katakana);
+                    }
+                }
+
+                if (entry.hankaku_katakana != null) {
+                    if (entry.hankaku_katakana.char_count () > 1) {
+                        int index = 0;
+                        unichar uc0, uc1;
+                        entry.hankaku_katakana.get_next_char (
+                            ref index, out uc0);
+                        entry.hankaku_katakana.get_next_char (
+                            ref index, out uc1);
+                        if (!_CompositionTable.has_key (uc0)) {
+                            _CompositionTable.set (
+                                uc0,
+                                new HashMap<unichar,unichar> ());
+                        }
+                        var composition = _CompositionTable.get (uc0);
+                        composition.set (uc1, entry.katakana);
+                    } else {
+                        _KatakanaTable.set (entry.hankaku_katakana.get_char (),
+                                            entry.katakana);
+                    }
+                }
             }
             for (var i = 0; i < WideLatinTable.length; i++) {
                 _WideLatinToLatinTable.set (WideLatinTable[i], i + 32);
