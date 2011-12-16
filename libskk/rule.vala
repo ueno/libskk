@@ -280,17 +280,21 @@ namespace Skk {
                 }
                 string? name;
                 while ((name = handle.read_name ()) != null) {
+                    if (name in names) {
+                        continue;
+                    }
                     var metadata_filename =
                         Path.build_filename (dir, name, "metadata.json");
                     if (FileUtils.test (metadata_filename, FileTest.EXISTS)) {
                         try {
                             var metadata = load_metadata (metadata_filename);
-                            if (!(name in names)) {
-                                names.add (name);
-                                metadata.name = name;
-                                rules += metadata;
-                            }
+                            names.add (name);
+                            metadata.name = name;
+                            rules += metadata;
                         } catch (RuleParseError e) {
+                            warning ("can't load metadata %s: %s",
+                                     metadata_filename,
+                                     e.message);
                         }
                     }
                 }
