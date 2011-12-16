@@ -59,7 +59,7 @@ namespace Skk {
             {"マ", "ﾏ"}, {"ミ", "ﾐ"}, {"ム", "ﾑ"}, {"メ", "ﾒ"}, {"モ", "ﾓ"},
             {"ヤ", "ﾔ"}, {"ユ", "ﾕ"}, {"ヨ", "ﾖ"},
             {"ラ", "ﾗ"}, {"リ", "ﾘ"}, {"ル", "ﾙ"}, {"レ", "ﾚ"}, {"ロ", "ﾛ"},
-            {"ワ", "ﾜ"}, {"ヰ", "ｲ"}, {"ヱ", "ｴ"}, {"ヲ", "ｦ"},
+            {"ワ", "ﾜ"}, {"ヲ", "ｦ"},
             {"ン", "ﾝ"},
             {"ガ", "ｶﾞ"}, {"ギ", "ｷﾞ"}, {"グ", "ｸﾞ"}, {"ゲ", "ｹﾞ"}, {"ゴ", "ｺﾞ"},
             {"ザ", "ｻﾞ"}, {"ジ", "ｼﾞ"}, {"ズ", "ｽﾞ"}, {"ゼ", "ｾﾞ"}, {"ゾ", "ｿﾞ"},
@@ -75,7 +75,9 @@ namespace Skk {
 
         static const Entry<string,string>[] HankakuKatakanaSubstitutes = {
             {"ヵ", "ｶ"},
-            {"ヶ", "ｹ"}
+            {"ヶ", "ｹ"},
+            {"ヰ", "ｲ"},
+            {"ヱ", "ｴ"} 
         };
 
         static const Entry<string,string>[] HankakuKatakanaSonants = {
@@ -209,8 +211,9 @@ namespace Skk {
         }
 
         internal static string get_hiragana (string kana) {
+            string zenkaku = get_zenkaku_katakana (kana);
             int diff = 0x30a2 - 0x3042; // ア - あ
-            string str = kana.replace ("ヴ", "ウ゛");
+            string str = zenkaku.replace ("ヴ", "ウ゛");
             StringBuilder builder = new StringBuilder ();
             int index = 0;
             unichar uc;
