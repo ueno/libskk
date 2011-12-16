@@ -147,7 +147,7 @@ namespace Skk {
             if (auto_start_henkan_keyword != null) {
                 output.append (auto_start_henkan_keyword);
             }
-            else if (okuri_rom_kana_converter.is_active ()) {
+            else if (okuri) {
                 output.append (okuri_rom_kana_converter.output);
             }
             reset ();
@@ -288,7 +288,7 @@ namespace Skk {
             if (abbrev.len > 0) {
                 builder.append (abbrev.str);
             }
-            else if (okuri_rom_kana_converter.is_active ()) {
+            else if (okuri) {
                 builder.append (rom_kana_converter.output);
                 builder.append ("*");
                 builder.append (okuri_rom_kana_converter.output);
@@ -352,7 +352,8 @@ namespace Skk {
                 state.reset ();
                 state.input_mode = input_mode;
                 return retval;
-            } else if (command == "start-preedit") {
+            } else if (command == "start-preedit" ||
+                       command == "start-preedit-kana") {
                 state.handler_type = typeof (StartStateHandler);
                 return true;
             }
@@ -676,10 +677,23 @@ namespace Skk {
             }
             else if (command != null && command.has_prefix ("insert-kana-")) {
                 var kana = command["insert-kana-".length:command.length];
-                state.rom_kana_converter.output = kana;
-                return true;
+                if (state.okuri) {
+                    state.okuri_rom_kana_converter.output = kana;
+                    state.handler_type = typeof (SelectStateHandler);
+                    key = state.where_is ("next-candidate");
+                    return false;
+                } else {
+                    state.rom_kana_converter.output = kana;
+                    return true;
+                }
             }
             else if (command == "start-preedit") {
+                return true;
+            }
+            else if (command == "start-preedit-kana") {
+                if (state.rom_kana_converter.output.length > 0) {
+                    state.okuri = true;
+                }
                 return true;
             }
 

@@ -386,6 +386,10 @@ nicola (void)
     { SKK_INPUT_MODE_HIRAGANA, "a (usleep 20000) (lshift) (usleep 10000) b", "", "うぃ", SKK_INPUT_MODE_HIRAGANA },
     // preedit
     { SKK_INPUT_MODE_HIRAGANA, "f (usleep 30000) j a (release a)", "▽う", "", SKK_INPUT_MODE_HIRAGANA },
+    // preedit
+    { SKK_INPUT_MODE_HIRAGANA, "f (usleep 30000) j a (release a) f (usleep 30000) j", "▽う*", "", SKK_INPUT_MODE_HIRAGANA },
+    // preedit
+    { SKK_INPUT_MODE_HIRAGANA, "f (usleep 30000) j a (release a) f (usleep 30000) j i (release i)", "▼受く", "", SKK_INPUT_MODE_HIRAGANA },
   };
   GError *error;
 

@@ -168,7 +168,7 @@
             "(lshift \\)": null,
             "(rshift \\)": null,
 
-            "[fj]": "start-preedit",
+            "[fj]": "start-preedit-kana",
             "[gh]": "abbrev",
             "[LR]": "set-input-mode-latin"
         }
