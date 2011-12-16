@@ -54,8 +54,11 @@ namespace Skk {
         internal string midasi;
         internal CandidateList candidates;
 
+        // These two RomKanaConverters are needed to track delete/undo
+        // operation.
         internal RomKanaConverter rom_kana_converter;
         internal RomKanaConverter okuri_rom_kana_converter;
+        internal bool okuri; 
 
         internal StringBuilder output = new StringBuilder ();
         internal StringBuilder abbrev = new StringBuilder ();
@@ -155,6 +158,7 @@ namespace Skk {
             _input_mode = InputMode.DEFAULT;
             rom_kana_converter.reset ();
             okuri_rom_kana_converter.reset ();
+            okuri = false;
             _typing_rule.get_filter ().reset ();
             completion_iterator = null;
             candidates.clear ();
@@ -358,7 +362,6 @@ namespace Skk {
                    state.input_mode == InputMode.KATAKANA ||
                    state.input_mode == InputMode.HANKAKU_KATAKANA) &&
                   key.modifiers == 0 &&
-                  state.rom_kana_converter.is_active () &&
                   state.rom_kana_converter.can_consume (key.code))) {
                 foreach (var entry in input_mode_commands) {
                     if (entry.key == command) {
@@ -439,9 +442,7 @@ namespace Skk {
 
         internal override string get_preedit (State state) {
             StringBuilder builder = new StringBuilder ();
-            if (state.rom_kana_converter.is_active ()) {
-                builder.append (state.rom_kana_converter.preedit);
-            }
+            builder.append (state.rom_kana_converter.preedit);
             return builder.str;
         }
     }
@@ -595,24 +596,22 @@ namespace Skk {
             }
 
             // ▽ひらがな + 'q' => ヒラガナ
-            if (state.rom_kana_converter.is_active ()) {
-                foreach (var entry in end_preedit_commands) {
-                    if (entry.key == command) {
-                        state.rom_kana_converter.output_nn_if_any ();
-                        state.output.assign (
-                            Util.convert_by_input_mode (
-                                state.rom_kana_converter.output,
-                                entry.value));
-                        state.rom_kana_converter.reset ();
-                        state.input_mode = entry.value;
-                        state.handler_type = typeof (NoneStateHandler);
-                        return true;
-                    }
+            foreach (var entry in end_preedit_commands) {
+                if (entry.key == command) {
+                    state.rom_kana_converter.output_nn_if_any ();
+                    state.output.assign (
+                        Util.convert_by_input_mode (
+                            state.rom_kana_converter.output,
+                            entry.value));
+                    state.rom_kana_converter.reset ();
+                    state.input_mode = entry.value;
+                    state.handler_type = typeof (NoneStateHandler);
+                    return true;
                 }
             }
 
             if (command == "next-candidate") {
-                if (!state.rom_kana_converter.is_active ()) {
+                if (state.rom_kana_converter.output.length == 0) {
                     state.reset ();
                     return true;
                 }
@@ -664,7 +663,7 @@ namespace Skk {
                 return true;
             }
             else if (command == "special-midasi") {
-                if (state.rom_kana_converter.is_active ()) {
+                if (state.rom_kana_converter.output.length > 0) {
                     state.rom_kana_converter.append (key.code.tolower ());
                     state.handler_type = typeof (SelectStateHandler);
                     key = state.where_is ("next-candidate");
@@ -686,17 +685,18 @@ namespace Skk {
 
             if (key.modifiers == 0 && key.code.isalpha ()) {
                 // okuri_rom_kana_converter is started or being started
-                if (state.okuri_rom_kana_converter.is_active () ||
+                if (state.okuri ||
                     (key.code.isupper () &&
-                     state.rom_kana_converter.is_active () &&
+                     state.rom_kana_converter.output.length > 0 &&
                      !state.rom_kana_converter.can_consume (
                          key.code.tolower (), true))) {
-                    if (!state.okuri_rom_kana_converter.is_active () &&
+                    if (!state.okuri &&
                         state.rom_kana_converter.can_consume (
                             key.code.tolower (), true, false)) {
                         state.rom_kana_converter.append (key.code.tolower ());
                     }
                     state.rom_kana_converter.output_nn_if_any ();
+                    state.okuri = true;
                     state.okuri_rom_kana_converter.append (key.code.tolower ());
                     if (state.okuri_rom_kana_converter.preedit.length == 0) {
                         state.handler_type = typeof (SelectStateHandler);
@@ -775,7 +775,7 @@ namespace Skk {
                         StringBuilder builder = new StringBuilder ();
                         state.rom_kana_converter.output_nn_if_any ();
                         builder.append (state.rom_kana_converter.output);
-                        if (state.okuri_rom_kana_converter.is_active ()) {
+                        if (state.okuri) {
                             var prefix = Util.get_okurigana_prefix (
                                 state.okuri_rom_kana_converter.output);
                             if (prefix != null) {
@@ -830,7 +830,7 @@ namespace Skk {
             if (state.auto_start_henkan_keyword != null) {
                 builder.append (state.auto_start_henkan_keyword);
             }
-            else if (state.okuri_rom_kana_converter.is_active ()) {
+            else if (state.okuri) {
                 builder.append (state.okuri_rom_kana_converter.output);
             }
             return builder.str;

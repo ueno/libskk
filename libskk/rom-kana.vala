@@ -324,14 +324,5 @@ namespace Skk {
             }
             return false;
         }
-
-        /**
-         * Check if the converter is active
-         *
-         * @return `true` if the converter is active, `false` otherwise
-         */
-        public bool is_active () {
-            return _output.len > 0 || _preedit.len > 0;
-        }
     }
 }
