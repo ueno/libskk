@@ -58,6 +58,7 @@ tutcode_touch16x_files =				\
 
 nicola_files =					\
 	nicola/metadata.json			\
+	nicola/keymap/default.json		\
 	nicola/keymap/kana.json			\
 	nicola/keymap/latin.json		\
 	nicola/keymap/katakana.json		\
