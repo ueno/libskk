@@ -2,8 +2,8 @@
     "define": {
         "keymap": {
             "C-g": "abort",
-            "\n": "enter",
-            "C-m": "enter",
+            "\n": "commit-and-newline",
+            "C-m": "commit-and-newline",
             "Q": "start-preedit",
             "\b": "delete",
             "C-h": "delete",

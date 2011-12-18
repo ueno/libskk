@@ -337,7 +337,7 @@ namespace Skk {
                 state.reset ();
                 state.input_mode = input_mode;
                 return retval;
-            } else if (command == "enter") {
+            } else if (command == "commit-and-newline") {
                 bool retval;
                 if (state.rom_kana_converter.preedit.length > 0) {
                     retval = true;
@@ -496,7 +496,7 @@ namespace Skk {
                 state.input_mode = input_mode;
                 return true;
             }
-            else if (command == "enter" &&
+            else if (command == "commit-and-newline" &&
                      (state.kuten.len == 4 || state.kuten.len == 6)) {
                 if (converter != null) {
                     var euc = parse_hex (state.kuten.str);
@@ -621,10 +621,15 @@ namespace Skk {
                 state.handler_type = typeof (SelectStateHandler);
                 return false;
             }
-            else if (command == "enter") {
+            else if (command == "commit") {
                 state.output.append (state.rom_kana_converter.output);
                 state.reset ();
                 return true;
+            }
+            else if (command == "commit-and-newline") {
+                state.output.append (state.rom_kana_converter.output);
+                state.reset ();
+                return state.egg_like_newline;
             }
             else if (command == "delete") {
                 if (state.okuri_rom_kana_converter.delete () ||
@@ -829,7 +834,7 @@ namespace Skk {
                 else if ((key.modifiers == 0 && key.code.isalpha ()) ||
                          command == "delete" ||
                          (!state.egg_like_newline &&
-                          command == "enter")) {
+                          command == "commit-and-newline")) {
                     return false;
                 }
             }

@@ -7,7 +7,8 @@
             "q": "set-input-mode-katakana",
             "l": "set-input-mode-latin",
             "L": "set-input-mode-wide-latin",
-            "C-q": "set-input-mode-hankaku-katakana"
+            "C-q": "set-input-mode-hankaku-katakana",
+	    "C-j": "commit"
         }
     }
 }
