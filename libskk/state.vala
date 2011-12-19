@@ -208,60 +208,71 @@ namespace Skk {
             return builder.str;
         }
 
-        void expand_numeric_references (Candidate[] candidates) {
-            foreach (var candidate in candidates) {
-                var builder = new StringBuilder ();
-                MatchInfo info = null;
-                int start_pos = 0;
-                for (int numeric_index = 0;
-                     numeric_index < numerics.length;
-                     numeric_index++)
-                {
-                    try {
-                        if (!numeric_ref_regex.match_full (candidate.text,
-                                                           -1,
-                                                           start_pos,
-                                                           0,
-                                                           out info)) {
-                            break;
-                        }
-                    } catch (GLib.RegexError e) {
-                        return_if_reached ();
-                    }
-                            
-                    int match_start_pos, match_end_pos;
-                    info.fetch_pos (0,
-                                    out match_start_pos,
-                                    out match_end_pos);
-                    builder.append (candidate.text[start_pos:match_start_pos]);
-
-                    string type = info.fetch (1);
-                    switch (type[0]) {
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '5':
-                        builder.append (
-                            Util.get_numeric (
-                                numerics[numeric_index],
-                                (NumericConversionType) (type[0] - '0')));
-                        break;
-                    case '4':
-                    case '9':
-                        // not supported yet
-                        break;
-                    default:
-                        warning ("unknown numeric conversion type: %s",
-                                 type);
-                        break;
-                    }
-                    start_pos = match_end_pos;
+        string expand_expr (string text) {
+            if (text.has_prefix ("(")) {
+                var reader = new ExprReader ();
+                int index = 0;
+                var node = reader.read_expr (text, ref index);
+                var evaluator = new ExprEvaluator ();
+                var _text = evaluator.eval (node);
+                if (_text != null) {
+                    return _text;
                 }
-                builder.append (
-                    candidate.text[start_pos:candidate.text.length]);
-                candidate.output = builder.str;
             }
+            return text;
+        }
+
+        string expand_numeric_references (string text) {
+            var builder = new StringBuilder ();
+            MatchInfo info = null;
+            int start_pos = 0;
+            for (int numeric_index = 0;
+                 numeric_index < numerics.length;
+                 numeric_index++)
+            {
+                try {
+                    if (!numeric_ref_regex.match_full (text,
+                                                       -1,
+                                                       start_pos,
+                                                       0,
+                                                       out info)) {
+                        break;
+                    }
+                } catch (GLib.RegexError e) {
+                    return_if_reached ();
+                }
+                            
+                int match_start_pos, match_end_pos;
+                info.fetch_pos (0,
+                                out match_start_pos,
+                                out match_end_pos);
+                builder.append (text[start_pos:match_start_pos]);
+
+                string type = info.fetch (1);
+                switch (type[0]) {
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '5':
+                    builder.append (
+                        Util.get_numeric (
+                            numerics[numeric_index],
+                            (NumericConversionType) (type[0] - '0')));
+                    break;
+                case '4':
+                case '9':
+                    // not supported yet
+                    break;
+                default:
+                    warning ("unknown numeric conversion type: %s",
+                             type);
+                    break;
+                }
+                start_pos = match_end_pos;
+            }
+            builder.append (text[start_pos:text.length]);
+            return builder.str;
         }
 
         internal void lookup (string midasi, bool okuri = false) {
@@ -270,7 +281,17 @@ namespace Skk {
             candidates.add_candidates_start (okuri);
             foreach (var dict in dictionaries) {
                 var _candidates = dict.lookup (this.midasi, okuri);
-                expand_numeric_references (_candidates);
+                foreach (var candidate in _candidates) {
+                    var text = candidate.text;
+                    text = expand_expr (text);
+                    text = expand_numeric_references (text);
+                    candidate.output = text;
+                    // annotation may be an expression
+                    if (candidate.annotation != null) {
+                        candidate.annotation = expand_expr (
+                            candidate.annotation);
+                    }
+                }
                 candidates.add_candidates (_candidates);
             }
             candidates.add_candidates_end ();

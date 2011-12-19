@@ -45,6 +45,9 @@ namespace Skk {
             get {
                 return _annotation;
             }
+            internal set {
+                _annotation = value;
+            }
         }
 
         /**
