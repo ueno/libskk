@@ -157,12 +157,14 @@ namespace Skk {
             var builder = new StringBuilder ();
             foreach (var entry in ENCODING_TO_CODING_SYSTEM_RULE) {
                 if (entry.key == converter.encoding) {
-                    builder.append (";;; -*- coding: %s -*-\n".printf (entry.value));
+                    builder.append (
+                        ";;; -*- coding: %s -*-\n".printf (entry.value));
                     break;
                 }
             }
             builder.append (";; okuri-ari entries.\n");
-            var entries = new TreeSet<Map.Entry<string,ArrayList<Candidate>>> ((CompareFunc) compare_entry);
+            var entries = new TreeSet<Map.Entry<string,ArrayList<Candidate>>> (
+                (CompareFunc) compare_entry);
             entries.add_all (okuri_ari_entries.entries);
             if (!entries.is_empty) {
                 var iter = entries.iterator_at (entries.last ());
@@ -222,7 +224,33 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override string[] complete (string midasi) {
-            return new string[0];
+            SortedSet<string> keys = new TreeSet<string> ();
+            ArrayList<string> completion = new ArrayList<string> ();
+            keys.add_all (okuri_nasi_entries.keys);
+            if (!keys.is_empty) {
+                var iter = keys.iterator_at (keys.first ());
+                do {
+                    var key = iter.get ();
+                    if (key.has_prefix (midasi)) {
+                        // don't add midasi word itself
+                        if (key != midasi) {
+                            completion.add (key);
+                        }
+                        break;
+                    }
+                } while (iter.next ());
+                while (iter.next ()) {
+                    var key = iter.get ();
+                    if (!key.has_prefix (midasi)) {
+                        break;
+                    }
+                    // don't add midasi word itself
+                    if (key != midasi) {
+                        completion.add (key);
+                    }
+                }
+            }
+            return completion.to_array ();
         }
 
         /**

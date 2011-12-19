@@ -215,14 +215,19 @@ completion (void)
 {
   SkkContext *context;
   SkkTransition transitions[] = {
-    { SKK_INPUT_MODE_HIRAGANA, "A \t", "▽あ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "A \t \t", "▽あい", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "A k a \t \t", "▽あかつき", "", SKK_INPUT_MODE_HIRAGANA },
+    // midasi word (= "あ") exists in the dictionary
+    { SKK_INPUT_MODE_HIRAGANA, "A \t", "▽あい", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A \t \t", "▽あいさつ", "", SKK_INPUT_MODE_HIRAGANA },
+    // midasi word (= "あか") exists in the dictionary
+    { SKK_INPUT_MODE_HIRAGANA, "A k a \t", "▽あかつき", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A k a \t \t", "▽あかね", "", SKK_INPUT_MODE_HIRAGANA },
+    // no more match for midasi word (= "あか")
     { SKK_INPUT_MODE_HIRAGANA, "A k a \t \t \t", "▽あかね", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "A k a \t \t \t \t", "▽あかね", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "A p a \t", "▽あぱ", "", SKK_INPUT_MODE_HIRAGANA },
+    // midasi word (= "こうこ") does not exist in the dictionary
     { SKK_INPUT_MODE_HIRAGANA, "K o u k o \t", "▽こうこう", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K o u k o \t \t", "▽こうこく", "", SKK_INPUT_MODE_HIRAGANA },
+    // no match for midasi word (= "あぱ")
+    { SKK_INPUT_MODE_HIRAGANA, "A p a \t", "▽あぱ", "", SKK_INPUT_MODE_HIRAGANA },
   };
 
   context = create_context ();

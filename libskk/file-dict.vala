@@ -248,12 +248,16 @@ namespace Skk {
                         warning ("corrupted dictionary entry: %s",
                                  line);
                     } else {
-                        try {
-                            string decoded = converter.decode (line[0:index]);
-                            completion.insert (0, decoded);
-                        } catch (GLib.Error e) {
-                            warning ("can't decode line %s: %s",
-                                     line, e.message);
+                        var completed = line[0:index];
+                        // don't add midasi word itself
+                        if (completed != _midasi) {
+                            try {
+                                string decoded = converter.decode (completed);
+                                completion.insert (0, decoded);
+                            } catch (GLib.Error e) {
+                                warning ("can't decode line %s: %s",
+                                         line, e.message);
+                            }
                         }
                     }
                 } while ((line = read_previous_line (ref pos, line)) != null &&
@@ -269,12 +273,16 @@ namespace Skk {
                         warning ("corrupted dictionary entry: %s",
                                  line);
                     } else {
-                        try {
-                            string decoded = converter.decode (line[0:index]);
-                            completion.add (decoded);
-                        } catch (GLib.Error e) {
-                            warning ("can't decode line %s: %s",
-                                     line, e.message);
+                        var completed = line[0:index];
+                        // don't add midasi word itself
+                        if (completed != _midasi) {
+                            try {
+                                string decoded = converter.decode (completed);
+                                completion.add (decoded);
+                            } catch (GLib.Error e) {
+                                warning ("can't decode line %s: %s",
+                                         line, e.message);
+                            }
                         }
                     }
                 }
