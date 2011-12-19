@@ -150,7 +150,9 @@ namespace Skk {
             else if (okuri) {
                 output.append (okuri_rom_kana_converter.output);
             }
+            var _input_mode = input_mode;
             reset ();
+            input_mode = _input_mode;
         }
 
         internal void reset () {
@@ -165,6 +167,12 @@ namespace Skk {
             abbrev.erase ();
             kuten.erase ();
             auto_start_henkan_keyword = null;
+        }
+
+        internal void cancel_okuri () {
+            rom_kana_converter.output += okuri_rom_kana_converter.output;
+            okuri_rom_kana_converter.reset ();
+            okuri = false;
         }
 
         string extract_numerics (string midasi, out int[] _numerics) {
@@ -337,7 +345,8 @@ namespace Skk {
                 state.reset ();
                 state.input_mode = input_mode;
                 return retval;
-            } else if (command == "commit-and-newline") {
+            } else if (command == "commit" ||
+                       command == "commit-and-newline") {
                 bool retval;
                 if (state.rom_kana_converter.preedit.length > 0) {
                     retval = true;
@@ -420,6 +429,11 @@ namespace Skk {
                         state.rom_kana_converter.output = "";
                         return true;
                     }
+                    else if (0x20 <= key.code && key.code <= 0x7F) {
+                        state.output.append_c ((char) key.code);
+                        state.rom_kana_converter.output = "";
+                        return true;
+                    }
                     else {
                         state.rom_kana_converter.output = "";
                         return false;
@@ -428,14 +442,14 @@ namespace Skk {
                 break;
             case InputMode.LATIN:
                 if (0x20 <= key.code && key.code <= 0x7F) {
-                    state.output.append_c ((char)key.code);
+                    state.output.append_c ((char) key.code);
                     return true;
                 }
                 break;
             case InputMode.WIDE_LATIN:
                 if (0x20 <= key.code && key.code <= 0x7F) {
                     state.output.append_unichar (
-                        Util.get_wide_latin_char ((char)key.code));
+                        Util.get_wide_latin_char ((char) key.code));
                     return true;
                 }
                 break;
@@ -623,12 +637,16 @@ namespace Skk {
             }
             else if (command == "commit") {
                 state.output.append (state.rom_kana_converter.output);
+                var input_mode = state.input_mode;
                 state.reset ();
+                state.input_mode = input_mode;
                 return true;
             }
             else if (command == "commit-and-newline") {
                 state.output.append (state.rom_kana_converter.output);
+                var input_mode = state.input_mode;
                 state.reset ();
+                state.input_mode = input_mode;
                 return state.egg_like_newline;
             }
             else if (command == "delete") {
@@ -786,11 +804,13 @@ namespace Skk {
                 if (state.candidates.cursor_pos < 0) {
                     state.handler_type = typeof (StartStateHandler);
                 }
+                return true;
             }
             else if (command == "purge-candidate") {
                 state.purge_candidate (state.midasi,
                                        state.candidates.get ());
                 state.reset ();
+                return true;
             }
             else if (command == "next-candidate") {
                 if (state.candidates.cursor_pos < 0) {
@@ -825,10 +845,13 @@ namespace Skk {
                         state.handler_type = typeof (StartStateHandler);
                     }
                 }
+                return true;
             }
             else if (command == "abort") {
                 state.candidates.clear ();
+                state.cancel_okuri ();
                 state.handler_type = typeof (StartStateHandler);
+                return true;
             }
             else {
                 state.candidates.select ();
@@ -836,7 +859,8 @@ namespace Skk {
                     state.handler_type = typeof (StartStateHandler);
                     return false;
                 }
-                else if ((key.modifiers == 0 && key.code.isalpha ()) ||
+                else if ((key.modifiers == 0 &&
+                          0x20 <= key.code && key.code <= 0x7E) ||
                          command == "delete" ||
                          (!state.egg_like_newline &&
                           command == "commit-and-newline")) {

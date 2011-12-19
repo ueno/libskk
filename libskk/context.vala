@@ -275,6 +275,7 @@ namespace Skk {
             if (dict_edit_level () > 0) {
                 midasi_stack.delete_link (midasi_stack);
                 state_stack.delete_link (state_stack);
+                state_stack.data.cancel_okuri ();
                 return true;
             }
             return false;

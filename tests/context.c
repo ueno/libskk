@@ -137,6 +137,8 @@ okuri_nasi (void)
     { SKK_INPUT_MODE_HIRAGANA, "K a n j i SPC C-j", "", "漢字", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K a n j i SPC C-g", "▽かんじ", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HANKAKU_KATAKANA, "K a n j i SPC", "▼漢字", "", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    //{ SKK_INPUT_MODE_HIRAGANA, "K a n j i SPC q", "", "漢字", SKK_INPUT_MODE_KATAKANA },
+    { SKK_INPUT_MODE_KATAKANA, "K a n j i SPC q", "", "漢字", SKK_INPUT_MODE_HIRAGANA },
     /* FIXME */
     // { SKK_INPUT_MODE_HIRAGANA, "A", "[DictEdit] な*んあ ", "", SKK_INPUT_MODE_HIRAGANA },
     // { SKK_INPUT_MODE_HIRAGANA, "A C-g\n", "", "", SKK_INPUT_MODE_HIRAGANA },
@@ -171,6 +173,9 @@ okuri_ari (void)
     { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC >", "▽>", "東", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC > s h i SPC", "▼氏", "東", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "T y o u >", "▼超", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "O K i C-g", "▽おき", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "O K C-g", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A o i O C-g", "▽あおいお", "", SKK_INPUT_MODE_HIRAGANA },
   };
 
   context = create_context ();
@@ -315,6 +320,7 @@ auto_conversion (void)
     { SKK_INPUT_MODE_HIRAGANA, "A i ,", "▼愛、", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A i , SPC", "▼哀、", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A i w o", "▼愛を", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A i SPC \\(", "", "愛(", SKK_INPUT_MODE_HIRAGANA },
   };
 
   context = create_context ();
