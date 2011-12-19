@@ -632,11 +632,16 @@ namespace Skk {
                 return state.egg_like_newline;
             }
             else if (command == "delete") {
-                if (state.okuri_rom_kana_converter.delete () ||
-                    state.rom_kana_converter.delete ()) {
+                if (state.okuri_rom_kana_converter.delete ()) {
+                    if (state.okuri_rom_kana_converter.preedit.length == 0) {
+                        state.okuri = false;
+                    }
                     return true;
                 }
-                if (state.output.len > 0) {
+                else if (state.rom_kana_converter.delete ()) {
+                    return true;
+                }
+                else if (state.output.len > 0) {
                     state.output.truncate (
                         state.output.str.index_of_nth_char (
                             state.output.str.char_count () - 1));

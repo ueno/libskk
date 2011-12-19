@@ -188,6 +188,8 @@ delete (void)
     { SKK_INPUT_MODE_HIRAGANA, "A i s a t s u SPC DEL", "", "挨", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A C-h", "▽", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A C-h C-h", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "E B DEL", "▽え", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "E B DEL r a B", "▽えら*b", "", SKK_INPUT_MODE_HIRAGANA },
   };
 
   context = create_context ();
