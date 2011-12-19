@@ -346,7 +346,7 @@ namespace Skk {
                 state.input_mode = input_mode;
                 return retval;
             } else if (command == "commit" ||
-                       command == "commit-and-newline") {
+                       command == "commit-unhandled") {
                 bool retval;
                 if (state.rom_kana_converter.preedit.length > 0) {
                     retval = true;
@@ -510,7 +510,7 @@ namespace Skk {
                 state.input_mode = input_mode;
                 return true;
             }
-            else if (command == "commit-and-newline" &&
+            else if (command == "commit-unhandled" &&
                      (state.kuten.len == 4 || state.kuten.len == 6)) {
                 if (converter != null) {
                     var euc = parse_hex (state.kuten.str);
@@ -642,7 +642,7 @@ namespace Skk {
                 state.input_mode = input_mode;
                 return true;
             }
-            else if (command == "commit-and-newline") {
+            else if (command == "commit-unhandled") {
                 state.output.append (state.rom_kana_converter.output);
                 var input_mode = state.input_mode;
                 state.reset ();
@@ -863,7 +863,7 @@ namespace Skk {
                           0x20 <= key.code && key.code <= 0x7E) ||
                          command == "delete" ||
                          (!state.egg_like_newline &&
-                          command == "commit-and-newline")) {
+                          command == "commit-unhandled")) {
                     return false;
                 }
             }
