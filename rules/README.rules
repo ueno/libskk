@@ -67,6 +67,23 @@ Example:
 This rule includes "default" rule first, replace mapping of
 "start-preedit" from "Q" to "C-@" (control + "@").
 
+The current available commands are:
+
+abbrev
+abort
+commit
+commit-unhandled
+complete
+delete
+insert-kana-<kana>
+kuten
+next-candidate
+previous-candidate
+set-input-mode-<mode>
+special-midasi
+start-preedit
+start-preedit-kana
+
 ** Format of rom-kana rule files
 
 The map name "rom-kana" is used to define romaji-to-kana conversion
