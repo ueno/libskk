@@ -1,7 +1,39 @@
-* Format of rule files
+* Rules overview
 
-Each file under keymaps/ and rom-kana/ directories is in the following
-format:
+libskk supports various typing rules such as AZIK, ACT, TUT-Code,
+which define keyboard shortcuts and romaji-to-kana conversion table.
+Rules are normally read from ~/.config/libskk/rules and
+/usr/share/libskk/rules.
+
+* Rule directory structure
+
+A rule consists of the following directory structure:
+
+<root>
+  metadata.json
+  keymap/
+    <map-file>
+    ...
+  rom-kana/
+    <map-file>
+    ...
+
+* Rule metadata
+
+Each rule need to have metadata.json in the top level directory, with
+the following content:
+
+{
+  "name": <name of the rule>,
+  "description": <description of the rule>,
+  "filter": <name of the optional keyboard filter (mainly used by NICOLA)>
+}
+
+
+* Format of map files
+
+Each file under keymaps/ and rom-kana/ directories is used to define
+some key-value mappings.  They are in the following format:
 
 {
   "include": [
