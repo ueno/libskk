@@ -151,6 +151,8 @@ namespace Skk {
             }
         }
 
+        public string midasi { get; private set; }
+
         /**
          * Whether this candidate list is generated as a result of
          * okuri-ari conversion.
@@ -165,8 +167,9 @@ namespace Skk {
             seen.clear ();
         }
 
-        internal void add_candidates_start (bool okuri) {
+        internal void add_candidates_start (string midasi, bool okuri) {
             clear ();
+            this.midasi = midasi;
             this.okuri = okuri;
         }
 

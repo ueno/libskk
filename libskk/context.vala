@@ -102,10 +102,14 @@ namespace Skk {
         /**
          * Current candidates.
          */
-        public CandidateList candidates { get; private set; }
+        public CandidateList candidates {
+            get {
+                return state_stack.data.candidates;
+            }
+        }
 
         SList<State> state_stack;
-        SList<string> midasi_stack;
+        SList<string> dict_edit_midasi_stack;
         HashMap<Type, StateHandler> handlers =
             new HashMap<Type, StateHandler> ();
 
@@ -198,15 +202,14 @@ namespace Skk {
                           new AbbrevStateHandler ());
             handlers.set (typeof (KutenStateHandler),
                           new KutenStateHandler ());
-            candidates = new CandidateList ();
-            state_stack.prepend (new State (_dictionaries, candidates));
+            state_stack.prepend (new State (_dictionaries));
             connect_state_signals (state_stack.data);
             candidates.notify["cursor-pos"].connect (() => {
                     update_preedit ();
                 });
             candidates.selected.connect ((candidate) => {
                     if (select_candidate_in_dictionaries (
-                            state_stack.data.midasi,
+                            candidates.midasi,
                             candidate,
                             candidates.okuri)) {
                         try {
@@ -246,8 +249,8 @@ namespace Skk {
         }
 
         void start_dict_edit (string midasi) {
-            midasi_stack.prepend (midasi);
-            state_stack.prepend (new State (_dictionaries, candidates));
+            dict_edit_midasi_stack.prepend (midasi);
+            state_stack.prepend (new State (_dictionaries));
             connect_state_signals (state_stack.data);
             update_preedit ();
         }
@@ -255,7 +258,7 @@ namespace Skk {
         bool end_dict_edit (string text) {
             if (leave_dict_edit ()) {
                 var candidate = new Candidate (text);
-                if (select_candidate_in_dictionaries (state_stack.data.midasi, 
+                if (select_candidate_in_dictionaries (candidates.midasi, 
                                                       candidate)) {
                     try {
                         save_dictionaries ();
@@ -273,7 +276,7 @@ namespace Skk {
 
         bool leave_dict_edit () {
             if (dict_edit_level () > 0) {
-                midasi_stack.delete_link (midasi_stack);
+                dict_edit_midasi_stack.delete_link (dict_edit_midasi_stack);
                 state_stack.delete_link (state_stack);
                 state_stack.data.cancel_okuri ();
                 return true;
@@ -453,7 +456,7 @@ namespace Skk {
                     builder.append_c (']');
                 }
                 builder.append (" ");
-                builder.append (midasi_stack.data);
+                builder.append (dict_edit_midasi_stack.data);
                 builder.append (" ");
                 builder.append (handler.get_output (state));
             }

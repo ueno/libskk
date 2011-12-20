@@ -51,7 +51,6 @@ namespace Skk {
         }
 
         internal ArrayList<Dict> dictionaries;
-        internal string midasi;
         internal CandidateList candidates;
 
         // These two RomKanaConverters are needed to track delete/undo
@@ -110,11 +109,10 @@ namespace Skk {
         Regex numeric_regex;
         Regex numeric_ref_regex;
 
-        internal State (ArrayList<Dict> dictionaries,
-                        CandidateList candidates)
+        internal State (ArrayList<Dict> dictionaries)
         {
             this.dictionaries = dictionaries;
-            this.candidates = candidates;
+            this.candidates = new CandidateList ();
             this.candidates.selected.connect (candidate_selected);
 
             rom_kana_converter = new RomKanaConverter ();
@@ -276,11 +274,11 @@ namespace Skk {
         }
 
         internal void lookup (string midasi, bool okuri = false) {
-            this.midasi = extract_numerics (midasi, out numerics);
+            var _midasi = extract_numerics (midasi, out numerics);
             candidates.clear ();
-            candidates.add_candidates_start (okuri);
+            candidates.add_candidates_start (_midasi, okuri);
             foreach (var dict in dictionaries) {
-                var _candidates = dict.lookup (this.midasi, okuri);
+                var _candidates = dict.lookup (_midasi, okuri);
                 foreach (var candidate in _candidates) {
                     var text = candidate.text;
                     text = expand_expr (text);
@@ -828,7 +826,7 @@ namespace Skk {
                 return true;
             }
             else if (command == "purge-candidate") {
-                state.purge_candidate (state.midasi,
+                state.purge_candidate (state.candidates.midasi,
                                        state.candidates.get ());
                 state.reset ();
                 return true;

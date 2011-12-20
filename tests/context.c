@@ -184,6 +184,22 @@ okuri_ari (void)
 }
 
 static void
+_abort (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    // back to select state if candidate list is not empty
+    { SKK_INPUT_MODE_HIRAGANA, "A k a SPC SPC SPC C-g", "▼垢", "", SKK_INPUT_MODE_HIRAGANA },
+    // back to preedit state if candidate list is empty
+    { SKK_INPUT_MODE_HIRAGANA, "A p a SPC C-g", "▽あぱ", "", SKK_INPUT_MODE_HIRAGANA },
+  };
+
+  context = create_context ();
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
+static void
 delete (void)
 {
   SkkContext *context;
@@ -434,6 +450,7 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/rom-kana", rom_kana);
   g_test_add_func ("/libskk/okuri-nasi", okuri_nasi);
   g_test_add_func ("/libskk/okuri-ari", okuri_ari);
+  g_test_add_func ("/libskk/abort", _abort);
   g_test_add_func ("/libskk/delete", delete);
   g_test_add_func ("/libskk/hankaku-katakana", hankaku_katakana);
   g_test_add_func ("/libskk/completion", completion);
