@@ -105,21 +105,25 @@ namespace Skk {
             "x", "w", "x", "x", "w", "n"
         };
 
-        internal static string? get_okurigana_prefix (string okurigana) {
-            var head = okurigana.get_char ();
-            if (head == 'ん') {
+        static string? get_okurigana_prefix_for_char (unichar uc) {
+            if (uc == 'ん') {
                 return "n";
             }
-            else if (head < 'ぁ' || head > 'ん') {
+            else if (uc < 'ぁ' || uc > 'ん') {
                 return null;
             }
-            else if (head == 'っ' && okurigana != "っ") {
-                var next = okurigana.get_char (1);
-                return KanaRomTable[next - 'ぁ'];
-            }
             else {
-                return KanaRomTable[head - 'ぁ'];
+                return KanaRomTable[uc - 'ぁ'];
             }
+        }
+
+        internal static string? get_okurigana_prefix (string okurigana) {
+            var head = okurigana.get_char ();
+            if (head == 'っ' && okurigana != "っ") {
+                var index = okurigana.index_of_nth_char (1);
+                head = okurigana.get_char (index);
+            }
+            return get_okurigana_prefix_for_char (head);
         }
 
         static const string[] KanjiNumericTable = {
