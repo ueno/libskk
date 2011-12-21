@@ -36,7 +36,7 @@ LT_INIT
 
 AM_PATH_GLIB_2_0
 PKG_CHECK_MODULES([LIBSKK], [glib-2.0 >= 2.26.0 gobject-2.0 gio-2.0 gee-1.0 json-glib-1.0], ,
-  [AC_MSG_ERROR([Required libraries are not found])])
+  [AC_MSG_ERROR([Please install glib-2.0 gobject-2.0 gio-2.0 gee-1.0 json-glib-1.0])])
 GLIB_GSETTINGS
 
 GOBJECT_INTROSPECTION_CHECK([0.9.0])
