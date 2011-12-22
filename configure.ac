@@ -34,10 +34,22 @@ AC_ISC_POSIX
 AC_HEADER_STDC
 LT_INIT
 
-AM_PATH_GLIB_2_0
-PKG_CHECK_MODULES([LIBSKK], [glib-2.0 >= 2.26.0 gobject-2.0 gio-2.0 gee-1.0 json-glib-1.0], ,
-  [AC_MSG_ERROR([Please install glib-2.0 gobject-2.0 gio-2.0 gee-1.0 json-glib-1.0])])
-GLIB_GSETTINGS
+# check gio
+PKG_CHECK_MODULES([GIO], [gio-2.0], ,
+  [AC_MSG_ERROR([can't find gio-2.0])])
+
+# check gee
+PKG_CHECK_MODULES([GEE], [gee-1.0], ,
+  [AC_MSG_ERROR([can't find gee-1.0])])
+
+# check json-glib
+PKG_CHECK_MODULES([JSON_GLIB], [json-glib-1.0], ,
+  [AC_MSG_ERROR([can't find json-glib-1.0])])
+
+LIBSKK_CFLAGS="$GIO_CFLAGS $GEE_CFLAGS $JSON_GLIB_CFLAGS"
+AC_SUBST(LIBSKK_CFLAGS)
+LIBSKK_LIBS="$GIO_LIBS $GEE_LIBS $JSON_GLIB_LIBS"
+AC_SUBST(LIBSKK_LIBS)
 
 GOBJECT_INTROSPECTION_CHECK([0.9.0])
 
