@@ -59,18 +59,20 @@ namespace Skk {
         internal RomKanaConverter okuri_rom_kana_converter;
         internal bool okuri; 
 
+        // Used by Context for dict edit.
+        internal string midasi;
+
         internal StringBuilder output = new StringBuilder ();
         internal StringBuilder abbrev = new StringBuilder ();
         internal StringBuilder kuten = new StringBuilder ();
 
-        internal Iterator<string>? completion_iterator;
+        internal ArrayList<string> completion = new ArrayList<string> ();
+        internal Iterator<string> completion_iterator;
 
         internal string[] auto_start_henkan_keywords;
         internal string? auto_start_henkan_keyword = null;
 
         internal bool egg_like_newline = false;
-
-        internal int[] numerics;
 
         internal PeriodStyle period_style {
             get {
@@ -140,6 +142,10 @@ namespace Skk {
             reset ();
         }
 
+        ~State () {
+            reset ();
+        }
+
         void candidate_selected (Candidate c) {
             output.append (c.output);
             if (auto_start_henkan_keyword != null) {
@@ -161,6 +167,7 @@ namespace Skk {
             okuri = false;
             _typing_rule.get_filter ().reset ();
             completion_iterator = null;
+            completion.clear ();
             candidates.clear ();
             abbrev.erase ();
             kuten.erase ();
@@ -173,7 +180,7 @@ namespace Skk {
             okuri = false;
         }
 
-        string extract_numerics (string midasi, out int[] _numerics) {
+        string extract_numerics (string midasi, out int[] numerics) {
             MatchInfo info = null;
             int start_pos = 0;
             var numeric_list = new ArrayList<int> ();
@@ -201,7 +208,7 @@ namespace Skk {
                 builder.append ("#");
                 start_pos = match_end_pos;
             }
-            _numerics = numeric_list.to_array ();
+            numerics = numeric_list.to_array ();
             builder.append (midasi[start_pos:midasi.length]);
             return builder.str;
         }
@@ -220,7 +227,7 @@ namespace Skk {
             return text;
         }
 
-        string expand_numeric_references (string text) {
+        string expand_numeric_references (string text, int[] numerics) {
             var builder = new StringBuilder ();
             MatchInfo info = null;
             int start_pos = 0;
@@ -274,15 +281,25 @@ namespace Skk {
         }
 
         internal void lookup (string midasi, bool okuri = false) {
-            var _midasi = extract_numerics (midasi, out numerics);
             candidates.clear ();
-            candidates.add_candidates_start (_midasi, okuri);
+            candidates.add_candidates_start ();
+            int[] numerics = new int[0];
+            lookup_internal (midasi, numerics, okuri);
+            var numeric_midasi = extract_numerics (midasi, out numerics);
+            lookup_internal (numeric_midasi, numerics, okuri);
+            candidates.add_candidates_end ();
+        }
+
+        void lookup_internal (string midasi,
+                              int[] numerics,
+                              bool okuri = false)
+        {
             foreach (var dict in dictionaries) {
-                var _candidates = dict.lookup (_midasi, okuri);
+                var _candidates = dict.lookup (midasi, okuri);
                 foreach (var candidate in _candidates) {
                     var text = candidate.text;
                     text = expand_expr (text);
-                    text = expand_numeric_references (text);
+                    text = expand_numeric_references (text, numerics);
                     candidate.output = text;
                     // annotation may be an expression
                     if (candidate.annotation != null) {
@@ -292,23 +309,20 @@ namespace Skk {
                 }
                 candidates.add_candidates (_candidates);
             }
-            candidates.add_candidates_end ();
         }
 
-        internal void purge_candidate (string midasi,
-                                       Candidate candidate,
-                                       bool okuri = false)
+        internal void purge_candidate (Candidate candidate)
         {
             foreach (var dict in dictionaries) {
                 if (!dict.read_only) {
-                    dict.purge_candidate (midasi, candidate);
+                    dict.purge_candidate (candidate);
                 }
             }
         }
 
         internal signal bool recursive_edit_abort ();
         internal signal bool recursive_edit_end (string text);
-        internal signal void recursive_edit_start (string midasi);
+        internal signal void recursive_edit_start (string midasi, bool okuri);
 
         internal string get_yomi () {
             StringBuilder builder = new StringBuilder ();
@@ -689,17 +703,17 @@ namespace Skk {
             }
             else if (command == "complete") {
                 if (state.completion_iterator == null) {
-                    var completion = new TreeSet<string> ();
                     foreach (var dict in state.dictionaries) {
-                        string[] _completion = dict.complete (
+                        string[] completion = dict.complete (
                             state.rom_kana_converter.output);
-                        foreach (var c in _completion) {
-                            completion.add (c);
+                        for (var i = 0; i < completion.length; i++) {
+                            state.completion.add (completion[i]);
                         }
+                        state.completion.sort ();
                     }
-                    if (!completion.is_empty) {
-                        state.completion_iterator = completion.iterator_at (
-                            completion.first ());
+                    state.completion_iterator = state.completion.iterator ();
+                    if (!state.completion_iterator.first ()) {
+                        state.completion_iterator = null;
                     }
                 }
                 if (state.completion_iterator != null) {
@@ -826,8 +840,8 @@ namespace Skk {
                 return true;
             }
             else if (command == "purge-candidate") {
-                state.purge_candidate (state.candidates.midasi,
-                                       state.candidates.get ());
+                var candidate = state.candidates.get ();
+                state.purge_candidate (candidate);
                 state.reset ();
                 return true;
             }
@@ -859,7 +873,7 @@ namespace Skk {
                     state.candidates.cursor_pos++;
                 }
                 else {
-                    state.recursive_edit_start (state.get_yomi ());
+                    state.recursive_edit_start (state.get_yomi (), state.okuri);
                     if (state.candidates.size == 0) {
                         state.handler_type = typeof (StartStateHandler);
                     }

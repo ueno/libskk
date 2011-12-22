@@ -196,7 +196,7 @@ namespace Skk {
                                  line, e.message);
                         return new Candidate[0];
                     }
-                    return split_candidates (_line);
+                    return split_candidates (midasi, okuri, _line);
                 }
             }
             return new Candidate[0];

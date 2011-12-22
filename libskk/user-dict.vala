@@ -68,7 +68,7 @@ namespace Skk {
                 }
             }
 
-            Map<string,ArrayList<Candidate>>? entries = null;
+            Map<string,Gee.List<Candidate>>? entries = null;
             while (line != null) {
                 if (line.has_prefix (";; okuri-ari entries.")) {
                     entries = okuri_ari_entries;
@@ -84,6 +84,7 @@ namespace Skk {
                     "no okuri-ari boundary");
             }
 
+            bool okuri = true;
             while (line != null) {
                 line = data.read_line (out length);
                 if (line == null) {
@@ -91,6 +92,7 @@ namespace Skk {
                 }
                 if (line.has_prefix (";; okuri-nasi entries.")) {
                     entries = okuri_nasi_entries;
+                    okuri = false;
                     continue;
                 }
                 try {
@@ -115,7 +117,9 @@ namespace Skk {
                         candidates_str);
                 }
 
-                var candidates = split_candidates (candidates_str);
+                var candidates = split_candidates (midasi,
+                                                   okuri,
+                                                   candidates_str);
                 var list = new ArrayList<Candidate> ();
                 foreach (var c in candidates) {
                     list.add (c);
@@ -145,9 +149,31 @@ namespace Skk {
             }
         }
 
-        static int compare_entry (Map.Entry<string,ArrayList<Candidate>> a,
-                                  Map.Entry<string,ArrayList<Candidate>> b) {
+        static int compare_entry_asc (Map.Entry<string,Gee.List<Candidate>> a,
+                                      Map.Entry<string,Gee.List<Candidate>> b)
+        {
             return strcmp (a.key, b.key);
+        }
+
+        static int compare_entry_dsc (Map.Entry<string,Gee.List<Candidate>> a,
+                                      Map.Entry<string,Gee.List<Candidate>> b)
+        {
+            return strcmp (b.key, a.key);
+        }
+
+        void write_entries (StringBuilder builder,
+                            Gee.List<Map.Entry<string,Gee.List<Candidate>>> entries)
+        {
+            var iter = entries.iterator ();
+            if (iter.first ()) {
+                do {
+                    var entry = iter.get ();
+                    var line = "%s %s\n".printf (
+                        entry.key,
+                        join_candidates (entry.value.to_array ()));
+                    builder.append (line);
+                } while (iter.next ());
+            }
         }
 
         /**
@@ -163,33 +189,17 @@ namespace Skk {
                 }
             }
             builder.append (";; okuri-ari entries.\n");
-            var entries = new TreeSet<Map.Entry<string,ArrayList<Candidate>>> (
-                (CompareFunc) compare_entry);
+            var entries = new ArrayList<Map.Entry<string,Gee.List<Candidate>>> ();
             entries.add_all (okuri_ari_entries.entries);
-            if (!entries.is_empty) {
-                var iter = entries.iterator_at (entries.last ());
-                do {
-                    var entry = iter.get ();
-                    var line = "%s %s\n".printf (
-                        entry.key,
-                        join_candidates (entry.value.to_array ()));
-                    builder.append (line);
-                } while (iter.previous ());
-            }
-            builder.append (";; okuri-nasi entries.\n");
+            entries.sort ((CompareFunc) compare_entry_dsc);
+            write_entries (builder, entries);
             entries.clear ();
+
+            builder.append (";; okuri-nasi entries.\n");
             entries.add_all (okuri_nasi_entries.entries);
-            if (!entries.is_empty) {
-                var iter = entries.iterator_at (entries.first ());
-                do {
-                    var entry = iter.get ();
-                    var line = "%s %s\n".printf (
-                        entry.key,
-                        join_candidates (
-                            entry.value.to_array ()));
-                    builder.append (line);
-                } while (iter.next ());
-            }
+            entries.sort ((CompareFunc) compare_entry_asc);
+            write_entries (builder, entries);
+            entries.clear ();
 
             var contents = converter.encode (builder.str);
             file.replace_contents (contents,
@@ -200,7 +210,7 @@ namespace Skk {
                                    out etag);
         }
 
-        Map<string,ArrayList<Candidate>> get_entries (bool okuri = false) {
+        Map<string,Gee.List<Candidate>> get_entries (bool okuri = false) {
             if (okuri) {
                 return okuri_ari_entries;
             } else {
@@ -225,7 +235,7 @@ namespace Skk {
          */
         public override string[] complete (string midasi) {
             SortedSet<string> keys = new TreeSet<string> ();
-            ArrayList<string> completion = new ArrayList<string> ();
+            Gee.List<string> completion = new ArrayList<string> ();
             keys.add_all (okuri_nasi_entries.keys);
             if (!keys.is_empty) {
                 var iter = keys.iterator_at (keys.first ());
@@ -256,9 +266,7 @@ namespace Skk {
         /**
          * {@inheritDoc}
          */
-        public override bool select_candidate (string midasi,
-                                               Candidate candidate,
-                                               bool okuri = false)
+        public override bool select_candidate (Candidate candidate)
         {
             int index;
 
@@ -266,7 +274,7 @@ namespace Skk {
             for (index = 0;
                  index < midasi_history.length && midasi_history[index] != null;
                  index++) {
-                if (midasi_history[index] == midasi) {
+                if (midasi_history[index] == candidate.midasi) {
                     if (index > 0) {
                         var first = midasi_history[0];
                         midasi_history[0] = midasi_history[index];
@@ -281,15 +289,15 @@ namespace Skk {
                     midasi_history[j] = midasi_history[j - 1];
                 }
             }
-            midasi_history[0] = midasi;
+            midasi_history[0] = candidate.midasi;
 
             // update candidates list associated with midasi
-            var entries = get_entries (okuri);
-            if (!entries.has_key (midasi)) {
-                entries.set (midasi, new ArrayList<Candidate> ());
+            var entries = get_entries (candidate.okuri);
+            if (!entries.has_key (candidate.midasi)) {
+                entries.set (candidate.midasi, new ArrayList<Candidate> ());
             }
             index = 0;
-            var candidates = entries.get (midasi);
+            var candidates = entries.get (candidate.midasi);
             foreach (var c in candidates) {
                 if (c.text == candidate.text) {
                     if (index > 0) {
@@ -309,14 +317,12 @@ namespace Skk {
         /**
          * {@inheritDoc}
          */
-        public override bool purge_candidate (string midasi,
-                                              Candidate candidate,
-                                              bool okuri = false)
+        public override bool purge_candidate (Candidate candidate)
         {
             bool modified = false;
-            var entries = get_entries (okuri);
-            if (entries.has_key (midasi)) {
-                var candidates = entries.get (midasi);
+            var entries = get_entries (candidate.okuri);
+            if (entries.has_key (candidate.midasi)) {
+                var candidates = entries.get (candidate.midasi);
                 if (candidates.size > 0) {
                     var iter = candidates.iterator ();
                     iter.first ();
@@ -328,7 +334,7 @@ namespace Skk {
                         }
                     } while (iter.next ());
                     if (candidates.size == 0) {
-                        entries.unset (midasi);
+                        entries.unset (candidate.midasi);
                     }
                 }
             }
@@ -347,10 +353,10 @@ namespace Skk {
         File file;
         string etag;
         EncodingConverter converter;
-        Map<string,ArrayList<Candidate>> okuri_ari_entries =
-            new HashMap<string,ArrayList<Candidate>> ();
-        Map<string,ArrayList<Candidate>> okuri_nasi_entries =
-            new HashMap<string,ArrayList<Candidate>> ();
+        Map<string,Gee.List<Candidate>> okuri_ari_entries =
+            new HashMap<string,Gee.List<Candidate>> ();
+        Map<string,Gee.List<Candidate>> okuri_nasi_entries =
+            new HashMap<string,Gee.List<Candidate>> ();
         Regex coding_cookie_regex;
         string midasi_history[128];
 

@@ -24,7 +24,7 @@ namespace Skk {
      * Must be called before using any functions in libskk.
      */
     public static void init () {
-        // needed to use static methods defined in Util class
+        // needed to use static methods defined in some classes
         typeof (Util).class_ref ();
         typeof (Rule).class_ref ();
     }
@@ -99,6 +99,7 @@ namespace Skk {
                 }
             }
         }
+
         /**
          * Current candidates.
          */
@@ -109,7 +110,6 @@ namespace Skk {
         }
 
         SList<State> state_stack;
-        SList<string> dict_edit_midasi_stack;
         HashMap<Type, StateHandler> handlers =
             new HashMap<Type, StateHandler> ();
 
@@ -208,10 +208,7 @@ namespace Skk {
                     update_preedit ();
                 });
             candidates.selected.connect ((candidate) => {
-                    if (select_candidate_in_dictionaries (
-                            candidates.midasi,
-                            candidate,
-                            candidates.okuri)) {
+                    if (select_candidate_in_dictionaries (candidate)) {
                         try {
                             save_dictionaries ();
                         } catch (GLib.Error e) {
@@ -219,6 +216,10 @@ namespace Skk {
                         }
                     }
                 });
+        }
+
+        ~Context () {
+            _dictionaries.clear ();
         }
 
         void connect_state_signals (State state) {
@@ -230,14 +231,12 @@ namespace Skk {
                 });
         }
 
-        bool select_candidate_in_dictionaries (string midasi,
-                                               Candidate candidate,
-                                               bool okuri = false)
+        bool select_candidate_in_dictionaries (Candidate candidate)
         {
             bool changed = false;
             foreach (var dict in dictionaries) {
                 if (!dict.read_only &&
-                    dict.select_candidate (midasi, candidate, okuri)) {
+                    dict.select_candidate (candidate)) {
                     changed = true;
                 }
             }
@@ -248,18 +247,21 @@ namespace Skk {
             return state_stack.length () - 1;
         }
 
-        void start_dict_edit (string midasi) {
-            dict_edit_midasi_stack.prepend (midasi);
-            state_stack.prepend (new State (_dictionaries));
+        void start_dict_edit (string midasi, bool okuri) {
+            var state = new State (_dictionaries);
+            state.midasi = midasi;
+            state.okuri = okuri;
+            state_stack.prepend (state);
             connect_state_signals (state_stack.data);
             update_preedit ();
         }
 
         bool end_dict_edit (string text) {
-            if (leave_dict_edit ()) {
-                var candidate = new Candidate (text);
-                if (select_candidate_in_dictionaries (candidates.midasi, 
-                                                      candidate)) {
+            string? midasi;
+            bool? okuri;
+            if (leave_dict_edit (out midasi, out okuri)) {
+                var candidate = new Candidate (midasi, okuri, text);
+                if (select_candidate_in_dictionaries (candidate)) {
                     try {
                         save_dictionaries ();
                     } catch (GLib.Error e) {
@@ -274,18 +276,23 @@ namespace Skk {
             return false;
         }
 
-        bool leave_dict_edit () {
+        bool leave_dict_edit (out string? midasi, out bool? okuri) {
             if (dict_edit_level () > 0) {
-                dict_edit_midasi_stack.delete_link (dict_edit_midasi_stack);
+                midasi = state_stack.data.midasi;
+                okuri = state_stack.data.okuri;
                 state_stack.delete_link (state_stack);
                 state_stack.data.cancel_okuri ();
                 return true;
             }
+            midasi = null;
+            okuri = false;
             return false;
         }
 
         bool abort_dict_edit () {
-            if (leave_dict_edit ()) {
+            string? midasi;
+            bool? okuri;
+            if (leave_dict_edit (out midasi, out okuri)) {
                 update_preedit ();
                 return true;
             }
@@ -456,7 +463,7 @@ namespace Skk {
                     builder.append_c (']');
                 }
                 builder.append (" ");
-                builder.append (dict_edit_midasi_stack.data);
+                builder.append (state_stack.data.midasi);
                 builder.append (" ");
                 builder.append (handler.get_output (state));
             }

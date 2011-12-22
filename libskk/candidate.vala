@@ -22,96 +22,67 @@ namespace Skk {
      * Object representing a candidate in dictionaries.
      */
     public class Candidate : Object {
-        string _text;
-        string? _annotation;
-        string? _output;
+        /**
+         * Midasi word generated this candidate.
+         */
+        public string midasi { get; private set; }
+
+        /**
+         * Whether this candidate is generated as a result of
+         * okuri-ari conversion.
+         */
+        public bool okuri { get; private set; }
 
         /**
          * Base string value of the candidate.
          */
-        public string text {
-            get {
-                return _text;
-            }
-            internal set {
-                _text = value;
-            }
-        }
+        public string text { get; set; }
 
         /**
          * Optional annotation text to the candidate.
          */
-        public string? annotation {
-            get {
-                return _annotation;
-            }
-            internal set {
-                _annotation = value;
-            }
-        }
+        public string? annotation { get; set; }
 
         /**
          * Output string shown instead of text.
          * This is used for numeric conversion feature.
          */
-        public string output {
-            get {
-                return _output;
-            }
-            internal set {
-                _output = value;
-            }
-        }
+        public string output { get; set; }
 
         /**
          * Returns a string representing the candidate.
          * @return a string representing the candidate
          */
         public string to_string () {
-            if (_annotation != null) {
-                return _text + ";" + _annotation;
+            if (annotation != null) {
+                return text + ";" + annotation;
             } else {
-                return _text;
+                return text;
             }
         }
 
         /**
          * Create a new Candidate.
          *
+         * @param midasi midasi (index) word which generate the candidate
+         * @param okuri whether the candidate is a result of okuri-ari conversion
          * @param text base string value of the candidate
          * @param annotation optional annotation text to the candidate
          * @param output optional output text used instead of text
          *
          * @return a new SkkCandidate
          */
-        public Candidate (string text,
+        public Candidate (string midasi,
+                          bool okuri,
+                          string text,
                           string? annotation = null,
                           string? output = null)
         {
-            _text = text;
-            _annotation = annotation;
-            _output = output == null ? text : output;
-        }
-
-        /**
-         * Create a new Candidate from a textual representation
-         *
-         * @param str a string representation of a candidate
-         * (i.e. text and annotation are separated by ";").
-         *
-         * @return a new Candidate
-         */
-        public Candidate.from_string (string str) {
-            var strv = str.split (";", 2);
-            string t, a;
-            if (strv.length == 2) {
-                t = strv[0];
-                a = strv[1];
-            } else {
-                t = str;
-                a = null;
-            }
-            this (t, a);
+            this.midasi = midasi;
+            this.okuri = okuri;
+            this.text = text;
+            this.annotation = annotation;
+            this.output = output == null ? text : output;
         }
     }
 
@@ -151,14 +122,6 @@ namespace Skk {
             }
         }
 
-        public string midasi { get; private set; }
-
-        /**
-         * Whether this candidate list is generated as a result of
-         * okuri-ari conversion.
-         */
-        public bool okuri { get; private set; }
-
         Set<string> seen = new HashSet<string> ();
 
         internal void clear () {
@@ -167,10 +130,8 @@ namespace Skk {
             seen.clear ();
         }
 
-        internal void add_candidates_start (string midasi, bool okuri) {
+        internal void add_candidates_start () {
             clear ();
-            this.midasi = midasi;
-            this.okuri = okuri;
         }
 
         internal void add_candidates (Candidate[] array) {

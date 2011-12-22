@@ -13,6 +13,7 @@ context (void)
 
   output = skk_context_get_output (context);
   g_assert_cmpstr (output, ==, "あい");
+  g_free (output);
 
   preedit = skk_context_get_preedit (context);
   g_assert_cmpstr (preedit, ==, "r");
@@ -29,6 +30,7 @@ context (void)
 
   output = skk_context_get_output (context);
   g_assert_cmpstr (output, ==, "");
+  g_free (output);
 
   preedit = skk_context_get_preedit (context);
   g_assert_cmpstr (preedit, ==, "▽あい");
@@ -44,6 +46,7 @@ context (void)
 
   output = skk_context_get_output (context);
   g_assert_cmpstr (output, ==, "愛");
+  g_free (output);
 
   retval = skk_context_process_key_events (context, "\n");
   g_assert (!retval);
@@ -436,6 +439,7 @@ nicola (void)
   rule = skk_rule_new ("nicola", &error);
   g_assert_no_error (error);
   skk_context_set_typing_rule (context, rule);
+  g_object_unref (rule);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
   g_object_unref (context);
 }

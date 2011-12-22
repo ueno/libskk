@@ -5,9 +5,10 @@
 SkkContext *
 create_context (void)
 {
-  SkkDict *dictionaries[1];
+  SkkDict *dictionaries[2];
   SkkFileDict *file_dict;
   SkkUserDict *user_dict;
+  SkkContext *context;
   GError *error;
 
   unlink ("user-dict.dat");
@@ -23,7 +24,12 @@ create_context (void)
   dictionaries[0] = SKK_DICT (user_dict);
   dictionaries[1] = SKK_DICT (file_dict);
 
-  return skk_context_new (dictionaries, 2);
+  context = skk_context_new (dictionaries, 2);
+
+  g_object_unref (user_dict);
+  g_object_unref (file_dict);
+
+  return context;
 }
 
 void
@@ -43,6 +49,7 @@ check_transitions (SkkContext    *context,
     g_assert_cmpstr (preedit, ==, transitions[i].preedit);
     output = skk_context_get_output (context);
     g_assert_cmpstr (output, ==, transitions[i].output);
+    g_free (output);
     input_mode = skk_context_get_input_mode (context);
     g_assert_cmpint (input_mode, ==, transitions[i].next_input_mode);
   }

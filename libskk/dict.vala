@@ -26,11 +26,26 @@ namespace Skk {
          * @param line a line consisting of candidates
          * @return an array of Candidates
          */
-        protected Candidate[] split_candidates (string line) {
+        protected Candidate[] split_candidates (string midasi,
+                                                bool okuri,
+                                                string line)
+        {
             var strv = line.strip ().slice (1, -1).split ("/");
             Candidate[] candidates = new Candidate[strv.length];
             for (int i = 0; i < strv.length; i++) {
-                candidates[i] = new Candidate.from_string (strv[i]);
+                var text_annotation = strv[i].split (";", 2);
+                string text, annotation;
+                if (text_annotation.length == 2) {
+                    text = text_annotation[0];
+                    annotation = text_annotation[1];
+                } else {
+                    text = strv[i];
+                    annotation = null;
+                }
+                candidates[i] = new Candidate (midasi,
+                                               okuri,
+                                               text,
+                                               annotation);
             }
             return candidates;
         }
@@ -84,15 +99,11 @@ namespace Skk {
         /**
          * Select a candidate in the dictionary.
          *
-         * @param midasi a midasi (title) string
          * @param candidate an Candidate
-         * @param okuri whether to select okuri-ari entries or okuri-nasi entries
          *
          * @return `true` if the dictionary is modified, `false` otherwise.
          */
-        public virtual bool select_candidate (string midasi,
-                                              Candidate candidate,
-                                              bool okuri = false)
+        public virtual bool select_candidate (Candidate candidate)
         {
             // FIXME: throw an error when the dictionary is read only
             return false;
@@ -101,15 +112,11 @@ namespace Skk {
         /**
          * Purge a candidate in the dictionary.
          *
-         * @param midasi a midasi (title) string
          * @param candidate an Candidate
-         * @param okuri whether to purge okuri-ari entries or okuri-nasi entries
          *
          * @return `true` if the dictionary is modified, `false` otherwise.
          */
-        public virtual bool purge_candidate (string midasi,
-                                             Candidate candidate,
-                                             bool okuri = false)
+        public virtual bool purge_candidate (Candidate candidate)
         {
             // FIXME: throw an error when the dictionary is read only
             return false;

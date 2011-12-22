@@ -102,8 +102,10 @@ namespace Skk {
                 var response = read_response ();
                 if (response.length == 0)
                     return new Candidate[0];
-                return split_candidates (
-                    converter.decode (response[1:response.length]));
+                return split_candidates (midasi,
+                                         okuri,
+                                         converter.decode (
+                                             response[1:response.length]));
             } catch (SkkServError e) {
                 return new Candidate[0];
             } catch (GLib.Error e) {

@@ -8,17 +8,27 @@ file_dict (void)
   g_assert_no_error (error);
 
   gint len;
-  SkkCandidate **candidates = skk_dict_lookup (SKK_DICT (dict),
-                                               "かんじ",
-                                               FALSE,
-                                               &len);
+  SkkCandidate **candidates;
+
+  candidates = skk_dict_lookup (SKK_DICT (dict),
+                                "かんじ",
+                                FALSE,
+                                &len);
   g_assert_cmpint (len, ==, 2);
+  while (--len >= 0) {
+    g_object_unref (candidates[len]);
+  }
+  g_free (candidates);
 
   candidates = skk_dict_lookup (SKK_DICT (dict),
                                 "あu",
                                 TRUE,
                                 &len);
   g_assert_cmpint (len, ==, 4);
+  while (--len >= 0) {
+    g_object_unref (candidates[len]);
+  }
+  g_free (candidates);
 
   g_object_unref (dict);
 }

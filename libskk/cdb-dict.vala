@@ -93,7 +93,7 @@ namespace Skk {
                                      (string) data, e.message);
                             break;
                         }
-                        return split_candidates (_data);
+                        return split_candidates (midasi, okuri, _data);
                     }
                 }
             }
