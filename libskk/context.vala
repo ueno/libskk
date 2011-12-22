@@ -254,6 +254,7 @@ namespace Skk {
             state_stack.prepend (state);
             connect_state_signals (state_stack.data);
             update_preedit ();
+            notify_property ("candidates");
         }
 
         bool end_dict_edit (string text) {
@@ -282,6 +283,7 @@ namespace Skk {
                 okuri = state_stack.data.okuri;
                 state_stack.delete_link (state_stack);
                 state_stack.data.cancel_okuri ();
+                notify_property ("candidates");
                 return true;
             }
             midasi = null;
@@ -424,6 +426,7 @@ namespace Skk {
             state_stack = null;
             state_stack.prepend (state);
             state.reset ();
+            notify_property ("candidates");
         }
 
         /**
