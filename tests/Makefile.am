@@ -24,3 +24,5 @@ context_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 
 EXTRA_DIST = file-dict.dat kana-kan.c
 CLEANFILES = user-dict.dat
+
+-include $(top_srcdir)/git.mk

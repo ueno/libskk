@@ -6,7 +6,7 @@ lib_LTLIBRARIES = libskk.la
 libskk_la_VALAFLAGS = \
 	--includedir=libskk \
 	-H libskk.h --vapi skk-@SKK_API_VERSION@.vapi \
-	-h skk-internals.h \
+	-h libskk-internals.h \
 	--vapidir=. \
 	--pkg config --pkg glib-2.0 --pkg gio-2.0 --pkg gee-1.0 \
 	--pkg posix --pkg json-glib-1.0 \
@@ -62,12 +62,18 @@ endif
 
 Skk-@SKK_API_VERSION@.gir skk-internals-@SKK_API_VERSION@.vapi skk-@SKK_API_VERSION@.vapi: libskk.la
 
-CLEANFILES = \
-	skk-@SKK_API_VERSION@.vapi \
-	skk-internals-@SKK_API_VERSION@.vapi \
-	Skk-@SKK_API_VERSION@.typelib \
-	Skk-@SKK_API_VERSION@.gir \
-	*.[ch] \
+GITIGNOREFILES =				\
+	$(libskk_la_SOURCES:.vala=.c)		\
+	libskk_la_vala.stamp			\
+	libskk.h				\
+	libskk-internals.h			\
+	$(NULL)
+
+CLEANFILES =					\
+	skk-@SKK_API_VERSION@.vapi		\
+	skk-internals-@SKK_API_VERSION@.vapi	\
+	Skk-@SKK_API_VERSION@.typelib		\
+	Skk-@SKK_API_VERSION@.gir		\
 	*.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -78,3 +84,4 @@ vapidir = $(datadir)/vala/vapi
 
 EXTRA_DIST = config.vapi skk-1.0.deps
 
+-include $(top_srcdir)/git.mk

@@ -96,3 +96,5 @@ nobase_dist_rules_DATA =			\
 	$(tcode_files)				\
 	$(trycode_files)			\
 	README.rules
+
+-include $(top_srcdir)/git.mk
