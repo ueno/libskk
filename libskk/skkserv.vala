@@ -71,8 +71,11 @@ namespace Skk {
                         throw new SkkServError.INVALID_RESPONSE (
                             "invalid response code");
                     }
-                    uint8[] _buffer = buffer[0:len];
-                    builder.append ((string)_buffer);
+                    // make sure to null terminate the string
+                    char[] data = new char[len + 1];
+                    Memory.copy (data, buffer, len);
+                    data.length--;
+                    builder.append ((string)data);
                 }
             }
             var index = builder.str.index_of_char ('\n');
