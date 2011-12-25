@@ -1,53 +1,67 @@
+# Copyright (C) 2011 Daiki Ueno <ueno@unixuser.org>
+# Copyright (C) 2011 Red Hat, Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 # force include config.h before gi18n.h.
 AM_CPPFLAGS = -include $(CONFIG_HEADER)
 
 lib_LTLIBRARIES = libskk.la
 
-libskk_la_VALAFLAGS = \
-	--includedir=libskk \
-	-H libskk.h --vapi skk-@SKK_API_VERSION@.vapi \
-	-h libskk-internals.h \
-	--vapidir=. \
-	--pkg config --pkg glib-2.0 --pkg gio-2.0 --pkg gee-1.0 \
-	--pkg posix --pkg json-glib-1.0 \
-	--internal-vapi skk-internals-@SKK_API_VERSION@.vapi \
-	--library skk-@SKK_API_VERSION@ --gir Skk-@SKK_API_VERSION@.gir \
+libskk_la_VALAFLAGS =						\
+	--includedir=libskk					\
+	-H libskk.h						\
+	--vapi skk-@SKK_API_VERSION@.vapi			\
+	-h libskk-internals.h					\
+	--vapidir=.						\
+	--pkg config						\
+	--pkg glib-2.0						\
+	--pkg gio-2.0						\
+	--pkg gee-1.0						\
+	--pkg posix						\
+	--pkg json-glib-1.0					\
+	--internal-vapi skk-internals-@SKK_API_VERSION@.vapi	\
+	--library skk-@SKK_API_VERSION@				\
+	--gir Skk-@SKK_API_VERSION@.gir				\
 	$(VALAFLAGS)
 
-libskk_la_CFLAGS = \
-	$(LIBSKK_CFLAGS) \
-	-DPKGDATADIR=\"$(pkgdatadir)\"
-
-libskk_la_LIBADD = \
-	$(LIBSKK_LIBS)
+libskk_la_CFLAGS = $(LIBSKK_CFLAGS) -DPKGDATADIR=\"$(pkgdatadir)\"
+libskk_la_LIBADD = $(LIBSKK_LIBS)
 
 libskkincludedir = $(includedir)/libskk
+libskkinclude_HEADERS = libskk.h
 
-skk_headers = \
-	libskk.h
-
-libskkinclude_HEADERS = \
-	$(skk_headers)
-
-libskk_la_SOURCES = \
-	rom-kana.vala \
-	kana-kan.vala \
-	encoding.vala \
-	dict.vala \
-	file-dict.vala \
-	cdb-dict.vala \
-	user-dict.vala \
-	skkserv.vala \
-	key-event.vala \
-	keymap.vala \
-	rule.vala \
-	map-file.vala \
-	state.vala \
-	context.vala \
-	candidate.vala \
-	nicola.vala \
-	expr.vala \
-	util.vala
+libskk_la_SOURCES =				\
+	rom-kana.vala				\
+	kana-kan.vala				\
+	encoding.vala				\
+	dict.vala				\
+	file-dict.vala				\
+	cdb-dict.vala				\
+	user-dict.vala				\
+	skkserv.vala				\
+	key-event.vala				\
+	keymap.vala				\
+	rule.vala				\
+	map-file.vala				\
+	state.vala				\
+	context.vala				\
+	candidate.vala				\
+	nicola.vala				\
+	expr.vala				\
+	util.vala				\
+	$(NULL)
 
 if HAVE_INTROSPECTION
 girdir = $(datadir)/gir-1.0
@@ -74,7 +88,8 @@ CLEANFILES =					\
 	skk-internals-@SKK_API_VERSION@.vapi	\
 	Skk-@SKK_API_VERSION@.typelib		\
 	Skk-@SKK_API_VERSION@.gir		\
-	*.pc
+	libskk.pc				\
+	$(NULL)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libskk.pc
