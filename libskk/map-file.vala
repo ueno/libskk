@@ -39,11 +39,11 @@ namespace Skk {
                    string name,
                    Set<string> included) throws RuleParseError
         {
-            var base_dir = Rule.get_base_dir (rule);
-            if (base_dir == null) {
+            var metadata = Rule.find_rule (rule);
+            if (metadata == null) {
                 throw new RuleParseError.FAILED ("can't find rule %s", rule);
             }
-            var filename = Path.build_filename (base_dir,
+            var filename = Path.build_filename (metadata.base_dir,
                                                 type,
                                                 name + ".json");
             if (!FileUtils.test (filename, FileTest.EXISTS)) {

@@ -123,9 +123,14 @@ namespace Skk {
         string filter;
     }
 
-    // A rule is a set of MapFiles and a RuleMetadata
+    /**
+     * Object representing a typing rule.
+     */
     public class Rule : Object {
-        internal RuleMetadata metadata;
+        /**
+         * Metadata associated with the rule.
+         */
+        public RuleMetadata metadata { get; private set; }
         internal KeymapMapFile[] keymaps = new KeymapMapFile[InputMode.LAST];
         internal RomKanaMapFile rom_kana;
 
@@ -217,8 +222,15 @@ namespace Skk {
             return filter_instances.get (metadata.filter);
         }
 
+        /**
+         * Create a rule.
+         *
+         * @param name name of the rule to load
+         *
+         * @return a new Rule
+         */
         public Rule (string name) throws RuleParseError {
-            var metadata = get_metadata (name);
+            var metadata = find_rule (name);
             if (metadata == null) {
                 throw new RuleParseError.FAILED (
                     "can't find metadata for \"%s\"",
@@ -233,21 +245,16 @@ namespace Skk {
             rom_kana = new RomKanaMapFile (name);
         }
 
-        internal static string? get_base_dir (string name) {
-            var metadata = find_rule (name);
-            if (metadata != null)
-                return metadata.base_dir;
-            return null;
-        }
-
-        internal static RuleMetadata? get_metadata (string name) {
-            return find_rule (name);
-        }
-
         static Map<string,RuleMetadata?> rule_cache = new HashMap<string,RuleMetadata?> ();
 
-        static RuleMetadata? find_rule (string name)
-        {
+        /**
+         * Locate a rule by name.
+         *
+         * @param name name of the rule
+         *
+         * @return a RuleMetadata or `null`
+         */
+        public static RuleMetadata? find_rule (string name) {
             if (rule_cache.has_key (name)) {
                 return rule_cache.get (name);
             }
@@ -268,7 +275,12 @@ namespace Skk {
             return null;
         }
 
-        internal static RuleMetadata[] list () {
+        /**
+         * List rules.
+         *
+         * @return an array of RuleMetadata
+         */
+        public static RuleMetadata[] list () {
             Set<string> names = new HashSet<string> ();
             RuleMetadata[] rules = {};
             foreach (var dir in rules_path) {
