@@ -30,16 +30,6 @@ namespace Skk {
     }
 
     /**
-     * Return the list of typing rules installed on the system.
-     *
-     * @return an array of RuleMetadata
-     */
-    public static RuleMetadata[] list_typing_rules () {
-        return Rule.list ();
-    }
-
-
-    /**
      * Type to specify input modes.
      */
     public enum InputMode {
@@ -430,21 +420,47 @@ namespace Skk {
         }
 
         /**
-         * Get the current output string.  This will clear the current
-         * output after calling.
+         * This is replaced with {@link poll_output}.
          *
          * @return an output string
+         * @deprecated 0.0.6
          */
         public string get_output () {
+            return poll_output ();
+        }
+
+        string retrieve_output (bool clear) {
             var state = state_stack.data;
             var handler = handlers.get (state.handler_type);
             if (dict_edit_level () > 0) {
                 return "";
             } else {
                 var output = handler.get_output (state);
-                state.output.erase ();
+                if (clear) {
+                    state.output.erase ();
+                }
                 return output;
             }
+        }
+
+        /**
+         * Peek (retrieve, but not remove) the current output string.
+         *
+         * @return an output string
+         * @since 0.0.6
+         */
+        public string peek_output () {
+            return retrieve_output (false);
+        }
+
+        /**
+         * Poll (retrieve and remove) the current output string.
+         *
+         * @return an output string
+         * @since 0.0.6
+         */
+        public string poll_output () {
+            return retrieve_output (true);
         }
 
         /**

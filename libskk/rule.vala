@@ -94,7 +94,7 @@ namespace Skk {
     }
 
     /**
-     * Object describes rule.
+     * Object describing a rule.
      */
     public struct RuleMetadata {
         /**

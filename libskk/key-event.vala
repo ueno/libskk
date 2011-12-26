@@ -55,7 +55,6 @@ namespace Skk {
          * Create a key event.
          *
          * @param name a key name
-         * @param option a key option value
          * @param code a character code
          * @param modifiers state of modifier keys
          *
@@ -195,7 +194,7 @@ namespace Skk {
         /**
          * Signal emitted when a new key event is generated in the filter.
          *
-         * @param a key event
+         * @param key a key event
          */
         public signal void forwarded (KeyEvent key);
 

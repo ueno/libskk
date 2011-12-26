@@ -30,13 +30,34 @@ namespace Skk {
         }
 
         public GetTime get_time_func = get_time;
+
+        /**
+         * Duration where a single key press event is committed
+         * without a corresponding key release event.
+         */
         public int64 timeout = 100000;
+
+        /**
+         * Duration between two overlapping key press events, so they
+         * are considered as a doule key press/release event.
+         */
         public int64 overlap = 50000;
+
+        /**
+         * Maximum duration to wait for the next key event.
+         */
         public int64 maxwait = 10000000;
 
         static const string[] SPECIAL_DOUBLES = {
             "[fj]", "[gh]", "[dk]", "[LR]"
         };
+
+        /**
+         * Special double key press events (SKK-NICOLA extension).
+         *
+         * By default, "[fj]" (f + j), "[gh]" (g + h), "[dk]" (d + k),
+         * and "[LR]" (left shift + right shift) are registered.
+         */
         public string[] special_doubles;
 
         class TimedEntry<T> {
@@ -170,12 +191,12 @@ namespace Skk {
                     pending.offer_head (b);
                     var r = dispatch_single (time);
                     apply_shift (s.data, a.data);
-                    forward (a.data);
+                    forwarded (a.data);
                     return r;
                 } else {
                     pending.clear ();
                     apply_shift (s.data, b.data);
-                    forward (a.data);
+                    forwarded (a.data);
                     return b.data;
                 }
             } else if (pending.size == 2) {
@@ -185,7 +206,7 @@ namespace Skk {
                     pending.clear ();
                     pending.offer_head (b);
                     var r = dispatch_single (time);
-                    forward (a.data);
+                    forwarded (a.data);
                     return r;
                 } else if ((is_char (a.data) && is_char (b.data)) ||
                            (is_shift (a.data) && is_shift (b.data))) {
@@ -201,7 +222,7 @@ namespace Skk {
                         pending.clear ();
                         pending.offer_head (b);
                         var r = dispatch_single (time);
-                        forward (a.data);
+                        forwarded (a.data);
                         return r;
                     }
                 } else if (time - a.time > timeout) {
@@ -221,15 +242,11 @@ namespace Skk {
             return null;
         }
 
-        void forward (KeyEvent key) {
-            forwarded (key);
-        }
-
         bool timeout_func () {
             int64 time = get_time_func ();
             var r = dispatch (time);
             if (r != null) {
-                forward (r);
+                forwarded (r);
             }
             return false;
         }
@@ -271,6 +288,9 @@ namespace Skk {
             return output;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override void reset () {
             pending.clear ();
         }

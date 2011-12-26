@@ -57,7 +57,7 @@ namespace Skk {
             Skk.init ();
 
             if (list_typing_rules) {
-                var rules = Skk.list_typing_rules ();
+                var rules = Skk.Rule.list ();
                 foreach (var rule in rules) {
                     stdout.printf ("%s - %s: %s\n",
                                    rule.name,
@@ -116,7 +116,7 @@ namespace Skk {
             string? line;
             while ((line = stdin.read_line ()) != null) {
                 context.process_key_events (line);
-                var output = context.get_output ();
+                var output = context.poll_output ();
                 var preedit = context.preedit;
                 stdout.printf (
                     "{ \"input\": \"%s\", " +
