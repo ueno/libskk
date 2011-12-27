@@ -219,7 +219,13 @@ namespace Skk {
             state.notify["input-mode"].connect ((s, p) => {
                     notify_property ("input-mode");
                 });
+            state.retrieve_surrounding_text.connect ((out t, out c) => {
+                    return retrieve_surrounding_text (out t, out c);
+                });
         }
+
+        public signal bool retrieve_surrounding_text (out string text,
+                                                      out uint cursor_pos);
 
         bool select_candidate_in_dictionaries (Candidate candidate)
         {

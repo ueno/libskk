@@ -66,7 +66,7 @@ namespace Skk {
         internal StringBuilder abbrev = new StringBuilder ();
         internal StringBuilder kuten = new StringBuilder ();
 
-        internal ArrayList<string> completion = new ArrayList<string> ();
+        ArrayList<string> completion = new ArrayList<string> ();
         internal Iterator<string> completion_iterator;
 
         internal string[] auto_start_henkan_keywords;
@@ -111,8 +111,7 @@ namespace Skk {
         Regex numeric_regex;
         Regex numeric_ref_regex;
 
-        internal State (ArrayList<Dict> dictionaries)
-        {
+        internal State (ArrayList<Dict> dictionaries) {
             this.dictionaries = dictionaries;
             this.candidates = new CandidateList ();
             this.candidates.selected.connect (candidate_selected);
@@ -172,6 +171,8 @@ namespace Skk {
             abbrev.erase ();
             kuten.erase ();
             auto_start_henkan_keyword = null;
+            reconvert_text = null;
+            reconvert_length = 0;
         }
 
         internal void cancel_okuri () {
@@ -311,8 +312,7 @@ namespace Skk {
             }
         }
 
-        internal void purge_candidate (Candidate candidate)
-        {
+        internal void purge_candidate (Candidate candidate) {
             foreach (var dict in dictionaries) {
                 if (!dict.read_only) {
                     dict.purge_candidate (candidate);
@@ -320,9 +320,29 @@ namespace Skk {
             }
         }
 
+        internal void completion_start (string midasi) {
+            foreach (var dict in dictionaries) {
+                string[] _completion = dict.complete (midasi);
+                foreach (var word in _completion) {
+                    completion.add (word);
+                }
+                completion.sort ();
+            }
+            completion_iterator = completion.iterator ();
+            if (!completion_iterator.first ()) {
+                completion_iterator = null;
+            }
+        }
+
         internal signal bool recursive_edit_abort ();
         internal signal bool recursive_edit_end (string text);
         internal signal void recursive_edit_start (string midasi, bool okuri);
+
+        internal UnicodeString? reconvert_text;
+        internal uint reconvert_length;
+
+        internal signal bool retrieve_surrounding_text (out string text,
+                                                        out uint cursor_pos);
 
         internal string get_yomi () {
             StringBuilder builder = new StringBuilder ();
@@ -396,6 +416,14 @@ namespace Skk {
                 return retval;
             } else if (command == "start-preedit" ||
                        command == "start-preedit-kana") {
+                string? text;
+                uint cursor_pos;
+                if (state.retrieve_surrounding_text (out text,
+                                                     out cursor_pos)) {
+                    state.reconvert_text = new UnicodeString (
+                        text[text.index_of_nth_char (cursor_pos):text.length]);
+                    state.reconvert_length = 0;
+                }
                 state.handler_type = typeof (StartStateHandler);
                 return true;
             }
@@ -703,18 +731,7 @@ namespace Skk {
             }
             else if (command == "complete") {
                 if (state.completion_iterator == null) {
-                    foreach (var dict in state.dictionaries) {
-                        string[] completion = dict.complete (
-                            state.rom_kana_converter.output);
-                        for (var i = 0; i < completion.length; i++) {
-                            state.completion.add (completion[i]);
-                        }
-                        state.completion.sort ();
-                    }
-                    state.completion_iterator = state.completion.iterator ();
-                    if (!state.completion_iterator.first ()) {
-                        state.completion_iterator = null;
-                    }
+                    state.completion_start (state.rom_kana_converter.output);
                 }
                 if (state.completion_iterator != null) {
                     string midasi = state.completion_iterator.get ();
@@ -760,6 +777,26 @@ namespace Skk {
                     state.okuri = true;
                 }
                 return true;
+            }
+            else if (command == "expand-preedit") {
+                if (state.reconvert_text != null &&
+                    state.reconvert_length < state.reconvert_text.length - 1) {
+                    state.reconvert_length++;
+                    state.rom_kana_converter.output =
+                        state.reconvert_text.substring (0,
+                                                        state.reconvert_length);
+                    return true;
+                }
+            }
+            else if (command == "shrink-preedit") {
+                if (state.reconvert_text != null &&
+                    state.reconvert_length > 0) {
+                    state.reconvert_length--;
+                    state.rom_kana_converter.output =
+                        state.reconvert_text.substring (0,
+                                                        state.reconvert_length);
+                    return true;
+                }
             }
 
             if (key.modifiers == 0 && key.code.isalpha ()) {
