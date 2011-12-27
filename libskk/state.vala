@@ -710,6 +710,10 @@ namespace Skk {
 
             if (command == "next-candidate") {
                 if (state.rom_kana_converter.output.length == 0) {
+                    if (state.surrounding_text != null) {
+                        state.output.append (state.surrounding_text.substring (
+                                                 state.surrounding_end));
+                    }
                     state.reset ();
                     return true;
                 }
