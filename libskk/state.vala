@@ -171,8 +171,8 @@ namespace Skk {
             abbrev.erase ();
             kuten.erase ();
             auto_start_henkan_keyword = null;
-            reconvert_text = null;
-            reconvert_length = 0;
+            surrounding_text = null;
+            surrounding_end = 0;
         }
 
         internal void cancel_okuri () {
@@ -338,11 +338,13 @@ namespace Skk {
         internal signal bool recursive_edit_end (string text);
         internal signal void recursive_edit_start (string midasi, bool okuri);
 
-        internal UnicodeString? reconvert_text;
-        internal uint reconvert_length;
+        internal UnicodeString? surrounding_text;
+        internal uint surrounding_end;
 
         internal signal bool retrieve_surrounding_text (out string text,
                                                         out uint cursor_pos);
+        internal signal bool delete_surrounding_text (int offset,
+                                                      uint nchars);
 
         internal string get_yomi () {
             StringBuilder builder = new StringBuilder ();
@@ -367,7 +369,9 @@ namespace Skk {
 
     abstract class StateHandler : Object {
         internal abstract bool process_key_event (State state, ref KeyEvent key);
-        internal abstract string get_preedit (State state);
+        internal abstract string get_preedit (State state,
+                                              out uint underline_offset,
+                                              out uint underline_nchars);
         internal virtual string get_output (State state) {
             return state.output.str;
         }
@@ -420,9 +424,11 @@ namespace Skk {
                 uint cursor_pos;
                 if (state.retrieve_surrounding_text (out text,
                                                      out cursor_pos)) {
-                    state.reconvert_text = new UnicodeString (
+                    state.surrounding_text = new UnicodeString (
                         text[text.index_of_nth_char (cursor_pos):text.length]);
-                    state.reconvert_length = 0;
+                    state.surrounding_end = 0;
+                    state.delete_surrounding_text (
+                        0, state.surrounding_text.length);
                 }
                 state.handler_type = typeof (StartStateHandler);
                 return true;
@@ -518,9 +524,13 @@ namespace Skk {
             return false;
         }
 
-        internal override string get_preedit (State state) {
+        internal override string get_preedit (State state,
+                                              out uint underline_offset,
+                                              out uint underline_nchars)
+        {
             StringBuilder builder = new StringBuilder ();
             builder.append (state.rom_kana_converter.preedit);
+            underline_offset = underline_nchars = 0;
             return builder.str;
         }
     }
@@ -603,7 +613,10 @@ namespace Skk {
             return true;
         }
 
-        internal override string get_preedit (State state) {
+        internal override string get_preedit (State state,
+                                              out uint underline_offset,
+                                              out uint underline_nchars) {
+            underline_offset = underline_nchars = 0;
             return _("Kuten([MM]KKTT) ") + state.kuten.str;
         }
     }
@@ -650,7 +663,10 @@ namespace Skk {
             return true;
         }
 
-        internal override string get_preedit (State state) {
+        internal override string get_preedit (State state,
+                                              out uint underline_offset,
+                                              out uint underline_nchars) {
+            underline_offset = underline_nchars = 0;
             return "▽" + state.abbrev.str;
         }
     }
@@ -681,6 +697,10 @@ namespace Skk {
                         Util.convert_by_input_mode (
                             state.rom_kana_converter.output,
                             entry.value));
+                    if (state.surrounding_text != null) {
+                        state.output.append (state.surrounding_text.substring (
+                                                 state.surrounding_end));
+                    }
                     state.rom_kana_converter.reset ();
                     state.input_mode = entry.value;
                     state.handler_type = typeof (NoneStateHandler);
@@ -698,6 +718,10 @@ namespace Skk {
             }
             else if (command == "commit") {
                 state.output.append (state.rom_kana_converter.output);
+                if (state.surrounding_text != null) {
+                    state.output.append (state.surrounding_text.substring (
+                                             state.surrounding_end));
+                }
                 var input_mode = state.input_mode;
                 state.reset ();
                 state.input_mode = input_mode;
@@ -705,6 +729,10 @@ namespace Skk {
             }
             else if (command == "commit-unhandled") {
                 state.output.append (state.rom_kana_converter.output);
+                if (state.surrounding_text != null) {
+                    state.output.append (state.surrounding_text.substring (
+                                             state.surrounding_end));
+                }
                 var input_mode = state.input_mode;
                 state.reset ();
                 state.input_mode = input_mode;
@@ -779,22 +807,22 @@ namespace Skk {
                 return true;
             }
             else if (command == "expand-preedit") {
-                if (state.reconvert_text != null &&
-                    state.reconvert_length < state.reconvert_text.length - 1) {
-                    state.reconvert_length++;
+                if (state.surrounding_text != null &&
+                    state.surrounding_end < state.surrounding_text.length) {
+                    state.surrounding_end++;
                     state.rom_kana_converter.output =
-                        state.reconvert_text.substring (0,
-                                                        state.reconvert_length);
+                        state.surrounding_text.substring (
+                            0, state.surrounding_end);
                     return true;
                 }
             }
             else if (command == "shrink-preedit") {
-                if (state.reconvert_text != null &&
-                    state.reconvert_length > 0) {
-                    state.reconvert_length--;
+                if (state.surrounding_text != null &&
+                    state.surrounding_end > 0) {
+                    state.surrounding_end--;
                     state.rom_kana_converter.output =
-                        state.reconvert_text.substring (0,
-                                                        state.reconvert_length);
+                        state.surrounding_text.substring (
+                            0, state.surrounding_end);
                     return true;
                 }
             }
@@ -844,9 +872,19 @@ namespace Skk {
             return true;
         }
 
-        internal override string get_preedit (State state) {
+        internal override string get_preedit (State state,
+                                              out uint underline_offset,
+                                              out uint underline_nchars) {
             StringBuilder builder = new StringBuilder ("▽");
+            underline_offset = underline_nchars = 0;
             builder.append (state.get_yomi ());
+            if (state.surrounding_text != null) {
+                underline_offset = 1;
+                underline_nchars = builder.str.char_count () - 1;
+                builder.append (state.surrounding_text.substring (
+                                    state.surrounding_end,
+                                    -1));
+            }
             return builder.str;
         }
 
@@ -924,7 +962,13 @@ namespace Skk {
                 return true;
             }
             else {
+                string surrounding_after = "";
+                if (state.surrounding_text != null) {
+                    surrounding_after = state.surrounding_text.substring (
+                        state.surrounding_end);
+                }
                 state.candidates.select ();
+                state.output.append (surrounding_after);
                 if (command == "special-midasi") {
                     state.handler_type = typeof (StartStateHandler);
                     return false;
@@ -941,8 +985,11 @@ namespace Skk {
             return true;
         }
 
-        internal override string get_preedit (State state) {
+        internal override string get_preedit (State state,
+                                              out uint underline_offset,
+                                              out uint underline_nchars) {
             StringBuilder builder = new StringBuilder ("▼");
+            underline_offset = underline_nchars = 0;
             if (state.candidates.cursor_pos >= 0) {
                 var c = state.candidates.get ();
                 builder.append (c.output);
@@ -954,6 +1001,13 @@ namespace Skk {
             }
             else if (state.okuri) {
                 builder.append (state.okuri_rom_kana_converter.output);
+            }
+            else if (state.surrounding_text != null) {
+                underline_offset = 1;
+                underline_nchars = builder.str.char_count () - 1;
+                builder.append (state.surrounding_text.substring (
+                                    state.surrounding_end,
+                                    -1));
             }
             return builder.str;
         }

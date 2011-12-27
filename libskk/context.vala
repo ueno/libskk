@@ -222,10 +222,15 @@ namespace Skk {
             state.retrieve_surrounding_text.connect ((out t, out c) => {
                     return retrieve_surrounding_text (out t, out c);
                 });
+            state.delete_surrounding_text.connect ((o, n) => {
+                    return delete_surrounding_text (o, n);
+                });
         }
 
         public signal bool retrieve_surrounding_text (out string text,
                                                       out uint cursor_pos);
+        public signal bool delete_surrounding_text (int offset,
+                                                    uint nchars);
 
         bool select_candidate_in_dictionaries (Candidate candidate)
         {
@@ -492,8 +497,22 @@ namespace Skk {
                 builder.append (" ");
                 builder.append (handler.get_output (state));
             }
-            builder.append (handler.get_preedit (state));
+            uint offset = (uint) builder.str.char_count ();
+            uint underline_offset, underline_nchars;
+            builder.append (handler.get_preedit (state,
+                                                 out underline_offset,
+                                                 out underline_nchars));
+            preedit_underline_offset = offset + underline_offset;
+            preedit_underline_nchars = underline_nchars;
             preedit = builder.str;
+        }
+
+        uint preedit_underline_offset;
+        uint preedit_underline_nchars;
+
+        public void get_preedit_underline (out uint offset, out uint nchars) {
+            offset = preedit_underline_offset;
+            nchars = preedit_underline_nchars;
         }
 
         /**
