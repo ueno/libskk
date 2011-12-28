@@ -45,7 +45,7 @@ namespace Skk {
                         builder.append_unichar (uc);
                     }
                     break;
-                case ' ':
+                case '(': case ')': case '"': case ' ':
                     stop = true;
                     break;
                 default:
@@ -163,7 +163,7 @@ namespace Skk {
                 if (iter.first ()) {
                     var funcall = iter.get ();
                     if (funcall.type == ExprNodeType.SYMBOL) {
-                        // FIXME support other functions
+                        // FIXME support other functions in more extensible way
                         if (funcall.data == "concat") {
                             var builder = new StringBuilder ();
                             while (iter.next ()) {
@@ -173,6 +173,17 @@ namespace Skk {
                                 }
                             }
                             return builder.str;
+                        }
+                        else if (funcall.data == "current-time-string") {
+                            var datetime = new DateTime.now_local ();
+                            return datetime.format ("%a, %d %b %Y %T %z");
+                        }
+                        else if (funcall.data == "pwd") {
+                            return Environment.get_current_dir ();
+                        }
+                        else if (funcall.data == "skk-version") {
+                            return "%s/%s".printf (Config.PACKAGE_NAME,
+                                                   Config.PACKAGE_VERSION);
                         }
                     }
                 }
