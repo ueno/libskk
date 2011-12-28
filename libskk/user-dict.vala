@@ -36,14 +36,15 @@ namespace Skk {
             } catch (GLib.Error e) {
                 throw new SkkDictError.NOT_READABLE ("can't load contents");
             }
-            var memory = new MemoryInputStream.from_data (contents, null);
+            var memory = new MemoryInputStream.from_data (contents, g_free);
             var data = new DataInputStream (memory);
 
             string? line = null;
             size_t length;
             line = data.read_line (out length);
-            if (line == null)
+            if (line == null) {
                 return;
+            }
 
             MatchInfo info = null;
             if (coding_cookie_regex.match (line, 0, out info)) {
@@ -385,6 +386,23 @@ namespace Skk {
             if (FileUtils.test (path, FileTest.EXISTS)) {
                 reload ();
             }
+        }
+
+        ~UserDict () {
+            var okuri_ari_iter = okuri_ari_entries.map_iterator ();
+            if (okuri_ari_iter.first ()) {
+                do {
+                    okuri_ari_iter.get_value ().clear ();
+                } while (okuri_ari_iter.next ());
+            }
+            okuri_ari_entries.clear ();
+            var okuri_nasi_iter = okuri_nasi_entries.map_iterator ();
+            if (okuri_nasi_iter.first ()) {
+                do {
+                    okuri_nasi_iter.get_value ().clear ();
+                } while (okuri_nasi_iter.next ());
+            }
+            okuri_nasi_entries.clear ();
         }
     }
 }
