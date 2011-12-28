@@ -116,7 +116,7 @@ namespace Skk {
         }
 
         /**
-         * Array of strings which cause automatic conversion.
+         * Array of strings which triggers automatic conversion.
          */
         public string[] auto_start_henkan_keywords {
             get {
@@ -128,7 +128,7 @@ namespace Skk {
         }
 
         /**
-         * Whether or not consume \n on conversion state.
+         * Flag to indicate whether or not "\n" is consumed on commit.
          */
         public bool egg_like_newline {
             get {
@@ -167,6 +167,12 @@ namespace Skk {
             }
         }
 
+        /**
+         * Filter which runs before process_key_event.
+         *
+         * This is particularly useful for NICOLA.
+         * @see NicolaKeyEventFilter
+         */
         public KeyEventFilter key_event_filter {
             owned get {
                 return state_stack.data.typing_rule.get_filter ();
@@ -321,8 +327,9 @@ namespace Skk {
         }
 
         /**
-         * Pass key events (separated by spaces) to the context.  This
-         * function is rarely used in programs but in unit tests.
+         * Pass key events (separated by spaces) to the context.
+         *
+         * This function is rarely used in programs but in unit tests.
          *
          * @param keyseq a string representing key events, seperated by " "
          *

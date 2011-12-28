@@ -23,13 +23,13 @@ namespace Skk {
      */
     public class Candidate : Object {
         /**
-         * Midasi word generated this candidate.
+         * Midasi word which generated this candidate.
          */
         public string midasi { get; private set; }
 
         /**
-         * Whether this candidate is generated as a result of
-         * okuri-ari conversion.
+         * Flag to indicate whether this candidate is generated as a
+         * result of okuri-ari conversion.
          */
         public bool okuri { get; private set; }
 
@@ -39,18 +39,20 @@ namespace Skk {
         public string text { get; set; }
 
         /**
-         * Optional annotation text to the candidate.
+         * Optional annotation text associated with the candidate.
          */
         public string? annotation { get; set; }
 
         /**
          * Output string shown instead of text.
-         * This is used for numeric conversion feature.
+         *
+         * This is particularly useful to display a candidate of
+         * numeric conversion.
          */
         public string output { get; set; }
 
         /**
-         * Returns a string representing the candidate.
+         * Convert the candidate to string.
          * @return a string representing the candidate
          */
         public string to_string () {

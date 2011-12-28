@@ -47,9 +47,24 @@ namespace Skk {
      * Object representing a key event.
      */
     public class KeyEvent {
-        public string? name;
-        public unichar code;
-        public ModifierType modifiers;
+        /**
+         * The base name of the KeyEvent.
+         *
+         * This is exclusive to {@link code}.
+         */
+        public string? name { get; private set; }
+
+        /**
+         * The base code of the KeyEvent.
+         *
+         * This is exclusive to {@link name}.
+         */
+        public unichar code { get; private set; }
+
+        /**
+         * Modifier mask.
+         */
+        public ModifierType modifiers { get; set; }
 
         /**
          * Create a key event.
@@ -68,6 +83,11 @@ namespace Skk {
             this.modifiers = modifiers;
         }
 
+        /**
+         * Create a copy of the key event.
+         *
+         * @return a new KeyEvent
+         */
         public KeyEvent copy () {
             return new KeyEvent (name, code, modifiers);
         }
@@ -133,6 +153,11 @@ namespace Skk {
             }
         }
 
+        /**
+         * Convert the KeyEvent to string.
+         *
+         * @return a string representing the KeyEvent
+         */
         public string to_string () {
             string _base = name != null ? name : code.to_string ();
             if (modifiers != 0) {
@@ -172,6 +197,13 @@ namespace Skk {
             }
         }
 
+        /**
+         * Compare two key events ignoring modifiers.
+         *
+         * @param key a KeyEvent
+         *
+         * @return `true` if those base components are equal, `false` otherwise
+         */
         public bool base_equal (KeyEvent key) {
             return code == key.code && name == key.name;
         }

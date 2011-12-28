@@ -124,7 +124,18 @@ namespace Skk {
         string etag;
         EncodingConverter converter;
 
-        public CdbDict (string path, string encoding = "EUC-JP") throws GLib.Error {
+        /**
+         * Create a new CdbDict.
+         *
+         * @param path a path to the file
+         * @param encoding encoding of the file (default EUC-JP)
+         *
+         * @return a new FileDict
+         * @throws GLib.Error if opening the file is failed
+         */
+        public CdbDict (string path,
+                        string encoding = "EUC-JP") throws GLib.Error
+        {
             this.file = File.new_for_path (path);
             this.mmap = new MemoryMappedFile (file);
             this.etag = "";

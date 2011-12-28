@@ -315,7 +315,9 @@ namespace Skk {
          * @return a new FileDict
          * @throws GLib.Error if opening the file is failed
          */
-        public FileDict (string path, string encoding = "EUC-JP") throws GLib.Error {
+        public FileDict (string path,
+                         string encoding = "EUC-JP") throws GLib.Error
+        {
             this.file = File.new_for_path (path);
             this.mmap = new MemoryMappedFile (file);
             this.etag = "";
