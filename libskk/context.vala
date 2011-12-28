@@ -227,8 +227,26 @@ namespace Skk {
                 });
         }
 
+        /**
+         * Signal emitted when the context requires surrounding-text.
+         *
+         * @param text surrounding text
+         * @param cursor_pos cursor position in text
+         *
+         * @return `true` on success, `false` on failure
+         */
         public signal bool retrieve_surrounding_text (out string text,
                                                       out uint cursor_pos);
+
+        /**
+         * Signal emitted when the context requests deletion of
+         * surrounding-text.
+         *
+         * @param offset character offset from the cursor position.
+         * @param nchars number of characters to delete.
+         *
+         * @return `true` on success, `false` on failure
+         */
         public signal bool delete_surrounding_text (int offset,
                                                     uint nchars);
 
@@ -510,6 +528,13 @@ namespace Skk {
         uint preedit_underline_offset;
         uint preedit_underline_nchars;
 
+        /**
+         * Get underlined range of preedit.
+         *
+         * @param offset starting offset (in chars) of underline
+         * @param nchars number of characters to be underlined
+         * @since 0.0.6
+         */
         public void get_preedit_underline (out uint offset, out uint nchars) {
             offset = preedit_underline_offset;
             nchars = preedit_underline_nchars;

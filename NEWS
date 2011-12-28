@@ -1,0 +1,40 @@
+Noteworthy changes in version 0.0.6 (unreleased)
+------------------------------------------------
+
+ * Support re-conversion based on surrounding text.
+
+Noteworthy changes in version 0.0.5 (2011-12-25)
+------------------------------------------------
+
+  * Fix buffer overrun when using skkserv (Issue#2).
+
+Noteworthy changes in version 0.0.4 (2011-12-20)
+------------------------------------------------
+
+  * Improve kanagaki input okuri-ari conversion.
+
+Noteworthy changes in version 0.0.3 (2011-12-20)
+------------------------------------------------
+
+  * Support (concat ...).
+
+Noteworthy changes in version 0.0.2 (2011-12-16)
+------------------------------------------------
+
+  * New test tool "skk".
+
+Noteworthy changes in version 0.0.1 (2011-11-30)
+------------------------------------------------
+
+  * First release of libskk.
+
+Copyright (C) 2011 Daiki Ueno <ueno@unixuser.org>
+Copyright (C) 2011 Red Hat, Inc.
+
+This file is free software; as a special exception the author gives
+unlimited permission to copy and/or distribute it, with or without
+modifications, as long as this notice is preserved.
+
+This file is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
