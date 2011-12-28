@@ -16,7 +16,9 @@
             "x": "previous-candidate",
             "X": "purge-candidate",
             "C-f": "expand-preedit",
-            "C-b": "shrink-preedit"
+            "C-b": "shrink-preedit",
+            "Right": "expand-preedit",
+            "Left": "shrink-preedit"
         }
     }
 }
