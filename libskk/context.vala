@@ -441,10 +441,14 @@ namespace Skk {
          * Reset the context.
          */
         public void reset () {
-            var state = state_stack.data;
-            state_stack = null;
-            state_stack.prepend (state);
-            state.reset ();
+            // cancel all dict edit
+            while (dict_edit_level () > 0) {
+                state_stack.delete_link (state_stack);
+                state_stack.data.cancel_okuri ();
+            }
+            // to restore surrounding text after focus change
+            state_stack.data.output_surrounding_text ();
+            state_stack.data.reset ();
             notify_property ("candidates");
         }
 
@@ -490,6 +494,15 @@ namespace Skk {
          */
         public string poll_output () {
             return retrieve_output (true);
+        }
+
+        /**
+         * Clear the output buffer.
+         *
+         * @since 0.0.6
+         */
+        public void clear_output () {
+            state_stack.data.output.erase ();
         }
 
         /**

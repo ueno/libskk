@@ -158,6 +158,12 @@ namespace Skk {
             input_mode = _input_mode;
         }
 
+        internal void output_surrounding_text () {
+            if (surrounding_text != null) {
+                output.append (surrounding_text.substring (0));
+            }
+        }
+
         internal void reset () {
             handler_type = typeof (NoneStateHandler);
             _input_mode = InputMode.DEFAULT;

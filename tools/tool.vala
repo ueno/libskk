@@ -126,6 +126,7 @@ namespace Skk {
                     output.replace ("\"", "\\\""),
                     preedit.replace ("\"", "\\\""));
                 context.reset ();
+                context.clear_output ();
             }
             return 0;
         }

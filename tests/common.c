@@ -43,11 +43,14 @@ check_transitions (SkkContext    *context,
     const gchar *preedit, *output;
     SkkInputMode input_mode;
     skk_context_reset (context);
+    output = skk_context_poll_output (context);
+    g_free (output);
+
     skk_context_set_input_mode (context, transitions[i].input_mode);
     skk_context_process_key_events (context, transitions[i].keys);
     preedit = skk_context_get_preedit (context);
     g_assert_cmpstr (preedit, ==, transitions[i].preedit);
-    output = skk_context_get_output (context);
+    output = skk_context_poll_output (context);
     g_assert_cmpstr (output, ==, transitions[i].output);
     g_free (output);
     input_mode = skk_context_get_input_mode (context);

@@ -11,7 +11,7 @@ context (void)
   retval = skk_context_process_key_events (context, "a i r");
   g_assert (retval);
 
-  output = skk_context_get_output (context);
+  output = skk_context_poll_output (context);
   g_assert_cmpstr (output, ==, "あい");
   g_free (output);
 
@@ -19,6 +19,7 @@ context (void)
   g_assert_cmpstr (preedit, ==, "r");
 
   skk_context_reset (context);
+  skk_context_clear_output (context);
   retval = skk_context_process_key_events (context, "A");
   g_assert (retval);
 
@@ -28,7 +29,7 @@ context (void)
   retval = skk_context_process_key_events (context, "i");
   g_assert (retval);
 
-  output = skk_context_get_output (context);
+  output = skk_context_poll_output (context);
   g_assert_cmpstr (output, ==, "");
   g_free (output);
 
@@ -44,7 +45,7 @@ context (void)
   retval = skk_context_process_key_events (context, "\n");
   g_assert (!retval);
 
-  output = skk_context_get_output (context);
+  output = skk_context_poll_output (context);
   g_assert_cmpstr (output, ==, "愛");
   g_free (output);
 
@@ -52,6 +53,7 @@ context (void)
   g_assert (!retval);
 
   skk_context_reset (context);
+  skk_context_clear_output (context);
 
   retval = skk_context_process_key_events (context, "A U");
 
