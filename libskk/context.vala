@@ -517,6 +517,7 @@ namespace Skk {
         /**
          * Current preedit string.
          */
+        [CCode(notify = false)]
         public string preedit { get; private set; default = ""; }
 
         void update_preedit () {
@@ -537,18 +538,28 @@ namespace Skk {
                 builder.append (" ");
                 builder.append (handler.get_output (state));
             }
-            uint offset = (uint) builder.str.char_count ();
-            uint underline_offset, underline_nchars;
+            uint offset, nchars;
             builder.append (handler.get_preedit (state,
-                                                 out underline_offset,
-                                                 out underline_nchars));
-            preedit_underline_offset = offset + underline_offset;
-            preedit_underline_nchars = underline_nchars;
-            preedit = builder.str;
+                                                 out offset,
+                                                 out nchars));
+            offset += (uint) builder.str.char_count ();
+            bool changed = false;
+            if (preedit != builder.str) {
+                preedit = builder.str;
+                changed = true;
+            } else if (preedit_underline_offset != offset ||
+                       preedit_underline_nchars != nchars) {
+                preedit_underline_offset = offset;
+                preedit_underline_nchars = nchars;
+                changed = true;
+            }
+            if (changed) {
+                notify_property ("preedit");
+            }
         }
 
-        uint preedit_underline_offset;
-        uint preedit_underline_nchars;
+        uint preedit_underline_offset = 0;
+        uint preedit_underline_nchars = 0;
 
         /**
          * Get underlined range of preedit.

@@ -128,7 +128,9 @@ namespace Skk {
 
         internal void clear () {
             _candidates.clear ();
-            cursor_pos = -1;
+            if (cursor_pos != -1) {
+                cursor_pos = -1;
+            }
             seen.clear ();
         }
 
