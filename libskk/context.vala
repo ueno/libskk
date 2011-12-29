@@ -201,7 +201,9 @@ namespace Skk {
             state_stack.prepend (new State (_dictionaries));
             connect_state_signals (state_stack.data);
             candidates.notify["cursor-pos"].connect (() => {
-                    update_preedit ();
+                    if (candidates.cursor_pos >= 0) {
+                        update_preedit ();
+                    }
                 });
             candidates.selected.connect ((candidate) => {
                     if (select_candidate_in_dictionaries (candidate)) {
