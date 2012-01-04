@@ -213,6 +213,7 @@ namespace Skk {
                             warning ("error saving dictionaries %s", e.message);
                         }
                     }
+                    update_preedit ();
                 });
         }
 

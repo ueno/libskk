@@ -918,8 +918,8 @@ namespace Skk {
         {
             var command = state.lookup_key (key);
             if (command == "previous-candidate") {
-                state.candidates.cursor_pos--;
-                if (state.candidates.cursor_pos < 0) {
+                if (!state.candidates.previous ()) {
+                    state.candidates.clear ();
                     state.handler_type = typeof (StartStateHandler);
                 }
                 return true;
@@ -952,16 +952,18 @@ namespace Skk {
                         midasi = Util.get_hiragana (builder.str);
                     }
                     state.lookup (midasi, okuri);
-                }
-
-                if (state.candidates.cursor_pos < state.candidates.size - 1) {
-                    state.candidates.cursor_pos++;
-                }
-                else {
-                    state.recursive_edit_start (state.get_yomi (), state.okuri);
-                    if (state.candidates.size == 0) {
-                        state.handler_type = typeof (StartStateHandler);
+                    if (state.candidates.size > 0) {
+                        return true;
                     }
+                }
+                else if (state.candidates.next ()) {
+                    return true;
+                }
+                // no more candidates
+                state.recursive_edit_start (state.get_yomi (), state.okuri);
+                if (state.candidates.size == 0) {
+                    state.candidates.clear ();
+                    state.handler_type = typeof (StartStateHandler);
                 }
                 return true;
             }
@@ -983,16 +985,23 @@ namespace Skk {
                     state.handler_type = typeof (StartStateHandler);
                     return false;
                 }
-                else if ((key.modifiers == 0 &&
-                          0x20 <= key.code && key.code <= 0x7E) ||
-                         command == "delete" ||
+                else {
+                    var input_mode = state.input_mode;
+                    state.reset ();
+                    state.input_mode = input_mode;
+                    if ((key.modifiers == 0 &&
+                         0x20 <= key.code && key.code <= 0x7E) ||
+                        command == "delete" ||
                          (!state.egg_like_newline &&
                           command == "commit-unhandled")) {
-                    return false;
+                        return false;
+                    }
+                    else {
+                        // mark any other key events are consumed here
+                        return true;
+                    }
                 }
             }
-            // mark any other key events are consumed here
-            return true;
         }
 
         internal override string get_preedit (State state,

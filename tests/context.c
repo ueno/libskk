@@ -178,9 +178,6 @@ okuri_ari (void)
     { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC >", "▽>", "東", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC > s h i SPC", "▼氏", "東", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "T y o u >", "▼超", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "O K i C-g", "▽おき", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "O K C-g", "", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "A o i O C-g", "▽あおいお", "", SKK_INPUT_MODE_HIRAGANA },
   };
 
   context = create_context ();
@@ -197,6 +194,9 @@ _abort (void)
     { SKK_INPUT_MODE_HIRAGANA, "A k a SPC SPC SPC C-g", "▼垢", "", SKK_INPUT_MODE_HIRAGANA },
     // back to preedit state if candidate list is empty
     { SKK_INPUT_MODE_HIRAGANA, "A p a SPC C-g", "▽あぱ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "O K i C-g", "▽おき", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "O K C-g", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A o i O C-g", "▽あおいお", "", SKK_INPUT_MODE_HIRAGANA },
   };
 
   context = create_context ();
@@ -374,6 +374,24 @@ kzik (void)
 }
 
 static void
+candidate_list (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC", "▼唯", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC", "▼違", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC x x", "▼井", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC SPC", "▼移", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC SPC SPC", "▼委", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC SPC SPC SPC", "[DictEdit] い ", "", SKK_INPUT_MODE_HIRAGANA },
+  };
+
+  context = create_context ();
+  check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+  g_object_unref (context);
+}
+
+static void
 numeric (void)
 {
   SkkContext *context;
@@ -465,6 +483,7 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/kuten", kuten);
   g_test_add_func ("/libskk/auto-conversion", auto_conversion);
   g_test_add_func ("/libskk/kzik", kzik);
+  g_test_add_func ("/libskk/candidate-list", candidate_list);
   g_test_add_func ("/libskk/numeric", numeric);
   g_test_add_func ("/libskk/nicola", nicola);
   return g_test_run ();
