@@ -145,7 +145,7 @@ Example:
     "rom-kana": {
       "xka": [ "", "か", "ヵ", "ｶ" ],
       "b.": [ "", "ぶ" ],
-      "dha": null,
+      "dha": null
     }
   }
 }
