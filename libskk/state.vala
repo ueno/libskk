@@ -514,13 +514,15 @@ namespace Skk {
                 }
                 break;
             case InputMode.LATIN:
-                if (0x20 <= key.code && key.code <= 0x7F) {
+                if (key.modifiers == 0 &&
+                    0x20 <= key.code && key.code <= 0x7F) {
                     state.output.append_c ((char) key.code);
                     return true;
                 }
                 break;
             case InputMode.WIDE_LATIN:
-                if (0x20 <= key.code && key.code <= 0x7F) {
+                if (key.modifiers == 0 &&
+                    0x20 <= key.code && key.code <= 0x7F) {
                     state.output.append_unichar (
                         Util.get_wide_latin_char ((char) key.code));
                     return true;
