@@ -207,7 +207,7 @@ namespace Skk {
                                    contents.length,
                                    etag,
                                    false,
-                                   FileCreateFlags.NONE,
+                                   FileCreateFlags.PRIVATE,
                                    out etag);
         }
 
