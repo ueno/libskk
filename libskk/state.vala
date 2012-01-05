@@ -29,12 +29,14 @@ namespace Skk {
     class State : Object {
         internal Type handler_type;
         InputMode _input_mode;
+        [CCode(notify = false)]
         internal InputMode input_mode {
             get {
                 return _input_mode;
             }
             set {
                 output.append (rom_kana_converter.output);
+                var last_input_mode = _input_mode;
                 reset ();
                 _input_mode = value;
                 switch (_input_mode) {
@@ -46,6 +48,9 @@ namespace Skk {
                     break;
                 default:
                     break;
+                }
+                if (_input_mode != last_input_mode) {
+                    notify_property ("input-mode");
                 }
             }
         }
@@ -153,9 +158,9 @@ namespace Skk {
             else if (okuri) {
                 output.append (okuri_rom_kana_converter.output);
             }
-            var _input_mode = input_mode;
+            var _mode = input_mode;
             reset ();
-            input_mode = _input_mode;
+            _input_mode = _mode;
         }
 
         internal void output_surrounding_text () {
@@ -165,8 +170,8 @@ namespace Skk {
         }
 
         internal void reset () {
+            // output and input_mode won't change
             handler_type = typeof (NoneStateHandler);
-            _input_mode = InputMode.DEFAULT;
             rom_kana_converter.reset ();
             okuri_rom_kana_converter.reset ();
             okuri = false;
@@ -404,9 +409,7 @@ namespace Skk {
                 } else {
                     retval = state.recursive_edit_abort ();
                 }
-                var input_mode = state.input_mode;
                 state.reset ();
-                state.input_mode = input_mode;
                 return retval;
             } else if (command == "commit" ||
                        command == "commit-unhandled") {
@@ -420,9 +423,7 @@ namespace Skk {
                 else {
                     retval = state.recursive_edit_end (state.output.str);
                 }
-                var input_mode = state.input_mode;
                 state.reset ();
-                state.input_mode = input_mode;
                 return retval;
             } else if (command == "start-preedit" ||
                        command == "start-preedit-kana") {
@@ -584,9 +585,7 @@ namespace Skk {
         {
             var command = state.lookup_key (key);
             if (command == "abort") {
-                var input_mode = state.input_mode;
                 state.reset ();
-                state.input_mode = input_mode;
                 return true;
             }
             else if (command == "commit-unhandled" &&
@@ -600,9 +599,7 @@ namespace Skk {
                                  euc, e.message);
                     }
                 }
-                var input_mode = state.input_mode;
                 state.reset ();
-                state.input_mode = input_mode;
                 return true;
             }
             else if (command == "delete" &&
@@ -635,9 +632,7 @@ namespace Skk {
         {
             var command = state.lookup_key (key);
             if (command == "abort") {
-                var input_mode = state.input_mode;
                 state.reset ();
-                state.input_mode = input_mode;
                 return true;
             }
             else if (command == "next-candidate") {
@@ -648,18 +643,14 @@ namespace Skk {
                      key.code == 'q') {
                 state.output.assign (
                     Util.get_wide_latin (state.abbrev.str));
-                var input_mode = state.input_mode;
                 state.reset ();
-                state.input_mode = input_mode;
                 return true;
             }
             else if (command == "delete") {
                 if (state.abbrev.len > 0) {
                     state.abbrev.truncate (state.abbrev.len - 1);
                 } else {
-                    var input_mode = state.input_mode;
                     state.reset ();
-                    state.input_mode = input_mode;
                 }
                 return true;
             }
@@ -691,9 +682,7 @@ namespace Skk {
         {
             var command = state.lookup_key (key);
             if (command == "abort") {
-                var input_mode = state.input_mode;
                 state.reset ();
-                state.input_mode = input_mode;
                 return true;
             }
 
@@ -734,9 +723,7 @@ namespace Skk {
                     state.output.append (state.surrounding_text.substring (
                                              state.surrounding_end));
                 }
-                var input_mode = state.input_mode;
                 state.reset ();
-                state.input_mode = input_mode;
                 return true;
             }
             else if (command == "commit-unhandled") {
@@ -745,9 +732,7 @@ namespace Skk {
                     state.output.append (state.surrounding_text.substring (
                                              state.surrounding_end));
                 }
-                var input_mode = state.input_mode;
                 state.reset ();
-                state.input_mode = input_mode;
                 return state.egg_like_newline;
             }
             else if (command == "delete") {
@@ -988,9 +973,7 @@ namespace Skk {
                     return false;
                 }
                 else {
-                    var input_mode = state.input_mode;
                     state.reset ();
-                    state.input_mode = input_mode;
                     if ((key.modifiers == 0 &&
                          0x20 <= key.code && key.code <= 0x7E) ||
                         command == "delete" ||

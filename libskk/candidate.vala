@@ -262,6 +262,9 @@ namespace Skk {
         }
 
         int _page_start;
+        /**
+         * Starting index of paging.
+         */
         public uint page_start {
             get {
                 return (uint) _page_start;
@@ -272,6 +275,9 @@ namespace Skk {
         }
 
         int _page_size;
+        /**
+         * Page size.
+         */
         public uint page_size {
             get {
                 return (uint) _page_size;
@@ -281,12 +287,20 @@ namespace Skk {
             }
         }
 
+        /**
+         * Flag to indicate whether page (lookup table) is visible.
+         */
         public bool page_visible {
             get {
                 return _cursor_pos >= _page_start;
             }
         }
 
+        /**
+         * Return cursor position of the beginning of the current page.
+         *
+         * @return cursor position
+         */
         public uint get_page_start_cursor_pos () {
             var pages = (_cursor_pos - _page_start) / _page_size;
             return pages * _page_size + _page_start;
@@ -294,6 +308,8 @@ namespace Skk {
 
         /**
          * Select the current candidate.
+         *
+         * @param index cursor position of the candidate to select
          */
         public void select (int index = -1) {
             if (index >= 0) {
