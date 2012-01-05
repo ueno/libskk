@@ -1,4 +1,10 @@
-Noteworthy changes in version 0.0.6 (unreleased)
+Noteworthy changes in version 0.0.7 (2012-01-05)
+------------------------------------------------
+
+ * Improve candidate list traversal with "x" and SPC keys.
+ * Reduce the number of property notifications for performance.
+
+Noteworthy changes in version 0.0.6 (2011-12-28)
 ------------------------------------------------
 
  * Support re-conversion based on surrounding text.
