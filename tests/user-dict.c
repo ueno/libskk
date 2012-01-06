@@ -68,5 +68,6 @@ main (int argc, char **argv) {
   skk_init ();
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/libskk/user-dict", user_dict);
+  g_test_add_func ("/libskk/completion", user_dict);
   return g_test_run ();
 }
