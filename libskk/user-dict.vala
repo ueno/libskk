@@ -235,11 +235,13 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override string[] complete (string midasi) {
-            SortedSet<string> keys = new TreeSet<string> ();
             Gee.List<string> completion = new ArrayList<string> ();
+            Gee.List<string> keys = new ArrayList<string> ();
             keys.add_all (okuri_nasi_entries.keys);
-            if (!keys.is_empty) {
-                var iter = keys.iterator_at (keys.first ());
+            keys.sort ();
+            var iter = keys.iterator ();
+            if (iter.first ()) {
+                // find the first matching entry
                 do {
                     var key = iter.get ();
                     if (key.has_prefix (midasi)) {
@@ -250,6 +252,7 @@ namespace Skk {
                         break;
                     }
                 } while (iter.next ());
+                // loop until the last matching entry
                 while (iter.next ()) {
                     var key = iter.get ();
                     if (!key.has_prefix (midasi)) {
