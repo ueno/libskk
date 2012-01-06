@@ -56,7 +56,7 @@ namespace Skk {
                     throw new RuleParseError.FAILED ("");
             } catch (GLib.Error e) {
                 throw new RuleParseError.FAILED (
-                    "%s".printf (e.message));
+                    "can't load %s: %s".printf (filename, e.message));
             }
             var root = parser.get_root ();
             if (root.get_node_type () != Json.NodeType.OBJECT) {
