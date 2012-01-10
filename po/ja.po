@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libskk 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-03 10:08+0900\n"
+"POT-Creation-Date: 2012-01-10 10:05+0900\n"
 "PO-Revision-Date: 2011-11-30 17:46+0900\n"
 "Last-Translator: Daiki Ueno <ueno@unixuser.org>\n"
 "Language-Team: Japanese\n"
@@ -16,26 +16,33 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../libskk/context.vala:366
+#: ../libskk/context.vala:533
 msgid "DictEdit"
 msgstr "辞書登録"
 
-#: ../libskk/state.vala:558
+#: ../libskk/state.vala:625
 msgid "Kuten([MM]KKTT) "
 msgstr "区点([MM]KKTT)"
 
-#: ../tools/tool.vala:12
+#: ../tools/tool.vala:30
 msgid "Path to a file dictionary"
 msgstr "ファイル辞書へのパス"
 
-#: ../tools/tool.vala:14
+#: ../tools/tool.vala:32
 msgid "Path to a user dictionary"
 msgstr "ユーザ辞書へのパス"
 
-#: ../tools/tool.vala:16
+#: ../tools/tool.vala:34
 msgid "Host and port running skkserv (HOST:PORT)"
 msgstr "skkserv が動いているホストとポート (HOST:PORT)"
 
-#: ../tools/tool.vala:18
-msgid "Romaji-to-kana conversion table (default: standard)"
-msgstr "ローマ字かな変換テーブル (デフォルト: standard)"
+#: ../tools/tool.vala:36
+msgid "Typing rule (default: \"default\")"
+msgstr ""
+
+#: ../tools/tool.vala:38
+msgid "List typing rules"
+msgstr ""
+
+#~ msgid "Romaji-to-kana conversion table (default: standard)"
+#~ msgstr "ローマ字かな変換テーブル (デフォルト: standard)"

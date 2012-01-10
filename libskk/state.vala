@@ -687,6 +687,7 @@ namespace Skk {
             }
 
             // ▽ひらがな + 'q' => ヒラガナ
+            // which should not change input mode (Issue#8)
             foreach (var entry in end_preedit_commands) {
                 if (entry.key == command) {
                     state.rom_kana_converter.output_nn_if_any ();
@@ -699,7 +700,6 @@ namespace Skk {
                                                  state.surrounding_end));
                     }
                     state.rom_kana_converter.reset ();
-                    state.input_mode = entry.value;
                     state.handler_type = typeof (NoneStateHandler);
                     return true;
                 }
