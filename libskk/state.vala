@@ -118,7 +118,7 @@ namespace Skk {
 
         internal State (ArrayList<Dict> dictionaries) {
             this.dictionaries = dictionaries;
-            this.candidates = new CandidateList ();
+            this.candidates = new SimpleCandidateList ();
             this.candidates.selected.connect (candidate_selected);
 
             rom_kana_converter = new RomKanaConverter ();
@@ -294,7 +294,6 @@ namespace Skk {
 
         internal void lookup (string midasi, bool okuri = false) {
             candidates.clear ();
-            candidates.add_candidates_start ();
             int[] numerics = new int[0];
             lookup_internal (midasi, numerics, okuri);
             var numeric_midasi = extract_numerics (midasi, out numerics);

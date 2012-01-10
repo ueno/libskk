@@ -89,24 +89,13 @@ namespace Skk {
     }
 
     /**
-     * Object maintaining the current candidates.
+     * Base abstract class of candidate list.
      */
-    public class CandidateList : Object {
-        ArrayList<Candidate> _candidates = new ArrayList<Candidate> ();
-
-        int _cursor_pos;
+    public abstract class CandidateList : Object {
         /**
          * Current cursor position.
          */
-        public int cursor_pos {
-            get {
-                return _cursor_pos;
-            }
-            set {
-                assert (value >= 0 && value < _candidates.size);
-                _cursor_pos = value;
-            }
-        }
+        public abstract int cursor_pos { get; }
 
         /**
          * Get the current candidate at the given index.
@@ -115,133 +104,54 @@ namespace Skk {
          *
          * @return a Candidate
          */
-        public new Candidate @get (int index = -1) {
-            if (index < 0)
-                index = _cursor_pos;
-            assert (0 <= index && index < size);
-            return _candidates.get (index);
-        }
+        public abstract new Candidate @get (int index = -1);
 
         /**
          * The number of candidate in the candidate list.
          */
-        public int size {
-            get {
-                return _candidates.size;
-            }
-        }
+        public abstract int size { get; }
 
-        Set<string> seen = new HashSet<string> ();
+        internal abstract void clear ();
 
-        internal void clear () {
-            _candidates.clear ();
-            _cursor_pos = -1;
-            seen.clear ();
-        }
+        internal abstract void add_candidates (Candidate[] array);
 
-        internal void add_candidates_start () {
-            clear ();
-        }
-
-        internal void add_candidates (Candidate[] array) {
-            foreach (var c in array) {
-                if (!(c.output in seen)) {
-                    _candidates.add (c);
-                    seen.add (c.output);
-                }
-            }
-        }
-
-        internal void add_candidates_end () {
-            if (_candidates.size > 0) {
-                _cursor_pos = 0;
-            }
-            notify_property ("cursor-pos");
-            populated ();
-        }
-
-        /**
-         * Create a new CandidateList.
-         *
-         * @param page_start page starting index of the candidate list
-         * @param page_size page size of the candidate list
-         *
-         * @return a new CandidateList.
-         */
-        public CandidateList (uint page_start = 4, uint page_size = 7) {
-            _page_start = (int) page_start;
-            _page_size = (int) page_size;
-        }
+        internal abstract void add_candidates_end ();
 
         /**
          * Move cursor to the previous candidate.
          *
          * @return `true` if cursor position has changed, `false` otherwise.
          */
-        public bool cursor_up () {
-            assert (_cursor_pos >= 0);
-            if (_cursor_pos > 0) {
-                _cursor_pos--;
-                notify_property ("cursor-pos");
-                return true;
-            }
-            return false;
-        }
+        public abstract bool cursor_up ();
 
         /**
          * Move cursor to the next candidate.
          *
          * @return `true` if cursor position has changed, `false` otherwise
          */
-        public bool cursor_down () {
-            assert (_cursor_pos >= 0);
-            if (_cursor_pos < _candidates.size - 1) {
-                _cursor_pos++;
-                notify_property ("cursor-pos");
-                return true;
-            }
-            return false;
-        }
+        public abstract bool cursor_down ();
 
         /**
          * Move cursor to the previous page.
          *
          * @return `true` if cursor position has changed, `false` otherwise
          */
-        public bool page_up () {
-            assert (_cursor_pos >= 0);
-            if (_cursor_pos >= _page_start + _page_size) {
-                _cursor_pos -= _page_size;
-                _cursor_pos = (int) get_page_start_cursor_pos ();
-                notify_property ("cursor-pos");
-                return true;
-            }
-            return false;
-        }
+        public abstract bool page_up ();
 
         /**
          * Move cursor to the next page.
          *
          * @return `true` if cursor position has changed, `false` otherwise
          */
-        public bool page_down () {
-            assert (_cursor_pos >= 0);
-            if (_cursor_pos < _candidates.size - _page_size) {
-                _cursor_pos += _page_size;
-                _cursor_pos = (int) get_page_start_cursor_pos ();
-                notify_property ("cursor-pos");
-                return true;
-            }
-            return false;
-        }
+        public abstract bool page_down ();
 
         /**
          * Move cursor forward.
          *
          * @return `true` if cursor position has changed, `false` otherwise
          */
-        public bool next () {
-            if (_cursor_pos < _page_start) {
+        public virtual bool next () {
+            if (cursor_pos < page_start) {
                 return cursor_down ();
             } else {
                 return page_down ();
@@ -253,72 +163,52 @@ namespace Skk {
          *
          * @return `true` if cursor position has changed, `false` otherwise
          */
-        public bool previous () {
-            if (_cursor_pos <= _page_start) {
+        public virtual bool previous () {
+            if (cursor_pos <= page_start) {
                 return cursor_up ();
             } else {
                 return page_up ();
             }
         }
 
-        int _page_start;
         /**
          * Starting index of paging.
          */
-        public uint page_start {
-            get {
-                return (uint) _page_start;
-            }
-            set {
-                _page_start = (int) value;
-            }
-        }
+        public abstract uint page_start { get; set; }
 
-        int _page_size;
         /**
          * Page size.
          */
-        public uint page_size {
-            get {
-                return (uint) _page_size;
-            }
-            set {
-                _page_size = (int) value;
-            }
-        }
+        public abstract uint page_size { get; set; }
 
         /**
          * Flag to indicate whether page (lookup table) is visible.
          */
-        public bool page_visible {
-            get {
-                return _cursor_pos >= _page_start;
-            }
-        }
+        public abstract bool page_visible { get; }
 
         /**
          * Return cursor position of the beginning of the current page.
          *
          * @return cursor position
          */
-        public uint get_page_start_cursor_pos () {
-            var pages = (_cursor_pos - _page_start) / _page_size;
-            return pages * _page_size + _page_start;
+        protected uint get_page_start_cursor_pos () {
+            var pages = (cursor_pos - page_start) / page_size;
+            return pages * page_size + page_start;
         }
 
         /**
-         * Select the current candidate.
+         * Select a candidate in the current page.
          *
-         * @param index cursor position of the candidate to select
+         * @param index cursor position in the page to select
+         *
+         * @return `true` if a candidate is selected, `false` otherwise
          */
-        public void select (int index = -1) {
-            if (index >= 0) {
-                _cursor_pos = index;
-                notify_property ("cursor-pos");
-            }
-            Candidate candidate = this.get ();
-            selected (candidate);
-        }
+        public abstract bool select_at (uint index_in_page);
+
+        /**
+         * Select the current candidate.
+         */
+        public abstract void select ();
 
         /**
          * Signal emitted when candidates are filled and ready for traversal.
@@ -331,5 +221,260 @@ namespace Skk {
          * @param candidate selected candidate
          */
         public signal void selected (Candidate candidate);
+    }
+
+    class SimpleCandidateList : CandidateList {
+        ArrayList<Candidate> _candidates = new ArrayList<Candidate> ();
+
+        int _cursor_pos;
+        public override int cursor_pos {
+            get {
+                return _cursor_pos;
+            }
+        }
+
+        public override Candidate @get (int index = -1) {
+            if (index < 0)
+                index = _cursor_pos;
+            assert (0 <= index && index < size);
+            return _candidates.get (index);
+        }
+
+        public override int size {
+            get {
+                return _candidates.size;
+            }
+        }
+
+        Set<string> seen = new HashSet<string> ();
+
+        internal override void clear () {
+            _candidates.clear ();
+            _cursor_pos = -1;
+            seen.clear ();
+        }
+
+        internal override void add_candidates (Candidate[] array) {
+            foreach (var c in array) {
+                if (!(c.output in seen)) {
+                    _candidates.add (c);
+                    seen.add (c.output);
+                }
+            }
+        }
+
+        internal override void add_candidates_end () {
+            if (_candidates.size > 0) {
+                _cursor_pos = 0;
+            }
+            notify_property ("cursor-pos");
+            populated ();
+        }
+
+        public override bool select_at (uint index_in_page) {
+            assert (index_in_page < page_size);
+            var page_offset = get_page_start_cursor_pos ();
+            if (page_offset + index_in_page < size) {
+                _cursor_pos = (int) (page_offset + index_in_page);
+                notify_property ("cursor-pos");
+                select ();
+                return true;
+            }
+            return false;
+        }
+
+        public override void select () {
+            Candidate candidate = this.get ();
+            selected (candidate);
+        }
+
+        public SimpleCandidateList (uint page_start = 4, uint page_size = 7) {
+            _page_start = (int) page_start;
+            _page_size = (int) page_size;
+        }
+
+        public override bool cursor_up () {
+            assert (_cursor_pos >= 0);
+            if (_cursor_pos > 0) {
+                _cursor_pos--;
+                notify_property ("cursor-pos");
+                return true;
+            }
+            return false;
+        }
+
+        public override bool cursor_down () {
+            assert (_cursor_pos >= 0);
+            if (_cursor_pos < _candidates.size - 1) {
+                _cursor_pos++;
+                notify_property ("cursor-pos");
+                return true;
+            }
+            return false;
+        }
+
+        public override bool page_up () {
+            assert (_cursor_pos >= 0);
+            if (_cursor_pos >= _page_start + _page_size) {
+                _cursor_pos -= _page_size;
+                _cursor_pos = (int) get_page_start_cursor_pos ();
+                notify_property ("cursor-pos");
+                return true;
+            }
+            return false;
+        }
+
+        public override bool page_down () {
+            assert (_cursor_pos >= 0);
+            if (_cursor_pos < _candidates.size - _page_size) {
+                _cursor_pos += _page_size;
+                _cursor_pos = (int) get_page_start_cursor_pos ();
+                notify_property ("cursor-pos");
+                return true;
+            }
+            return false;
+        }
+
+        int _page_start;
+        public override uint page_start {
+            get {
+                return (uint) _page_start;
+            }
+            set {
+                _page_start = (int) value;
+            }
+        }
+
+        int _page_size;
+        public override uint page_size {
+            get {
+                return (uint) _page_size;
+            }
+            set {
+                _page_size = (int) value;
+            }
+        }
+
+        public override bool page_visible {
+            get {
+                return _cursor_pos >= _page_start;
+            }
+        }
+    }
+
+    class ProxyCandidateList : CandidateList {
+        CandidateList _candidates;
+        
+        void notify_cursor_pos_cb (Object s, ParamSpec? p) {
+            notify_property ("cursor-pos");
+        }
+
+        void populated_cb () {
+            populated ();
+        }
+
+        void selected_cb (Candidate c) {
+            selected (c);
+        }
+
+        public CandidateList candidates {
+            get {
+                return _candidates;
+            }
+            set {
+                if (_candidates != null) {
+                    _candidates.notify["cursor-pos"].disconnect (
+                        notify_cursor_pos_cb);
+                    _candidates.populated.disconnect (populated_cb);
+                    _candidates.selected.disconnect (selected_cb);
+                }
+                _candidates = value;
+                _candidates.notify["cursor-pos"].connect (
+                    notify_cursor_pos_cb);
+                _candidates.populated.connect (populated_cb);
+                _candidates.selected.connect (selected_cb);
+                populated ();
+            }
+        }
+
+        public override int cursor_pos {
+            get {
+                return candidates.cursor_pos;
+            }
+        }
+
+        public override Candidate @get (int index = -1) {
+            return candidates.get (index);
+        }
+
+        public override int size {
+            get {
+                return candidates.size;
+            }
+        }
+
+        internal override void clear () {
+            candidates.clear ();
+        }
+
+        internal override void add_candidates (Candidate[] array) {
+            candidates.add_candidates (array);
+        }
+
+        internal override void add_candidates_end () {
+            candidates.add_candidates_end ();
+        }
+
+        public override bool select_at (uint index_in_page) {
+            return candidates.select_at (index_in_page);
+        }
+
+        public override void select () {
+            candidates.select ();
+        }
+
+        public ProxyCandidateList (CandidateList candidates) {
+            this.candidates = candidates;
+        }
+
+        public override bool cursor_up () {
+            return candidates.cursor_up ();
+        }
+
+        public override bool cursor_down () {
+            return candidates.cursor_down ();
+        }
+
+        public override bool page_up () {
+            return candidates.page_up ();
+        }
+
+        public override bool page_down () {
+            return candidates.page_down ();
+        }
+
+        public override uint page_start {
+            get {
+                return candidates.page_start;
+            }
+            set {
+                candidates.page_start = value;
+            }
+        }
+
+        public override uint page_size {
+            get {
+                return candidates.page_size;
+            }
+            set {
+                candidates.page_size = value;
+            }
+        }
+
+        public override bool page_visible {
+            get {
+                return candidates.page_visible;
+            }
+        }
     }
 }

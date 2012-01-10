@@ -82,7 +82,6 @@ namespace Skk {
             owned get {
                 return _dictionaries.to_array ();
             }
-            // deprecated since 0.0.8
             set {
                 _dictionaries.clear ();
                 foreach (var dict in value) {
@@ -111,12 +110,13 @@ namespace Skk {
             _dictionaries.remove (dict);
         }
 
+        CandidateList _candidates;
         /**
          * Current candidates.
          */
         public CandidateList candidates {
             get {
-                return state_stack.data.candidates;
+                return _candidates;
             }
         }
 
@@ -223,12 +223,13 @@ namespace Skk {
                           new KutenStateHandler ());
             state_stack.prepend (new State (_dictionaries));
             connect_state_signals (state_stack.data);
-            candidates.notify["cursor-pos"].connect (() => {
-                    if (candidates.cursor_pos >= 0) {
+            _candidates = new ProxyCandidateList (state_stack.data.candidates);
+            _candidates.notify["cursor-pos"].connect (() => {
+                    if (_candidates.cursor_pos >= 0) {
                         update_preedit ();
                     }
                 });
-            candidates.selected.connect ((candidate) => {
+            _candidates.selected.connect ((candidate) => {
                     if (select_candidate_in_dictionaries (candidate)) {
                         try {
                             save_dictionaries ();
@@ -244,19 +245,40 @@ namespace Skk {
             _dictionaries.clear ();
         }
 
+        void notify_input_mode_cb (Object s, ParamSpec? p) {
+            notify_property ("input-mode");
+        }
+
+        bool retrieve_surrounding_text_cb (out string text,
+                                           out uint cursor_pos)
+        {
+            return retrieve_surrounding_text (out text, out cursor_pos);
+        }
+
+        bool delete_surrounding_text_cb (int offset, uint nchars) {
+            return delete_surrounding_text (offset, nchars);
+        }
+
         void connect_state_signals (State state) {
             state.recursive_edit_start.connect (start_dict_edit);
             state.recursive_edit_end.connect (end_dict_edit);
             state.recursive_edit_abort.connect (abort_dict_edit);
-            state.notify["input-mode"].connect ((s, p) => {
-                    notify_property ("input-mode");
-                });
-            state.retrieve_surrounding_text.connect ((out t, out c) => {
-                    return retrieve_surrounding_text (out t, out c);
-                });
-            state.delete_surrounding_text.connect ((o, n) => {
-                    return delete_surrounding_text (o, n);
-                });
+            state.notify["input-mode"].connect (notify_input_mode_cb);
+            state.retrieve_surrounding_text.connect (
+                retrieve_surrounding_text_cb);
+            state.delete_surrounding_text.connect (
+                delete_surrounding_text_cb);
+        }
+
+        void disconnect_state_signals (State state) {
+            state.recursive_edit_start.disconnect (start_dict_edit);
+            state.recursive_edit_end.disconnect (end_dict_edit);
+            state.recursive_edit_abort.disconnect (abort_dict_edit);
+            state.notify["input-mode"].disconnect (notify_input_mode_cb);
+            state.retrieve_surrounding_text.disconnect (
+                retrieve_surrounding_text_cb);
+            state.delete_surrounding_text.disconnect (
+                delete_surrounding_text_cb);
         }
 
         /**
@@ -282,8 +304,7 @@ namespace Skk {
         public signal bool delete_surrounding_text (int offset,
                                                     uint nchars);
 
-        bool select_candidate_in_dictionaries (Candidate candidate)
-        {
+        bool select_candidate_in_dictionaries (Candidate candidate) {
             bool changed = false;
             foreach (var dict in dictionaries) {
                 if (!dict.read_only &&
@@ -302,10 +323,12 @@ namespace Skk {
             var state = new State (_dictionaries);
             state.midasi = midasi;
             state.okuri = okuri;
+            disconnect_state_signals (state_stack.data);
             state_stack.prepend (state);
             connect_state_signals (state_stack.data);
             update_preedit ();
-            notify_property ("candidates");
+            ((ProxyCandidateList) _candidates).candidates =
+                state_stack.data.candidates;
         }
 
         bool end_dict_edit (string text) {
@@ -332,9 +355,12 @@ namespace Skk {
             if (dict_edit_level () > 0) {
                 midasi = state_stack.data.midasi;
                 okuri = state_stack.data.okuri;
+                disconnect_state_signals (state_stack.data);
                 state_stack.delete_link (state_stack);
+                connect_state_signals (state_stack.data);
                 state_stack.data.cancel_okuri ();
-                notify_property ("candidates");
+                ((ProxyCandidateList) _candidates).candidates =
+                    state_stack.data.candidates;
                 return true;
             }
             midasi = null;
@@ -476,13 +502,16 @@ namespace Skk {
         public void reset () {
             // cancel all dict edit
             while (dict_edit_level () > 0) {
+                disconnect_state_signals (state_stack.data);
                 state_stack.delete_link (state_stack);
+                connect_state_signals (state_stack.data);
                 state_stack.data.cancel_okuri ();
             }
             // to restore surrounding text after focus change
             state_stack.data.output_surrounding_text ();
             state_stack.data.reset ();
-            notify_property ("candidates");
+            ((ProxyCandidateList) _candidates).candidates =
+                state_stack.data.candidates;
         }
 
         /**
