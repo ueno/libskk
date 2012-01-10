@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: libskk 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-01-10 10:05+0900\n"
-"PO-Revision-Date: 2011-11-30 17:46+0900\n"
+"PO-Revision-Date: 2012-01-10 10:07+0900\n"
 "Last-Translator: Daiki Ueno <ueno@unixuser.org>\n"
 "Language-Team: Japanese\n"
 "Language: \n"
@@ -38,11 +38,8 @@ msgstr "skkserv が動いているホストとポート (HOST:PORT)"
 
 #: ../tools/tool.vala:36
 msgid "Typing rule (default: \"default\")"
-msgstr ""
+msgstr "タイピング方式 (既定値: \"default\")"
 
 #: ../tools/tool.vala:38
 msgid "List typing rules"
-msgstr ""
-
-#~ msgid "Romaji-to-kana conversion table (default: standard)"
-#~ msgstr "ローマ字かな変換テーブル (デフォルト: standard)"
+msgstr "タイピング方式を一覧表示"
