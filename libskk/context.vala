@@ -82,12 +82,33 @@ namespace Skk {
             owned get {
                 return _dictionaries.to_array ();
             }
+            // deprecated since 0.0.8
             set {
                 _dictionaries.clear ();
                 foreach (var dict in value) {
                     _dictionaries.add (dict);
                 }
             }
+        }
+
+        /**
+         * Register dictionary.
+         *
+         * @param dict a dictionary
+         * @since 0.0.8
+         */
+        public void add_dictionary (Dict dict) {
+            _dictionaries.add (dict);
+        }
+
+        /**
+         * Unregister dictionary.
+         *
+         * @param dict a dictionary
+         * @since 0.0.8
+         */
+        public void remove_dictionary (Dict dict) {
+            _dictionaries.remove (dict);
         }
 
         /**
@@ -187,7 +208,9 @@ namespace Skk {
          * @return a new Context
          */
         public Context (Dict[] dictionaries) {
-            this.dictionaries = dictionaries;
+            foreach (var dict in dictionaries) {
+                add_dictionary (dict);
+            }
             handlers.set (typeof (NoneStateHandler),
                           new NoneStateHandler ());
             handlers.set (typeof (StartStateHandler),
