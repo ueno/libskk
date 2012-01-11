@@ -270,8 +270,7 @@ namespace Skk {
         /**
          * {@inheritDoc}
          */
-        public override bool select_candidate (Candidate candidate)
-        {
+        public override bool select_candidate (Candidate candidate) {
             int index;
 
             // update midasi history
@@ -305,7 +304,7 @@ namespace Skk {
             foreach (var c in candidates) {
                 if (c.text == candidate.text) {
                     if (index > 0) {
-                        var first = candidates[index];
+                        var first = candidates[0];
                         candidates[0] = candidates[index];
                         candidates[index] = first;
                         return true;
