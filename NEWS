@@ -1,3 +1,8 @@
+Noteworthy changes in version 0.0.8 (2012-01-11)
+------------------------------------------------
+
+ * Fix user dictionary handling (ibus-skk Issue#44).
+
 Noteworthy changes in version 0.0.7 (2012-01-05)
 ------------------------------------------------
 
