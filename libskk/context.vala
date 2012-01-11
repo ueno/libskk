@@ -600,8 +600,9 @@ namespace Skk {
             if (preedit != builder.str) {
                 preedit = builder.str;
                 changed = true;
-            } else if (preedit_underline_offset != offset ||
-                       preedit_underline_nchars != nchars) {
+            }
+            if (preedit_underline_offset != offset ||
+                preedit_underline_nchars != nchars) {
                 preedit_underline_offset = offset;
                 preedit_underline_nchars = nchars;
                 changed = true;
