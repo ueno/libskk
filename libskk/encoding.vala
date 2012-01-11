@@ -34,16 +34,26 @@ namespace Skk {
         }
 
         string convert (CharsetConverter converter, string str) throws GLib.Error {
-            uint8[] buf = new uint8[BUFSIZ];
+            uint8[] inbuf = str.data;
+            uint8[] outbuf = new uint8[BUFSIZ];
             StringBuilder builder = new StringBuilder ();
-            size_t bytes_read, bytes_written;
-            converter.convert (str.data,
-                               buf,
-                               ConverterFlags.NO_FLAGS,
-                               out bytes_read,
-                               out bytes_written);
-            for (int i = 0; i < bytes_written; i++)
-                builder.append_c ((char)buf[i]);
+            size_t total_bytes_read = 0;
+            while (total_bytes_read < inbuf.length) {
+                size_t bytes_read, bytes_written;
+                // FIXME: we could split inbuf to small segments (<
+                // BUFSIZ) here to reduce memory copy.  However it
+                // requires proper error handling when the end of
+                // segmented buffer lies across a UTF-8 character
+                // boundary.
+                converter.convert (inbuf[total_bytes_read : inbuf.length],
+                                   outbuf,
+                                   ConverterFlags.INPUT_AT_END,
+                                   out bytes_read,
+                                   out bytes_written);
+                for (int i = 0; i < bytes_written; i++)
+                    builder.append_c ((char)outbuf[i]);
+                total_bytes_read += bytes_read;
+            }
             return builder.str;
         }
 
