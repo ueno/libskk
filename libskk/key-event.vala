@@ -208,49 +208,4 @@ namespace Skk {
             return code == key.code && name == key.name;
         }
     }
-
-    /**
-     * Base class of a key event filter.
-     */
-    public abstract class KeyEventFilter : Object {
-        /**
-         * Convert a key event to another.
-         *
-         * @param key a key event
-         *
-         * @return a KeyEvent or `null` if the result cannot be
-         * fetched immediately
-         */
-        public abstract KeyEvent? filter_key_event (KeyEvent key);
-
-        /**
-         * Signal emitted when a new key event is generated in the filter.
-         *
-         * @param key a key event
-         */
-        public signal void forwarded (KeyEvent key);
-
-        /**
-         * Reset the filter.
-         */
-        public virtual void reset () {
-        }
-    }
-
-    /**
-     * Simple implementation of a key event filter.
-     */
-    public class SimpleKeyEventFilter : KeyEventFilter {
-        /**
-         * {@inheritDoc}
-         */
-        public override KeyEvent? filter_key_event (KeyEvent key) {
-            // ignore key release event
-            if ((key.modifiers & ModifierType.RELEASE_MASK) != 0)
-                return null;
-            // clear shift mask
-            key.modifiers &= ~ModifierType.SHIFT_MASK;
-            return key;
-        }
-    }
 }

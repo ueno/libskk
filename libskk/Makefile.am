@@ -52,12 +52,14 @@ libskk_la_SOURCES =				\
 	user-dict.vala				\
 	skkserv.vala				\
 	key-event.vala				\
+	key-event-filter.vala			\
 	keymap.vala				\
 	rule.vala				\
 	map-file.vala				\
 	state.vala				\
 	context.vala				\
 	candidate.vala				\
+	candidate-list.vala			\
 	nicola.vala				\
 	expr.vala				\
 	util.vala				\
