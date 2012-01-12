@@ -70,14 +70,32 @@ namespace Skk {
 
             ArrayList<Skk.Dict> dictionaries = new ArrayList<Skk.Dict> ();
             if (user_dict != null) {
-                dictionaries.add (new Skk.UserDict (file_dict));
+                try {
+                    dictionaries.add (new Skk.UserDict (user_dict));
+                } catch (GLib.Error e) {
+                    stderr.printf ("can't open user dict %s: %s",
+                                   user_dict, e.message);
+                    return 1;
+                }
             }
 
             if (file_dict != null) {
                 if (file_dict.has_suffix (".cdb")) {
-                    dictionaries.add (new Skk.CdbDict (file_dict));
+                    try {
+                        dictionaries.add (new Skk.CdbDict (file_dict));
+                    } catch (GLib.Error e) {
+                        stderr.printf ("can't open CDB dict %s: %s",
+                                       file_dict, e.message);
+                        return 1;
+                    }
                 } else {
-                    dictionaries.add (new Skk.FileDict (file_dict));
+                    try {
+                        dictionaries.add (new Skk.FileDict (file_dict));
+                    } catch (GLib.Error e) {
+                        stderr.printf ("can't open file dict %s: %s",
+                                       file_dict, e.message);
+                        return 1;
+                    }
                 }
             } else {
                 dictionaries.add (
@@ -98,7 +116,13 @@ namespace Skk {
                     port = (uint16) int.parse (
                         skkserv[index + 1:skkserv.length]);
                 }
-                dictionaries.add (new Skk.SkkServ (host, port));
+                try {
+                    dictionaries.add (new Skk.SkkServ (host, port));
+                } catch (GLib.Error e) {
+                    stderr.printf ("can't connect to skkserv at %s:%d: %s",
+                                   host, port, e.message);
+                        return 1;
+                }
             }
 
             var context = new Skk.Context (dictionaries.to_array ());

@@ -13,8 +13,6 @@ create_context (gboolean use_user_dict,
   SkkContext *context;
   GError *error;
 
-  unlink ("user-dict.dat");
-
   if (use_user_dict) {
     error = NULL;
     user_dict = skk_user_dict_new ("user-dict.dat", "EUC-JP", &error);
@@ -40,6 +38,13 @@ create_context (gboolean use_user_dict,
 }
 
 void
+destroy_context (SkkContext *context)
+{
+  unlink ("user-dict.dat");
+  g_object_unref (context);
+}
+
+void
 check_transitions (SkkContext    *context,
                    SkkTransition *transitions,
                    int            n_transitions)
@@ -47,7 +52,8 @@ check_transitions (SkkContext    *context,
   gint i;
 
   for (i = 0; i < n_transitions; i++) {
-    const gchar *preedit, *output;
+    const gchar *preedit;
+    gchar *output;
     SkkInputMode input_mode;
     skk_context_reset (context);
     output = skk_context_poll_output (context);

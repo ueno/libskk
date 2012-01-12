@@ -12,8 +12,9 @@ struct _SkkTransition {
 };
 typedef struct _SkkTransition SkkTransition;
 
-SkkContext *create_context    (gboolean use_user_dict,
-                               gboolean use_file_dict);
+SkkContext *create_context    (gboolean       use_user_dict,
+                               gboolean       use_file_dict);
+void        destroy_context   (SkkContext    *context);
 void        check_transitions (SkkContext    *context,
                                SkkTransition *transitions,
                                int            n_transitions);

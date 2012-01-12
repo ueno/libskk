@@ -6,7 +6,8 @@ context (void)
 {
   SkkContext *context = create_context (TRUE, TRUE);
   gboolean retval;
-  const gchar *output, *preedit;
+  const gchar *preedit;
+  gchar *output;
 
   retval = skk_context_process_key_events (context, "a i r");
   g_assert (retval);
@@ -60,7 +61,7 @@ context (void)
   preedit = skk_context_get_preedit (context);
   g_assert_cmpstr (preedit, ==, "▼合う");
 
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -86,7 +87,7 @@ input_mode (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -122,7 +123,7 @@ rom_kana (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -152,7 +153,7 @@ okuri_nasi (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -182,7 +183,7 @@ okuri_ari (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -201,7 +202,7 @@ _abort (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -220,7 +221,7 @@ delete (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -233,7 +234,7 @@ hankaku_katakana (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -258,7 +259,7 @@ completion (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -283,7 +284,7 @@ abbrev (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -314,7 +315,7 @@ dict_edit (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -332,7 +333,7 @@ kuten (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -348,7 +349,7 @@ auto_conversion (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -369,7 +370,7 @@ kzik (void)
   g_assert_no_error (error);
   skk_context_set_typing_rule (context, rule);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
   g_object_unref (rule);
 }
 
@@ -388,7 +389,7 @@ candidate_list (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -408,7 +409,7 @@ numeric (void)
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 static void
@@ -461,7 +462,7 @@ nicola (void)
   skk_context_set_typing_rule (context, rule);
   g_object_unref (rule);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
-  g_object_unref (context);
+  destroy_context (context);
 }
 
 int
