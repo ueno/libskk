@@ -8,6 +8,7 @@ context (void)
   gboolean retval;
   const gchar *preedit;
   gchar *output;
+  guint offset, nchars;
 
   retval = skk_context_process_key_events (context, "a i r");
   g_assert (retval);
@@ -18,6 +19,10 @@ context (void)
 
   preedit = skk_context_get_preedit (context);
   g_assert_cmpstr (preedit, ==, "r");
+
+  skk_context_get_preedit_underline (context, &offset, &nchars);
+  g_assert_cmpint (offset, ==, 1);
+  g_assert_cmpint (nchars, ==, 0);
 
   skk_context_reset (context);
   skk_context_clear_output (context);
@@ -386,9 +391,76 @@ candidate_list (void)
     { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC SPC SPC", "▼委", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC SPC SPC SPC", "[DictEdit] い ", "", SKK_INPUT_MODE_HIRAGANA },
   };
+  SkkCandidateList *candidates;
+  SkkCandidate *candidate;
+  gint cursor_pos;
+  gint retval;
 
   context = create_context (TRUE, TRUE);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
+
+  candidates = skk_context_get_candidates (context);
+  skk_candidate_list_set_page_start (candidates, 4);
+  skk_candidate_list_set_page_size (candidates, 7);
+
+  cursor_pos = skk_candidate_list_get_cursor_pos (candidates);
+  g_assert_cmpint (cursor_pos, ==, -1);
+
+  retval = skk_context_process_key_events (context, "I SPC");
+  g_assert (retval);
+
+  cursor_pos = skk_candidate_list_get_cursor_pos (candidates);
+  g_assert_cmpint (cursor_pos, ==, 0);
+
+  skk_candidate_list_cursor_down (candidates);
+  cursor_pos = skk_candidate_list_get_cursor_pos (candidates);
+  g_assert_cmpint (cursor_pos, ==, 1);
+
+  skk_candidate_list_cursor_up (candidates);
+  cursor_pos = skk_candidate_list_get_cursor_pos (candidates);
+  g_assert_cmpint (cursor_pos, ==, 0);
+
+  // page_down has no effect if cursor_pos < page_start
+  retval = skk_candidate_list_page_down (candidates);
+  g_assert (!retval);
+  cursor_pos = skk_candidate_list_get_cursor_pos (candidates);
+  g_assert_cmpint (cursor_pos, ==, 0);
+
+  // page_up has no effect if cursor_pos < page_start + page_size
+  retval = skk_candidate_list_page_up (candidates);
+  g_assert (!retval);
+  cursor_pos = skk_candidate_list_get_cursor_pos (candidates);
+  g_assert_cmpint (cursor_pos, ==, 0);
+
+  for (cursor_pos = 0;
+       cursor_pos < skk_candidate_list_get_page_start (candidates);
+       cursor_pos++) {
+    g_assert (!skk_candidate_list_get_page_visible (candidates));
+    skk_candidate_list_next (candidates);
+  }
+  g_assert (skk_candidate_list_get_page_visible (candidates));
+
+  skk_candidate_list_next (candidates);
+  cursor_pos = skk_candidate_list_get_cursor_pos (candidates);
+  g_assert_cmpint (cursor_pos, ==,
+                   skk_candidate_list_get_page_start (candidates) +
+                   skk_candidate_list_get_page_size (candidates));
+
+  skk_candidate_list_previous (candidates);
+  cursor_pos = skk_candidate_list_get_cursor_pos (candidates);
+  g_assert_cmpint (cursor_pos, ==,
+                   skk_candidate_list_get_page_start (candidates));
+
+  candidate = skk_candidate_list_get (candidates, -1);
+  g_assert_cmpstr (skk_candidate_get_text (candidate), ==, "唯");
+
+  skk_candidate_list_previous (candidates);
+  cursor_pos = skk_candidate_list_get_cursor_pos (candidates);
+  g_assert_cmpint (cursor_pos, ==,
+                   skk_candidate_list_get_page_start (candidates) - 1);
+
+  skk_candidate_list_select (candidates);
+
   destroy_context (context);
 }
 

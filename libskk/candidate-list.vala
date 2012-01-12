@@ -256,7 +256,8 @@ namespace Skk {
 
         public override bool page_down () {
             assert (_cursor_pos >= 0);
-            if (_cursor_pos < _candidates.size - _page_size) {
+            if (_cursor_pos >= _page_start &&
+                _cursor_pos < _candidates.size - _page_size) {
                 _cursor_pos += _page_size;
                 _cursor_pos = (int) get_page_start_cursor_pos ();
                 notify_property ("cursor-pos");
