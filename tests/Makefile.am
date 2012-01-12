@@ -16,7 +16,11 @@
 
 INCLUDES = -I$(top_srcdir) $(LIBSKK_CFLAGS)
 
-TESTS_ENVIRONMENT = LIBSKK_DATA_PATH=$(top_srcdir)
+TESTS_ENVIRONMENT =					\
+	G_DEBUG=${G_DEBUG:+"${G_DEBUG},"}gc-friendly	\
+	G_SLICE=${G_SLICE},always-malloc		\
+	LIBSKK_DATA_PATH=$(top_srcdir)			\
+	$(LIBTOOL) --mode=execute $(VALGRIND) $(VALGRIND_OPTS)
 TESTS = rom-kana file-dict user-dict context
 noinst_PROGRAMS = $(TESTS)
 noinst_HEADERS = common.h
@@ -39,6 +43,6 @@ context_SOURCES = context.c common.c
 context_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 
 EXTRA_DIST = file-dict.dat kana-kan.c
-CLEANFILES = user-dict.dat
+CLEANFILES = user-dict.dat valgrind.log.*
 
 -include $(top_srcdir)/git.mk

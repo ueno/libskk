@@ -127,6 +127,21 @@ fi
 AC_SUBST([CODE_COVERAGE_CFLAGS])
 AC_SUBST([CODE_COVERAGE_LDFLAGS])
 
+AC_ARG_ENABLE([valgrind-tests],
+              AS_HELP_STRING([--enable-valgrind-tests],
+                             [run self tests under valgrind]),
+              [enable_valgrind_tests=$enableval], [enable_valgrind_tests=no])
+
+# Run self-tests under valgrind?
+if test "x$enable_valgrind_tests" = "xyes"; then
+    AC_CHECK_PROGS(VALGRIND, valgrind)
+fi
+
+if test -n "$VALGRIND"; then
+    VALGRIND_OPTS="--leak-check=full --show-reachable=no --gen-suppressions=all --num-callers=20 --error-exitcode=0 --log-file=valgrind.log.%p"
+    AC_SUBST(VALGRIND_OPTS)
+fi
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile
 libskk/Makefile
