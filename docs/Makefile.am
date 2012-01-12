@@ -32,6 +32,8 @@ libskkimg_DATA = \
 	libskk/libskk/img/*.png \
 	$(NULL)
 
+dist_man_MANS = skk.1
+
 $(libskkdoc_DATA) $(libskkimg_DATA): libskk-doc
 $(libskkgtkdoc_DATA): libskk-gtk-doc
 

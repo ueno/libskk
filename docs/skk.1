@@ -1,0 +1,55 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.TH LIBSKK 1 "5 Jan 2012"
+.SH NAME
+skk \- program that emulates Japanese SKK input method
+.SH SYNOPSIS
+.B skk
+.RI [ options ]
+.br
+.SH DESCRIPTION
+\fBskk\fP is a tool that reads key sequences from the standard input
+and converts them to Japanese text according to a Japanese input
+method called SKK (Simple Kana to Kanji conversion program).
+.PP
+More information about the SKK input method itself can be found at:
+\m[blue]\fB\%http://openlab.jp/skk/\fR\m[]\&
+.SH OPTIONS
+The \fBskk\fP command follows the usual GNU command line syntax, with
+long options starting with two dashes (`-').  A summary of options is
+included below.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+.TP
+.B \-f, \-\-file-dict=\fIFILE\fR
+Specify path to a file dictionary.
+.TP
+.B \-u, \-\-user-dict=\fIFILE\fR
+Specify path to a user dictionary.
+.TP
+.B \-s, \-\-skkserv=\fIHOST\fR:\fIPORT\fR
+Specify host and port running skkserv.
+.TP
+.B \-r, \-\-rule=\fIRULE\fR
+Specify typing rule.
+.TP
+.B \-l, \-\-list-rules
+List typing rules.
+.SH EXAMPLE
+.TP
+echo "A i SPC" | skk
+Converts a capital letter "A" followed by lowercase letter "i" and a space.
+.TP
+echo "K a p a SPC K a SPC" | skk
+Converts a capital letter "K" followed by lowercase letters "a", "p", "a", and
+a space.  Then converts a capital letter "K" followed by "a" and a space.
+.TP
+echo "r k" | skk -r tutcode
+Converts two lowercase letters "r" and "k" with TUT-Code typing rule.
+.TP
+echo "a (usleep 50000) b (usleep 200000)" | skk -r nicola
+Converts two lowercase letters "a" and "b" typed with a 50000 micro
+seconds interval, and wait 200000 micro seconds, with NICOLA typing
+rule.
+.SH AUTHOR
+libskk was written by Daiki Ueno <ueno@unixuser.org>.
