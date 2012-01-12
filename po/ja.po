@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libskk 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-10 10:05+0900\n"
-"PO-Revision-Date: 2012-01-10 10:07+0900\n"
+"POT-Creation-Date: 2012-01-12 16:39+0900\n"
+"PO-Revision-Date: 2012-01-12 16:40+0900\n"
 "Last-Translator: Daiki Ueno <ueno@unixuser.org>\n"
 "Language-Team: Japanese\n"
 "Language: \n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../libskk/context.vala:533
+#: ../libskk/context.vala:585
 msgid "DictEdit"
 msgstr "辞書登録"
 
-#: ../libskk/state.vala:625
+#: ../libskk/state.vala:624
 msgid "Kuten([MM]KKTT) "
 msgstr "区点([MM]KKTT)"
 
@@ -43,3 +43,7 @@ msgstr "タイピング方式 (既定値: \"default\")"
 #: ../tools/tool.vala:38
 msgid "List typing rules"
 msgstr "タイピング方式を一覧表示"
+
+#: ../tools/tool.vala:49
+msgid "- emulate SKK input method on the command line"
+msgstr "コマンドライン上で SKK 入力メソッドをエミュレート"

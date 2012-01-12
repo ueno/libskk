@@ -45,7 +45,8 @@ namespace Skk {
             Intl.bind_textdomain_codeset (Config.GETTEXT_PACKAGE, "UTF-8");
             Intl.textdomain (Config.GETTEXT_PACKAGE);
 
-            var option_context = new OptionContext ("- skk");
+            var option_context = new OptionContext (
+                _("- emulate SKK input method on the command line"));
             option_context.add_main_entries (options, "libskk");
             try {
                 option_context.parse (ref args);
