@@ -34,6 +34,22 @@ GITIGNOREFILES =				\
 	missing					\
 	mkinstalldirs				\
 	m4					\
+	$(top_builddir)/lcov.html/*		\
 	$(NULL)
+
+MAINTAINERCLEANFILES =				\
+	$(top_builddir)/lcov.info		\
+	$(NULL)
+
+EXTRA_DIST = lcov.mk
+
+maintainer-clean-local: maintainer-clean-local-lcov
+maintainer-clean-local-lcov:
+	rm -rf $(top_builddir)/lcov.html
+
+.PHONY: maintainer-clean-local-lcov
+
+# Code coverage support
+include $(top_srcdir)/lcov.mk
 
 -include $(top_srcdir)/git.mk

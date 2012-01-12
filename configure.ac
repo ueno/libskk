@@ -113,6 +113,20 @@ if test "x$enable_docs" = "xyes" -a "x$have_valadoc" != "xyes"; then
     AC_MSG_ERROR([Doc building requested but valadoc not installed.])
 fi
 
+AC_ARG_ENABLE([code-coverage],
+              AS_HELP_STRING([--enable-code-coverage],
+                             [compile with code coverage code]),
+              [enable_code_coverage=$enableval], [enable_code_coverage=no])
+
+# Only enable code coverage if this isn't a release.
+if test "x$enable_code_coverage" = "xyes"; then
+    CODE_COVERAGE_CFLAGS="-fprofile-arcs -ftest-coverage -O0 -ggdb"
+    CODE_COVERAGE_LDFLAGS="-lgcov"
+fi
+
+AC_SUBST([CODE_COVERAGE_CFLAGS])
+AC_SUBST([CODE_COVERAGE_LDFLAGS])
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile
 libskk/Makefile

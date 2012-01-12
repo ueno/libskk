@@ -38,9 +38,14 @@ libskk_la_VALAFLAGS =						\
 	$(VALAFLAGS)						\
 	$(NULL)
 
-libskk_la_CFLAGS = $(LIBSKK_CFLAGS) -DPKGDATADIR=\"$(pkgdatadir)\"
+libskk_la_CFLAGS =				\
+	$(CODE_COVERAGE_CFLAGS)			\
+	$(LIBSKK_CFLAGS)			\
+	-DPKGDATADIR=\"$(pkgdatadir)\"		\
+	$(NULL)
 libskk_la_LIBADD = $(LIBSKK_LIBS)
 libskk_la_LDFLAGS =							\
+	$(CODE_COVERAGE_LDFLAGS)					\
 	-version-info "$(LT_CURRENT)":"$(LT_REVISION)":"$(LT_AGE)"	\
 	-export-dynamic							\
 	-export-symbols $(srcdir)/libskk.symbols			\
