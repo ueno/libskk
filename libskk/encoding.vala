@@ -18,7 +18,7 @@
 namespace Skk {
     // XXX: we use Vala string to represent byte array, assuming that
     // it does not contain null element
-    class EncodingConverter {
+    class EncodingConverter : Object {
         static const int BUFSIZ = 4096;
         static const string INTERNAL_ENCODING = "UTF-8";
 
