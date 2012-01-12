@@ -50,6 +50,21 @@ AC_ISC_POSIX
 AC_HEADER_STDC
 LT_INIT
 
+# If library source has changed since last release, increment revision
+# If public symbols have been added, removed or changed since last release,
+#  increment current and set revision to 0
+# If public symbols have been added since last release, increment age
+# If public symbols have been removed since last release, set age to 0
+m4_define([libskk_lt_current], [0])
+m4_define([libskk_lt_revision], [0])
+m4_define([libskk_lt_age], [0])
+LT_CURRENT=libskk_lt_current
+LT_REVISION=libskk_lt_revision
+LT_AGE=libskk_lt_age
+AC_SUBST([LT_CURRENT])
+AC_SUBST([LT_REVISION])
+AC_SUBST([LT_AGE])
+
 # check gio
 PKG_CHECK_MODULES([GIO], [gio-2.0], ,
   [AC_MSG_ERROR([can't find gio-2.0])])
