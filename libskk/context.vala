@@ -67,7 +67,7 @@ namespace Skk {
     }
 
     /**
-     * The main entry point of libskk.
+     * Main entry point of libskk.
      *
      * Context represents an input context with support for SKK
      * kana-kanji conversion method.

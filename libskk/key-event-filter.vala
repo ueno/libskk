@@ -46,8 +46,13 @@ namespace Skk {
 
     /**
      * Simple implementation of a key event filter.
+     *
+     * This class is rarely used in programs but specified as "filter"
+     * property in rule metadata.
+     *
+     * @see Rule
      */
-    public class SimpleKeyEventFilter : KeyEventFilter {
+    class SimpleKeyEventFilter : KeyEventFilter {
         /**
          * {@inheritDoc}
          */

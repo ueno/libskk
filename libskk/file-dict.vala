@@ -19,7 +19,7 @@ using Gee;
 
 namespace Skk {
     /**
-     * A file based implementation of Dict.
+     * Read-only file based implementation of Dict.
      */
     public class FileDict : Dict {
         // Read a line near offset and move offset to the beginning of

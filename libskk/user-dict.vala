@@ -19,7 +19,7 @@ using Gee;
 
 namespace Skk {
     /**
-     * A file based implementation of Dict used for user dictionary.
+     * File based implementation of Dict with write access.
      */
     public class UserDict : Dict {
         static const Entry<string,string> ENCODING_TO_CODING_SYSTEM_RULE[] = {

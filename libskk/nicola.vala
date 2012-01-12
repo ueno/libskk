@@ -18,10 +18,18 @@
 using Gee;
 
 namespace Skk {
+    /**
+     * Get the current timer count.
+     */
     public delegate int64 GetTime ();
 
     /**
-     * A key event filter implementing NICOLA (thumb shift) input
+     * Key event filter implementing NICOLA (thumb shift) input
+     *
+     * This class is rarely used in programs but specified as "filter"
+     * property in rule metadata.
+     *
+     * @see Rule
      */
     public class NicolaKeyEventFilter : KeyEventFilter {
         static int64 get_time () {

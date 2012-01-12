@@ -22,7 +22,7 @@ namespace Skk {
     }
 
     /**
-     * An implementation of Dict which talks the skkserv protocol.
+     * Network based Implementation of Dict.
      */
     public class SkkServ : Dict {
         SocketConnection? connection;

@@ -17,7 +17,7 @@
  */
 namespace Skk {
     /**
-     * A CDB based implementation of Dict.
+     * CDB based implementation of Dict.
      */
     public class CdbDict : Dict {
         static uint32 hash (char[] chars) {
