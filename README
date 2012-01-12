@@ -23,7 +23,7 @@ Documentation:
 
 * file:tests/context.c for basic usage
 * http://du-a.org/docs/libskk/libskk/ for Vala binding reference
-* http://du-a.org/docs/gtk-doc/libskk/ for C binding reference
+* http://du-a.org/docs/gtk-doc/libskk/html/ for C binding reference
 
 Test:
 
