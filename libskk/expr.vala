@@ -24,9 +24,9 @@ namespace Skk {
         STRING
     }
 
-    class ExprNode {
+    struct ExprNode {
         public ExprNodeType type;
-        public LinkedList<ExprNode> nodes;
+        public LinkedList<ExprNode?> nodes;
         public string data;
         public ExprNode (ExprNodeType type) {
             this.type = type;
@@ -53,7 +53,7 @@ namespace Skk {
                     break;
                 }
             }
-            var node = new ExprNode (ExprNodeType.SYMBOL);
+            var node = ExprNode (ExprNodeType.SYMBOL);
             node.data = builder.str;
             return node;
         }
@@ -116,7 +116,7 @@ namespace Skk {
                     break;
                 }
             }
-            var node = new ExprNode (ExprNodeType.STRING);
+            var node = ExprNode (ExprNodeType.STRING);
             node.data = builder.str;
             return node;
         }
@@ -124,7 +124,7 @@ namespace Skk {
         public ExprNode? read_expr (string expr, ref int index) {
             return_val_if_fail (index < expr.length && expr[index] == '(',
                                 null);
-            var nodes = new LinkedList<ExprNode> ();
+            var nodes = new LinkedList<ExprNode?> ();
             bool stop = false;
             index++;
             unichar uc = '\0';
@@ -150,7 +150,7 @@ namespace Skk {
                     break;
                 }
             }
-            var node = new ExprNode (ExprNodeType.ARRAY);
+            var node = ExprNode (ExprNodeType.ARRAY);
             node.nodes = nodes;
             return node;
         }
