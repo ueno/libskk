@@ -144,11 +144,10 @@ namespace Skk {
 
         static string[] rules_path;
 
+        KeyEventFilter? filter;
+
         static Map<string,Type> filter_types = 
             new HashMap<string,Type> ();
-
-        static Map<string,KeyEventFilter> filter_instances =
-            new HashMap<string,KeyEventFilter> ();
 
         static construct {
             rules_path = Util.build_data_path ("rules");
@@ -214,12 +213,11 @@ namespace Skk {
         }
 
         internal KeyEventFilter get_filter () {
-            if (!filter_instances.has_key (metadata.filter)) {
+            if (filter == null) {
                 var type = filter_types.get (metadata.filter);
-                var filter = (KeyEventFilter) Object.new (type);
-                filter_instances.set (metadata.filter, filter);
+                filter = (KeyEventFilter) Object.new (type);
             }
-            return filter_instances.get (metadata.filter);
+            return filter;
         }
 
         /**
@@ -243,6 +241,13 @@ namespace Skk {
             }
 
             rom_kana = new RomKanaMapFile (name);
+        }
+
+        ~Rule () {
+            if (filter != null) {
+                filter.reset ();
+                filter = null;
+            }
         }
 
         static Map<string,RuleMetadata?> rule_cache = new HashMap<string,RuleMetadata?> ();
