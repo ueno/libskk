@@ -2,12 +2,16 @@
 #include "common.h"
 
 static void
-rule (void) {
+list (void) {
   SkkRuleMetadata *rules;
   gint len;
 
   rules = skk_rule_list (&len);
   g_assert_cmpint (len, >, 0);
+  while (--len >= 0) {
+    skk_rule_metadata_destroy (&rules[len]);
+  }
+  g_free (rules);
 }
 
 static void
@@ -27,9 +31,9 @@ kzik (void)
   rule = skk_rule_new ("kzik", &error);
   g_assert_no_error (error);
   skk_context_set_typing_rule (context, rule);
+  g_object_unref (rule);
   check_transitions (context, transitions, G_N_ELEMENTS (transitions));
   destroy_context (context);
-  g_object_unref (rule);
 }
 
 static void
@@ -90,7 +94,7 @@ main (int argc, char **argv) {
   g_type_init ();
   skk_init ();
   g_test_init (&argc, &argv, NULL);
-  g_test_add_func ("/libskk/rule", rule);
+  g_test_add_func ("/libskk/list", list);
   g_test_add_func ("/libskk/kzik", kzik);
   g_test_add_func ("/libskk/nicola", nicola);
   return g_test_run ();

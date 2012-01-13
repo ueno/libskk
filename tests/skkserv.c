@@ -64,8 +64,10 @@ skkserv_thread (gpointer user_data)
         }
     }
 
+  g_object_unref (connection);
   g_socket_close (socket, &error);
   g_assert_no_error (error);
+  g_object_unref (socket);
   return NULL;
 }
 
@@ -110,6 +112,7 @@ skkserv (void)
   GError *error;
   SkkServData *data;
   GSocketAddress *addr;
+  gchar *host;
   guint16 port;
   GInetAddress *iaddr;
   SkkSkkServ *dict;
@@ -135,9 +138,12 @@ skkserv (void)
 
   port = g_inet_socket_address_get_port (G_INET_SOCKET_ADDRESS (addr));
   iaddr = g_inet_socket_address_get_address (G_INET_SOCKET_ADDRESS (addr));
+  host = g_inet_address_to_string (iaddr);
+  g_object_unref (addr);
 
   error = NULL;
-  dict = skk_skk_serv_new (g_inet_address_to_string (iaddr), port, "UTF-8", &error);
+  dict = skk_skk_serv_new (host, port, "UTF-8", &error);
+  g_free (host);
   g_assert_no_error (error);
 
   g_assert (skk_dict_get_read_only (SKK_DICT (dict)));
@@ -145,12 +151,20 @@ skkserv (void)
   g_assert (read_only);
 
   candidates = skk_dict_lookup (SKK_DICT (dict), "あい", FALSE, &len);
+  g_assert_cmpint (len, ==, 4);
+  while (--len >= 0) {
+    g_object_unref (candidates[len]);
+  }
+  g_free (candidates);
 
   completion = skk_dict_complete (SKK_DICT (dict), "あ", &len);
   g_assert_cmpint (len, ==, 2);
+  g_strfreev (completion);
 
   g_object_unref (dict);
   g_thread_join (data->thread);
+  g_object_unref (data->server);
+  g_slice_free (SkkServData, data);
 }
 
 int

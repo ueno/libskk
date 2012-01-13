@@ -34,8 +34,8 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override void reload () {
-            // this will cause connection close
             if (connection != null)
+                connection.close ();
                 connection = null;
             try {
                 var client = new SocketClient ();
@@ -178,6 +178,7 @@ namespace Skk {
         ~SkkServ () {
             if (connection != null) {
                 connection.close ();
+                connection = null;
             }
         }
     }

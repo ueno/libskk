@@ -46,7 +46,7 @@ namespace Skk {
     /**
      * Object representing a key event.
      */
-    public class KeyEvent {
+    public class KeyEvent : Object {
         /**
          * The base name of the KeyEvent.
          *

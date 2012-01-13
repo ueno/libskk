@@ -39,6 +39,7 @@ cdb_dict (void)
   /* completion is always empty with CDB dict */
   completion = skk_dict_complete (SKK_DICT (dict), "か", &len);
   g_assert_cmpint (len, ==, 0);
+  g_free (completion);
 
   error = NULL;
   skk_dict_save (SKK_DICT (dict), &error);

@@ -968,6 +968,7 @@ namespace Skk {
                 state.candidates.select ();
                 state.output.append (surrounding_after);
                 if (command == "special-midasi") {
+                    state.candidates.clear ();
                     state.handler_type = typeof (StartStateHandler);
                     return false;
                 }

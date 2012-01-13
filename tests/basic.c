@@ -363,6 +363,7 @@ candidate_list (void)
 
   candidate = skk_candidate_list_get (candidates, -1);
   g_assert_cmpstr (skk_candidate_get_text (candidate), ==, "唯");
+  g_object_unref (candidate);
 
   skk_candidate_list_previous (candidates);
   cursor_pos = skk_candidate_list_get_cursor_pos (candidates);

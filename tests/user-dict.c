@@ -12,6 +12,7 @@ user_dict (void)
   g_assert (skk_dict_get_read_only (SKK_DICT (dict)) == FALSE);
   g_object_get (dict, "read-only", &read_only, NULL);
   g_assert (read_only == FALSE);
+  g_object_unref (dict);
 }
 
 static void

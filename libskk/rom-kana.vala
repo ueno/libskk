@@ -42,7 +42,7 @@ namespace Skk {
 
     static const string[] PERIOD_RULE = {"。、", "．，", "。，", "．、"};
 
-    class RomKanaNode {
+    class RomKanaNode : Object {
         internal RomKanaEntry? entry;
         internal weak RomKanaNode parent;
         internal RomKanaNode children[128];

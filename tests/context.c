@@ -1,7 +1,32 @@
 #include <libskk/libskk.h>
 
 static void
-context (void)
+dictionary (void)
+{
+  SkkContext *context = create_context (TRUE, TRUE);
+  SkkEmptyDict *dict = skk_empty_dict_new ();
+  SkkDict **dictionaries;
+  gint n_dictionaries;
+
+  skk_context_add_dictionary (context, SKK_DICT (dict));
+
+  dictionaries = skk_context_get_dictionaries (context, &n_dictionaries);
+  g_assert_cmpint (n_dictionaries, ==, 4);
+  skk_context_set_dictionaries (context, dictionaries, n_dictionaries);
+  while (--n_dictionaries >= 0) {
+    g_object_unref (dictionaries[n_dictionaries]);
+  }
+  g_free (dictionaries);
+
+  skk_context_remove_dictionary (context, SKK_DICT (dict));
+
+  g_object_unref (dict);
+
+  destroy_context (context);
+}
+
+static void
+basic (void)
 {
   SkkContext *context = create_context (TRUE, TRUE);
   gboolean retval;
@@ -12,9 +37,10 @@ context (void)
   retval = skk_context_process_key_events (context, "a i r");
   g_assert (retval);
 
-  output = skk_context_poll_output (context);
+  output = skk_context_peek_output (context);
   g_assert_cmpstr (output, ==, "あい");
   g_free (output);
+  skk_context_clear_output (context);
 
   preedit = skk_context_get_preedit (context);
   g_assert_cmpstr (preedit, ==, "r");
@@ -73,6 +99,8 @@ main (int argc, char **argv) {
   g_type_init ();
   skk_init ();
   g_test_init (&argc, &argv, NULL);
-  g_test_add_func ("/libskk/context", context);
+  g_test_add_func ("/libskk/context/dictionary",
+                   dictionary);
+  g_test_add_func ("/libskk/context/basic", basic);
   return g_test_run ();
 }
