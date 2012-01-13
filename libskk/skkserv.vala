@@ -137,7 +137,7 @@ namespace Skk {
                 if (response.length < 2)
                     return new string[0];
                 return converter.decode (
-                    response[2:response.length]).split ("/");
+                    response[2:-1]).split ("/");
             } catch (SkkServError e) {
                 warning ("server completion failed %s", e.message);
                 return new string[0];
@@ -173,6 +173,12 @@ namespace Skk {
             this.port = port;
             this.converter = new EncodingConverter (encoding);
             reload ();
+        }
+
+        ~SkkServ () {
+            if (connection != null) {
+                connection.close ();
+            }
         }
     }
 }
