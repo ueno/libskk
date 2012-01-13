@@ -1,14 +1,15 @@
 #include <libskk/libskk.h>
 
 static void
-file_dict (void)
+cdb_dict (void)
 {
   GError *error = NULL;
-  SkkFileDict *dict = skk_file_dict_new (LIBSKK_FILE_DICT, "EUC-JP", &error);
+  SkkCdbDict *dict = skk_cdb_dict_new (LIBSKK_CDB_DICT, "EUC-JP", &error);
   g_assert_no_error (error);
 
   gint len;
   SkkCandidate **candidates;
+  gchar **completion;
   gboolean read_only;
 
   g_assert (skk_dict_get_read_only (SKK_DICT (dict)));
@@ -35,6 +36,14 @@ file_dict (void)
   }
   g_free (candidates);
 
+  /* completion is always empty with CDB dict */
+  completion = skk_dict_complete (SKK_DICT (dict), "か", &len);
+  g_assert_cmpint (len, ==, 0);
+
+  error = NULL;
+  skk_dict_save (SKK_DICT (dict), &error);
+  g_assert_no_error (error);
+
   g_object_unref (dict);
 }
 
@@ -44,6 +53,6 @@ main (int argc, char **argv)
   g_type_init ();
   skk_init ();
   g_test_init (&argc, &argv, NULL);
-  g_test_add_func ("/libskk/file-dict", file_dict);
+  g_test_add_func ("/libskk/cdb-dict", cdb_dict);
   return g_test_run ();
 }

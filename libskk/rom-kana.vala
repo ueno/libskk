@@ -69,6 +69,7 @@ namespace Skk {
             node.entry = entry;
         }
 
+#if 0
         RomKanaNode? lookup_node (string key) {
             var node = this;
             for (var i = 0; i < key.length; i++) {
@@ -100,6 +101,7 @@ namespace Skk {
                 node.parent.remove_child (node);
             }
         }
+#endif
     }
 
     /**
