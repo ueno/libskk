@@ -21,7 +21,7 @@ TESTS_ENVIRONMENT =					\
 	G_SLICE=${G_SLICE},always-malloc		\
 	LIBSKK_DATA_PATH=$(top_srcdir)			\
 	$(LIBTOOL) --mode=execute $(VALGRIND) $(VALGRIND_OPTS)
-TESTS = rom-kana file-dict user-dict cdb-dict rule context basic
+TESTS = rom-kana file-dict user-dict cdb-dict skkserv rule context basic
 noinst_PROGRAMS = $(TESTS)
 noinst_HEADERS = common.h
 
@@ -41,6 +41,9 @@ file_dict_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 
 cdb_dict_SOURCES = cdb-dict.c
 cdb_dict_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
+
+skkserv_SOURCES = skkserv.c
+skkserv_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 
 user_dict_SOURCES = user-dict.c common.c
 user_dict_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
