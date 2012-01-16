@@ -55,7 +55,7 @@ namespace Skk {
             }
         }
 
-        internal ArrayList<Dict> dictionaries;
+        internal Gee.List<Dict> dictionaries;
         internal CandidateList candidates;
 
         // These two RomKanaConverters are needed to track delete/undo
@@ -116,7 +116,7 @@ namespace Skk {
         Regex numeric_regex;
         Regex numeric_ref_regex;
 
-        internal State (ArrayList<Dict> dictionaries) {
+        internal State (Gee.List<Dict> dictionaries) {
             this.dictionaries = dictionaries;
             this.candidates = new SimpleCandidateList ();
             this.candidates.selected.connect (candidate_selected);

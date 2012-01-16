@@ -73,7 +73,7 @@ namespace Skk {
      * kana-kanji conversion method.
      */
     public class Context : Object {
-        ArrayList<Dict> _dictionaries = new ArrayList<Dict> ();
+        Gee.List<Dict> _dictionaries = new ArrayList<Dict> ();
 
         /**
          * Dictionaries.
@@ -120,8 +120,8 @@ namespace Skk {
             }
         }
 
-        SList<State> state_stack;
-        HashMap<Type, StateHandler> handlers =
+        LinkedList<State> state_stack = new LinkedList<State> ();
+        Gee.Map<Type, StateHandler> handlers =
             new HashMap<Type, StateHandler> ();
 
         /**
@@ -129,10 +129,10 @@ namespace Skk {
          */
         public InputMode input_mode {
             get {
-                return state_stack.data.input_mode;
+                return state_stack.peek_head ().input_mode;
             }
             set {
-                state_stack.data.input_mode = value;
+                state_stack.peek_head ().input_mode = value;
             }
         }
 
@@ -141,10 +141,10 @@ namespace Skk {
          */
         public string[] auto_start_henkan_keywords {
             get {
-                return state_stack.data.auto_start_henkan_keywords;
+                return state_stack.peek_head ().auto_start_henkan_keywords;
             }
             set {
-                state_stack.data.auto_start_henkan_keywords = value;
+                state_stack.peek_head ().auto_start_henkan_keywords = value;
             }
         }
 
@@ -153,10 +153,10 @@ namespace Skk {
          */
         public bool egg_like_newline {
             get {
-                return state_stack.data.egg_like_newline;
+                return state_stack.peek_head ().egg_like_newline;
             }
             set {
-                state_stack.data.egg_like_newline = value;
+                state_stack.peek_head ().egg_like_newline = value;
             }
         }
 
@@ -165,11 +165,15 @@ namespace Skk {
          */
         public PeriodStyle period_style {
             get {
-                return state_stack.data.period_style;
+                return state_stack.peek_head ().period_style;
             }
             set {
-                state_stack.data.period_style = value;
+                state_stack.peek_head ().period_style = value;
             }
+        }
+
+        void filter_forwarded_cb (KeyEvent key) {
+            process_key_event_internal (key);
         }
 
         /**
@@ -177,14 +181,15 @@ namespace Skk {
          */
         public Rule typing_rule {
             get {
-                return state_stack.data.typing_rule;
+                return state_stack.peek_head ().typing_rule;
             }
             set {
-                var rule = state_stack.data.typing_rule = value;
-                var filter = rule.get_filter ();
-                filter.forwarded.connect ((key) => {
-                        process_key_event_internal (key);
-                    });
+                var state = state_stack.peek_head ();
+                state.typing_rule.get_filter ().forwarded.disconnect (
+                    filter_forwarded_cb);
+                state.typing_rule = value;
+                state.typing_rule.get_filter ().forwarded.connect (
+                    filter_forwarded_cb);
             }
         }
 
@@ -196,7 +201,7 @@ namespace Skk {
          */
         public KeyEventFilter key_event_filter {
             owned get {
-                return state_stack.data.typing_rule.get_filter ();
+                return state_stack.peek_head ().typing_rule.get_filter ();
             }
         }
 
@@ -221,9 +226,9 @@ namespace Skk {
                           new AbbrevStateHandler ());
             handlers.set (typeof (KutenStateHandler),
                           new KutenStateHandler ());
-            state_stack.prepend (new State (_dictionaries));
-            connect_state_signals (state_stack.data);
-            _candidates = new ProxyCandidateList (state_stack.data.candidates);
+            var state = new State (_dictionaries);
+            _candidates = new ProxyCandidateList (state.candidates);
+            push_state (state);
             _candidates.notify["cursor-pos"].connect (() => {
                     if (_candidates.cursor_pos >= 0) {
                         update_preedit ();
@@ -316,19 +321,40 @@ namespace Skk {
         }
 
         uint dict_edit_level () {
-            return state_stack.length () - 1;
+            return state_stack.size - 1;
+        }
+
+        void push_state (State state) {
+            if (!state_stack.is_empty) {
+                disconnect_state_signals (state_stack.peek_head ());
+            }
+            state_stack.offer_head (state);
+            connect_state_signals (state);
+            var pcandidates = (ProxyCandidateList) _candidates;
+            if (pcandidates.candidates != state.candidates) {
+                pcandidates.candidates = state.candidates;
+            }
+        }
+
+        void pop_state () {
+            assert (!state_stack.is_empty);
+            disconnect_state_signals (state_stack.poll_head ());
+            if (!state_stack.is_empty) {
+                var state = state_stack.peek_head ();
+                connect_state_signals (state);
+                var pcandidates = (ProxyCandidateList) _candidates;
+                if (pcandidates.candidates != state.candidates) {
+                    pcandidates.candidates = state.candidates;
+                }
+            }
         }
 
         void start_dict_edit (string midasi, bool okuri) {
             var state = new State (_dictionaries);
             state.midasi = midasi;
             state.okuri = okuri;
-            disconnect_state_signals (state_stack.data);
-            state_stack.prepend (state);
-            connect_state_signals (state_stack.data);
+            push_state (state);
             update_preedit ();
-            ((ProxyCandidateList) _candidates).candidates =
-                state_stack.data.candidates;
         }
 
         bool end_dict_edit (string text) {
@@ -343,8 +369,9 @@ namespace Skk {
                         warning ("error saving dictionaries %s", e.message);
                     }
                 }
-                state_stack.data.reset ();
-                state_stack.data.output.assign (text);
+                var state = state_stack.peek_head ();
+                state.reset ();
+                state.output.assign (text);
                 update_preedit ();
                 return true;
             }
@@ -353,14 +380,12 @@ namespace Skk {
 
         bool leave_dict_edit (out string? midasi, out bool? okuri) {
             if (dict_edit_level () > 0) {
-                midasi = state_stack.data.midasi;
-                okuri = state_stack.data.okuri;
-                disconnect_state_signals (state_stack.data);
-                state_stack.delete_link (state_stack);
-                connect_state_signals (state_stack.data);
-                state_stack.data.cancel_okuri ();
-                ((ProxyCandidateList) _candidates).candidates =
-                    state_stack.data.candidates;
+                var state = state_stack.peek_head ();
+                midasi = state.midasi;
+                okuri = state.okuri;
+                pop_state ();
+                state = state_stack.peek_head ();
+                state.cancel_okuri ();
                 return true;
             }
             midasi = null;
@@ -388,7 +413,7 @@ namespace Skk {
          * @return `true` if any of key events are handled, `false` otherwise
          */
         public bool process_key_events (string keyseq) {
-            ArrayList<string> keys = new ArrayList<string> ();
+            Gee.List<string> keys = new ArrayList<string> ();
             var builder = new StringBuilder ();
             bool complex = false;
             bool escaped = false;
@@ -477,7 +502,7 @@ namespace Skk {
 
         bool process_key_event_internal (KeyEvent key) {
             KeyEvent _key = key.copy ();
-            var state = state_stack.data;
+            var state = state_stack.peek_head ();
             while (true) {
                 var handler_type = state.handler_type;
                 var handler = handlers.get (handler_type);
@@ -502,16 +527,14 @@ namespace Skk {
         public void reset () {
             // cancel all dict edit
             while (dict_edit_level () > 0) {
-                disconnect_state_signals (state_stack.data);
-                state_stack.delete_link (state_stack);
-                connect_state_signals (state_stack.data);
-                state_stack.data.cancel_okuri ();
+                pop_state ();
+                state_stack.peek_head ().cancel_okuri ();
             }
             // to restore surrounding text after focus change
-            state_stack.data.output_surrounding_text ();
-            state_stack.data.reset ();
-            ((ProxyCandidateList) _candidates).candidates =
-                state_stack.data.candidates;
+            var state = state_stack.peek_head ();
+            state.output_surrounding_text ();
+            state.reset ();
+            ((ProxyCandidateList) _candidates).candidates = state.candidates;
         }
 
         /**
@@ -525,7 +548,7 @@ namespace Skk {
         }
 
         string retrieve_output (bool clear) {
-            var state = state_stack.data;
+            var state = state_stack.peek_head ();
             var handler = handlers.get (state.handler_type);
             if (dict_edit_level () > 0) {
                 return "";
@@ -564,7 +587,7 @@ namespace Skk {
          * @since 0.0.6
          */
         public void clear_output () {
-            state_stack.data.output.erase ();
+            state_stack.peek_head ().output.erase ();
         }
 
         /**
@@ -574,7 +597,7 @@ namespace Skk {
         public string preedit { get; private set; default = ""; }
 
         void update_preedit () {
-            var state = state_stack.data;
+            var state = state_stack.peek_head ();
             var handler = handlers.get (state.handler_type);
             var builder = new StringBuilder ();
             if (dict_edit_level () > 0) {
@@ -587,7 +610,7 @@ namespace Skk {
                     builder.append_c (']');
                 }
                 builder.append (" ");
-                builder.append (state_stack.data.midasi);
+                builder.append (state.midasi);
                 builder.append (" ");
                 builder.append (handler.get_output (state));
             }
