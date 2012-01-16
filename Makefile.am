@@ -39,6 +39,7 @@ GITIGNOREFILES =				\
 
 MAINTAINERCLEANFILES =				\
 	$(top_builddir)/lcov.info		\
+	$(srcdir)/ChangeLog			\
 	$(NULL)
 
 EXTRA_DIST = lcov.mk
@@ -48,6 +49,22 @@ maintainer-clean-local-lcov:
 	rm -rf $(top_builddir)/lcov.html
 
 .PHONY: maintainer-clean-local-lcov
+
+ChangeLog:
+	@echo Creating $@
+	@if test -d "$(srcdir)/.git"; then \
+	  (GIT_DIR=$(top_srcdir)/.git ./missing --run git log --stat) | fmt --split-only > $@.tmp \
+	  && mv -f $@.tmp $@ \
+	  || ($(RM) $@.tmp; \
+	      echo Failed to generate ChangeLog, your ChangeLog may be outdated >&2; \
+	      (test -f $@ || echo git-log is required to generate this file >> $@)); \
+	else \
+	  test -f $@ || \
+	  (echo A git checkout and git-log is required to generate ChangeLog >&2 && \
+	  echo A git checkout and git-log is required to generate this file >> $@); \
+	fi
+
+.PHONY: ChangeLog
 
 # Code coverage support
 include $(top_srcdir)/lcov.mk
