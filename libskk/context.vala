@@ -25,7 +25,7 @@ namespace Skk {
      */
     public static void init () {
         // needed to use static methods defined in some classes
-        new Util ();
+        typeof (Util).class_ref ();
         typeof (Rule).class_ref ();
     }
 
