@@ -313,18 +313,21 @@ namespace Skk {
                 return _candidates;
             }
             set {
-                if (_candidates != null) {
-                    _candidates.notify["cursor-pos"].disconnect (
+                if (_candidates != value) {
+                    // _candidates is initially null
+                    if (_candidates != null) {
+                        _candidates.notify["cursor-pos"].disconnect (
+                            notify_cursor_pos_cb);
+                        _candidates.populated.disconnect (populated_cb);
+                        _candidates.selected.disconnect (selected_cb);
+                    }
+                    _candidates = value;
+                    _candidates.notify["cursor-pos"].connect (
                         notify_cursor_pos_cb);
-                    _candidates.populated.disconnect (populated_cb);
-                    _candidates.selected.disconnect (selected_cb);
+                    _candidates.populated.connect (populated_cb);
+                    _candidates.selected.connect (selected_cb);
+                    populated ();
                 }
-                _candidates = value;
-                _candidates.notify["cursor-pos"].connect (
-                    notify_cursor_pos_cb);
-                _candidates.populated.connect (populated_cb);
-                _candidates.selected.connect (selected_cb);
-                populated ();
             }
         }
 

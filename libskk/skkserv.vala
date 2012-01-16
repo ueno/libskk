@@ -30,13 +30,22 @@ namespace Skk {
         string host;
         uint16 port;
 
+        void close_connection () {
+            if (connection != null) {
+                try {
+                    connection.close ();
+                } catch (GLib.Error e) {
+                    warning ("can't close skkserv: %s", e.message);
+                }
+                connection = null;
+            }
+        }
+
         /**
          * {@inheritDoc}
          */
         public override void reload () {
-            if (connection != null)
-                connection.close ();
-                connection = null;
+            close_connection ();
             try {
                 var client = new SocketClient ();
                 connection = client.connect_to_host (host, port);
@@ -47,10 +56,12 @@ namespace Skk {
                 connection.output_stream.flush ();
                 ssize_t len = connection.input_stream.read (buffer);
                 if (len <= 0) {
-                    connection = null;
+                    close_connection ();
                 }
             } catch (GLib.Error e) {
-                connection = null;
+                warning ("can't open skkserv at %s:%u: %s",
+                         host, port, e.message);
+                close_connection ();
             }
         }
 
@@ -176,10 +187,7 @@ namespace Skk {
         }
 
         ~SkkServ () {
-            if (connection != null) {
-                connection.close ();
-                connection = null;
-            }
+            close_connection ();
         }
     }
 }
