@@ -202,11 +202,13 @@ namespace Skk {
         /**
          * Output "nn" if preedit ends with "n".
          */
-        public void output_nn_if_any () {
+        public bool output_nn_if_any () {
             if (_preedit.str.has_suffix ("n")) {
                 _output.append (NN[kana_mode]);
                 _preedit.truncate (_preedit.len - 1);
+                return true;
             }
+            return false;
         }
 
         /**
@@ -233,7 +235,7 @@ namespace Skk {
             var child_node = current_node.children[uc];
             if (child_node == null) {
                 // no such transition path in trie
-                output_nn_if_any ();
+                var retval = output_nn_if_any ();
                 // XXX: index_of_char does not work with '\0'
                 var index = uc != '\0' ? ".,".index_of_char (uc) : -1;
                 if (index >= 0) {
@@ -247,7 +249,8 @@ namespace Skk {
                     _output.append_unichar (uc);
                     _preedit.erase ();
                     current_node = rule.root_node;
-                    return false;
+                    // there may be "NN" output
+                    return retval;
                 } else {
                     // abondon current preedit and restart lookup from
                     // the root with uc
