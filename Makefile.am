@@ -37,6 +37,11 @@ GITIGNOREFILES =				\
 	$(top_builddir)/lcov.html/*		\
 	$(NULL)
 
+distclean-local:
+	if test "x$(srcdir)" = "x."; then :; else \
+		rm -f ChangeLog; \
+	fi
+
 MAINTAINERCLEANFILES =				\
 	$(top_builddir)/lcov.info		\
 	$(srcdir)/ChangeLog			\
