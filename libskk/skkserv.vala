@@ -33,6 +33,11 @@ namespace Skk {
         void close_connection () {
             if (connection != null) {
                 try {
+                    buffer[0] = '0';
+                    size_t bytes_written;
+                    connection.output_stream.write_all (buffer[0:1],
+                                                        out bytes_written);
+                    connection.output_stream.flush ();
                     connection.close ();
                 } catch (GLib.Error e) {
                     warning ("can't close skkserv: %s", e.message);
