@@ -40,4 +40,6 @@ GITIGNOREFILES =				\
 	skk_vala.stamp				\
 	$(NULL)
 
+dist_man_MANS = skk.1
+
 -include $(top_srcdir)/git.mk
