@@ -173,7 +173,8 @@
             "[LR]": "set-input-mode-latin",
             "A": "set-input-mode-latin",
             "Z": "set-input-mode-wide-latin",
-            "L": "set-input-mode-wide-latin"
+            "L": "set-input-mode-wide-latin",
+            "Q": "start-preedit"
         }
     }
 }
