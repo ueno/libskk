@@ -18,12 +18,13 @@
 using Gee;
 
 namespace Skk {
-    class Tool : Object {
+    abstract class Tool : Object {
         static string file_dict;
         static string user_dict;
         static string skkserv;
         static string typing_rule;
         static bool list_typing_rules;
+        static bool run_under_fep;
 
         const OptionEntry[] options = {
             {"file-dict", 'f', 0, OptionArg.STRING, ref file_dict,
@@ -36,6 +37,10 @@ namespace Skk {
              N_("Typing rule (default: \"default\")"), null },
             {"list-rules", 'l', 0, OptionArg.NONE, ref list_typing_rules,
              N_("List typing rules"), null },
+#if ENABLE_FEP
+            {"fep", 'e', 0, OptionArg.NONE, ref run_under_fep,
+             N_("Run under FEP"), null },
+#endif
             { null }
         };
 
@@ -137,7 +142,25 @@ namespace Skk {
                     return 1;
                 }
             }
+            Tool tool;
+#if ENABLE_FEP
+            if (run_under_fep)
+                tool = new FepTool (context);
+            else
+#endif
+                tool = new DebugTool (context);
+            if (!tool.run ())
+                return 1;
+            return 0;
+        }
 
+        public abstract bool run ();
+    }
+
+    class DebugTool : Tool {
+        Skk.Context context;
+
+        public override bool run () {
             string? line;
             while ((line = stdin.read_line ()) != null) {
                 context.process_key_events (line);
@@ -153,7 +176,11 @@ namespace Skk {
                 context.reset ();
                 context.clear_output ();
             }
-            return 0;
+            return true;
+        }
+
+        public DebugTool (Skk.Context context) {
+            this.context = context;
         }
     }
 }

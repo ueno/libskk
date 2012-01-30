@@ -1,0 +1,4 @@
+#!/bin/sh
+
+@bindir@/skk -e &
+exec "$SHELL" "$@"

@@ -21,6 +21,7 @@ bin_PROGRAMS = skk
 
 skk_VALAFLAGS =					\
 	--vapidir=$(top_srcdir)/libskk		\
+	--vapidir=$(top_srcdir)/tools		\
 	--pkg config				\
 	--pkg skk-1.0				\
 	$(VALAFLAGS)
@@ -35,11 +36,34 @@ skk_CFLAGS =					\
 skk_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 skk_SOURCES = tool.vala
 
+dist_man_MANS = skk.1
+
+if ENABLE_FEP
+skk_VALAFLAGS += --pkg libfep-glib -D ENABLE_FEP
+skk_CFLAGS += $(LIBFEP_CFLAGS)
+skk_LDADD += $(LIBFEP_LIBS)
+skk_SOURCES += fep.vala
+dist_man_MANS += skkfep.1
+
+EXTRA_DIST = skkfep.in skkfep.wrapper.in
+bin_SCRIPTS = skkfep
+libexec_SCRIPTS = skkfep.wrapper
+
+skkfep: skkfep.in
+	$(AM_V_GEN) sed -e "s!@FEP\@!"$(FEP)"!" \
+	-e "s!@libexecdir\@!"$(libexecdir)"!" \
+	$< > $@.tmp && \
+	mv $@.tmp $@
+
+skkfep.wrapper: skkfep.wrapper.in
+	$(AM_V_GEN) sed -e "s!@bindir\@!"$(bindir)"!" \
+	$< > $@.tmp && \
+	mv $@.tmp $@
+endif
+
 GITIGNOREFILES =				\
 	$(skk_SOURCES:.vala=.c)			\
 	skk_vala.stamp				\
 	$(NULL)
-
-dist_man_MANS = skk.1
 
 -include $(top_srcdir)/git.mk
