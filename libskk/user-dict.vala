@@ -22,13 +22,6 @@ namespace Skk {
      * File based implementation of Dict with write access.
      */
     public class UserDict : Dict {
-        static const Entry<string,string> ENCODING_TO_CODING_SYSTEM_RULE[] = {
-            { "UTF-8", "utf-8" },
-            { "EUC-JP", "euc-jp" },
-            { "Shift_JIS", "shift_jis" },
-            { "ISO-2022-JP", "iso-2022-jp" }
-        };
-
         void load () throws SkkDictError, GLib.IOError {
             uint8[] contents;
             try {
@@ -46,21 +39,17 @@ namespace Skk {
                 return;
             }
 
-            MatchInfo info = null;
-            if (coding_cookie_regex.match (line, 0, out info)) {
-                string coding_system = info.fetch (1);
-                foreach (var entry in ENCODING_TO_CODING_SYSTEM_RULE) {
-                    if (entry.value == coding_system) {
-                        try {
-                            // override encoding with coding cookie
-                            converter = new EncodingConverter (entry.key);
-                        } catch (GLib.Error e) {
-                            throw new SkkDictError.MALFORMED_INPUT (
-                                "can't create encoder for coding cookie %s: %s",
-                                entry.key, e.message);
-                        }
-                        break;
+            var coding = EncodingConverter.extract_coding_system (line);
+            if (coding != null) {
+                try {
+                    var _converter = new EncodingConverter.from_coding_system (
+                        coding);
+                    if (_converter != null) {
+                        converter = _converter;
                     }
+                } catch (Error e) {
+                    warning ("can't create converter from coding system %s: %s",
+                             coding, e.message);
                 }
                 // proceed to the next line
                 line = data.read_line (out length);
@@ -182,13 +171,11 @@ namespace Skk {
          */
         public override void save () throws GLib.Error {
             var builder = new StringBuilder ();
-            foreach (var entry in ENCODING_TO_CODING_SYSTEM_RULE) {
-                if (entry.key == converter.encoding) {
-                    builder.append (
-                        ";;; -*- coding: %s -*-\n".printf (entry.value));
-                    break;
-                }
+            var coding = converter.get_coding_system ();
+            if (coding != null) {
+                builder.append (";;; -*- coding: %s -*-\n".printf (coding));
             }
+
             builder.append (";; okuri-ari entries.\n");
             var entries = new ArrayList<Map.Entry<string,Gee.List<Candidate>>> ();
             entries.add_all (okuri_ari_entries.entries);
@@ -360,7 +347,6 @@ namespace Skk {
             new HashMap<string,Gee.List<Candidate>> ();
         Map<string,Gee.List<Candidate>> okuri_nasi_entries =
             new HashMap<string,Gee.List<Candidate>> ();
-        Regex coding_cookie_regex;
         string midasi_history[128];
 
         /**
@@ -378,12 +364,6 @@ namespace Skk {
             this.file = File.new_for_path (path);
             this.etag = "";
             this.converter = new EncodingConverter (encoding);
-            try {
-                this.coding_cookie_regex = new Regex (
-                    "\\A\\s*;+\\s*-\\*-\\s*coding:\\s*(\\S+?)\\s*-\\*-");
-            } catch (GLib.RegexError e) {
-                assert_not_reached ();
-            }
             // user dictionary may not exist for the first time
             if (FileUtils.test (path, FileTest.EXISTS)) {
                 reload ();

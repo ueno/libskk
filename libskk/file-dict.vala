@@ -87,6 +87,27 @@ namespace Skk {
             mmap.remap ();
 
             long offset = 0;
+            var line = read_line (ref offset);
+            if (line == null) {
+                throw new SkkDictError.MALFORMED_INPUT (
+                    "can't read the first line");
+            }
+
+            var coding = EncodingConverter.extract_coding_system (line);
+            if (coding != null) {
+                try {
+                    var _converter = new EncodingConverter.from_coding_system (
+                        coding);
+                    if (_converter != null) {
+                        converter = _converter;
+                    }
+                } catch (Error e) {
+                    warning ("can't create converter from coding system %s: %s",
+                             coding, e.message);
+                }
+            }
+
+            offset = 0;
             if (!read_until (ref offset, ";; okuri-ari entries.\n")) {
                 throw new SkkDictError.MALFORMED_INPUT (
                     "no okuri-ari boundary");

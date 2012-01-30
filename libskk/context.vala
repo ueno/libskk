@@ -27,6 +27,7 @@ namespace Skk {
         // needed to use static methods defined in some classes
         typeof (Util).class_ref ();
         typeof (Rule).class_ref ();
+        typeof (EncodingConverter).class_ref ();
     }
 
     /**
