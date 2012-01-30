@@ -19,7 +19,9 @@ input_mode (void)
     { SKK_INPUT_MODE_HANKAKU_KATAKANA, "l", "", "", SKK_INPUT_MODE_LATIN },
     { SKK_INPUT_MODE_HANKAKU_KATAKANA, "L", "", "", SKK_INPUT_MODE_WIDE_LATIN },
     { SKK_INPUT_MODE_LATIN, "C-j", "", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "w w q", "", "っ", SKK_INPUT_MODE_KATAKANA }
+    { SKK_INPUT_MODE_HIRAGANA, "w w q", "", "っ", SKK_INPUT_MODE_KATAKANA },
+    /* Issue#10 */
+    { SKK_INPUT_MODE_HIRAGANA, "l Q", "", "Q", SKK_INPUT_MODE_LATIN }
   };
 
   context = create_context (TRUE, TRUE);

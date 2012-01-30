@@ -4,7 +4,6 @@
             "C-g": "abort",
             "\n": "commit-unhandled",
             "C-m": "commit-unhandled",
-            "Q": "start-preedit",
             "\b": "delete",
             "C-h": "delete",
             "[gh]": "abbrev",
