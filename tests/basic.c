@@ -87,9 +87,9 @@ okuri_nasi (void)
     //{ SKK_INPUT_MODE_HIRAGANA, "K a n j i SPC q", "", "漢字", SKK_INPUT_MODE_KATAKANA },
     { SKK_INPUT_MODE_KATAKANA, "K a n j i SPC q", "", "漢字", SKK_INPUT_MODE_HIRAGANA },
     /* FIXME */
-    // { SKK_INPUT_MODE_HIRAGANA, "A", "[DictEdit] な*んあ ", "", SKK_INPUT_MODE_HIRAGANA },
+    // { SKK_INPUT_MODE_HIRAGANA, "A", "▼な*んあ【】", "", SKK_INPUT_MODE_HIRAGANA },
     // { SKK_INPUT_MODE_HIRAGANA, "A C-g\n", "", "", SKK_INPUT_MODE_HIRAGANA },
-    // { SKK_INPUT_MODE_HIRAGANA, "N A N a", "[DictEdit] な*な ", "", SKK_INPUT_MODE_HIRAGANA },
+    // { SKK_INPUT_MODE_HIRAGANA, "N A N a", "▼な*な【】", "", SKK_INPUT_MODE_HIRAGANA },
   };
 
   context = create_context (TRUE, TRUE);
@@ -132,6 +132,7 @@ _abort (void)
 {
   SkkContext *context;
   SkkTransition transitions[] = {
+#if 0
     // back to select state if candidate list is not empty
     { SKK_INPUT_MODE_HIRAGANA, "A k a SPC SPC SPC C-g", "▼垢", "", SKK_INPUT_MODE_HIRAGANA },
     // back to preedit state if candidate list is empty
@@ -139,6 +140,7 @@ _abort (void)
     { SKK_INPUT_MODE_HIRAGANA, "O K i C-g", "▽おき", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "O K C-g", "", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A o i O C-g", "▽あおいお", "", SKK_INPUT_MODE_HIRAGANA },
+#endif
   };
 
   context = create_context (TRUE, TRUE);
@@ -233,24 +235,24 @@ dict_edit (void)
 {
   SkkContext *context;
   SkkTransition transitions[] = {
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC", "[DictEdit] かぱ ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC a", "[DictEdit] かぱ あ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a", "[DictEdit] かぱ ▽か", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a p a SPC", "[[DictEdit]] かぱ ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a p a SPC C-g", "[DictEdit] かぱ ▽かぱ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a p a SPC C-g C-g", "[DictEdit] かぱ ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC", "▼かぱ【】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC a", "▼かぱ【あ】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a", "▼かぱ【▽か】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a p a SPC", "▼かぱ【▼かぱ【】】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a p a SPC C-g", "▼かぱ【▽かぱ】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a p a SPC C-g C-g", "▼かぱ【】", "", SKK_INPUT_MODE_HIRAGANA },
     // Don't register empty string (Debian Bug#590191)
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC \n", "▽かぱ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC", "[DictEdit] かぱ ▼下", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC C-j", "[DictEdit] かぱ 下破", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC", "▼かぱ【▼下】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC C-j", "▼かぱ【下破】", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC K a SPC H a SPC \n", "", "下破", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC", "▼下破", "", SKK_INPUT_MODE_HIRAGANA },
     // Purge "下破" from the user dictionary (Debian Bug#590188).
     { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC X", "", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC", "[DictEdit] かぱ ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a n g a E SPC", "[DictEdit] かんが*え ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a t a k a n a SPC SPC K a t a k a n a q", "[DictEdit] かたかな カタカナ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "K a t a k a n a SPC SPC K a t a k a n a q l n a", "[DictEdit] かたかな カタカナna", "", SKK_INPUT_MODE_LATIN },
+    { SKK_INPUT_MODE_HIRAGANA, "K a p a SPC", "▼かぱ【】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a n g a E SPC", "▼かんが*え【】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a t a k a n a SPC SPC K a t a k a n a q", "▼かたかな【カタカナ】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a t a k a n a SPC SPC K a t a k a n a q l n a", "▼かたかな【カタカナna】", "", SKK_INPUT_MODE_LATIN },
     { SKK_INPUT_MODE_HIRAGANA, "K a t a k a n a SPC SPC K a t a k a n a q C-m", "", "カタカナ", SKK_INPUT_MODE_HIRAGANA },
   };
 
@@ -303,7 +305,7 @@ candidate_list (void)
     { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC x x", "▼井", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC SPC", "▼移", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC SPC SPC", "▼委", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC SPC SPC SPC", "[DictEdit] い ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "I SPC SPC SPC SPC SPC SPC SPC SPC SPC", "▼い【】", "", SKK_INPUT_MODE_HIRAGANA },
   };
   SkkCandidateList *candidates;
   SkkCandidate *candidate;

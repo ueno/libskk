@@ -598,28 +598,36 @@ namespace Skk {
         public string preedit { get; private set; default = ""; }
 
         void update_preedit () {
+            var builder = new StringBuilder ();
+            var iter = state_stack.list_iterator ();
+            iter.last ();
+            while (iter.has_previous ()) {
+                var state = iter.get ();
+                var handler = handlers.get (state.handler_type);
+                builder.append (handler.get_output (state));
+                iter.previous ();
+                state = iter.get ();
+                builder.append ("▼");
+                builder.append (state.midasi);
+                builder.append ("【");
+            }
+
             var state = state_stack.peek_head ();
             var handler = handlers.get (state.handler_type);
-            var builder = new StringBuilder ();
-            if (dict_edit_level () > 0) {
-                var level = dict_edit_level ();
-                for (var i = 0; i < level; i++) {
-                    builder.append_c ('[');
-                }
-                builder.append (_("DictEdit"));
-                for (var i = 0; i < level; i++) {
-                    builder.append_c (']');
-                }
-                builder.append (" ");
-                builder.append (state.midasi);
-                builder.append (" ");
+            if (dict_edit_level () > 0)
                 builder.append (handler.get_output (state));
-            }
+            uint start = (uint) builder.str.char_count ();
             uint offset, nchars;
             builder.append (handler.get_preedit (state,
                                                  out offset,
                                                  out nchars));
-            offset += (uint) builder.str.char_count ();
+            offset += start;
+
+            var level = dict_edit_level ();
+            for (var i = 0; i < level; i++) {
+                builder.append ("】");
+            }
+
             bool changed = false;
             if (preedit != builder.str) {
                 preedit = builder.str;

@@ -46,7 +46,7 @@ basic (void)
   g_assert_cmpstr (preedit, ==, "r");
 
   skk_context_get_preedit_underline (context, &offset, &nchars);
-  g_assert_cmpint (offset, ==, 1);
+  g_assert_cmpint (offset, ==, 0);
   g_assert_cmpint (nchars, ==, 0);
 
   skk_context_reset (context);
