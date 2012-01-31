@@ -132,7 +132,6 @@ _abort (void)
 {
   SkkContext *context;
   SkkTransition transitions[] = {
-#if 0
     // back to select state if candidate list is not empty
     { SKK_INPUT_MODE_HIRAGANA, "A k a SPC SPC SPC C-g", "▼垢", "", SKK_INPUT_MODE_HIRAGANA },
     // back to preedit state if candidate list is empty
@@ -140,7 +139,6 @@ _abort (void)
     { SKK_INPUT_MODE_HIRAGANA, "O K i C-g", "▽おき", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "O K C-g", "", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A o i O C-g", "▽あおいお", "", SKK_INPUT_MODE_HIRAGANA },
-#endif
   };
 
   context = create_context (TRUE, TRUE);
