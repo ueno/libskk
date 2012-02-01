@@ -1,4 +1,10 @@
-Noteworthy changes in version 0.0.9 (unreleased)
+Noteworthy changes in version 0.0.10 (unreleased)
+------------------------------------------------
+
+ * Respect coding cookie in file dictionaries (Issue#10).
+ * Change DictEdit preedit format to make Firefox forms happy.
+
+Noteworthy changes in version 0.0.9 (2012-01-25)
 ------------------------------------------------
 
  * Import skk.1 manual page from Debian.
