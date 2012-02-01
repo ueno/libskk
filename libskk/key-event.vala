@@ -18,6 +18,11 @@
 using Gee;
 
 namespace Skk {
+    public errordomain KeyEventFormatError {
+        PARSE_FAILED,
+        KEYSYM_NOT_FOUND
+    }
+
     /**
      * A set of bit-flags to indicate the state of modifier keys.
      */
@@ -99,7 +104,7 @@ namespace Skk {
          *
          * @return a new KeyEvent
          */
-        public KeyEvent.from_string (string key) {
+        public KeyEvent.from_string (string key) throws KeyEventFormatError {
             if (key.has_prefix ("(") && key.has_suffix (")")) {
                 var strv = key[1:-1].split (" ");
                 int index = 0;
@@ -122,6 +127,9 @@ namespace Skk {
                         modifiers |= ModifierType.USLEEP_MASK;
                     } else if (strv[index] == "release") {
                         modifiers |= ModifierType.RELEASE_MASK;
+                    } else {
+                        throw new KeyEventFormatError.PARSE_FAILED (
+                            "unknown modifier %s", strv[index]);
                     }
                 }
                 name = strv[index];
@@ -195,6 +203,51 @@ namespace Skk {
             } else {
                 return _base;
             }
+        }
+
+        static const Entry<uint,unichar>[] CODE_KEYVALS = {
+            { Keysyms.Tab, '\t' },
+            { Keysyms.Return, '\n' },
+            { Keysyms.BackSpace, '\b' }
+        };
+
+        static const Entry<uint,string>[] NAME_KEYVALS = {
+            { Keysyms.Up, "Up" },
+            { Keysyms.Down, "Down" },
+            { Keysyms.Left, "Left" },
+            { Keysyms.Right, "Right" },
+            { Keysyms.Page_Up, "Page_Up" },
+            { Keysyms.KP_Page_Up, "Page_Up" },
+            { Keysyms.Page_Down, "Page_Down" },
+            { Keysyms.KP_Page_Down, "Page_Down" },
+            { Keysyms.Muhenkan, "lshift" },
+            { Keysyms.Henkan, "rshift" }
+        };
+
+        public KeyEvent.from_x_keysym (uint keyval,
+                                       ModifierType modifiers) throws KeyEventFormatError {
+            foreach (var entry in NAME_KEYVALS) {
+                if (entry.key == keyval) {
+                    name = entry.value;
+                    break;
+                }
+            }
+            foreach (var entry in CODE_KEYVALS) {
+                if (entry.key == keyval) {
+                    code = entry.value;
+                    break;
+                }
+            }
+            assert (name == null || code == '\0');
+            if (name == null && code == '\0') {
+                if (0x20 <= keyval && keyval < 0x7F) {
+                    code = (unichar) keyval;
+                } else {
+                    throw new KeyEventFormatError.KEYSYM_NOT_FOUND (
+                        "unknown keysym %u", keyval);
+                }
+            }
+            this.modifiers = modifiers;
         }
 
         /**

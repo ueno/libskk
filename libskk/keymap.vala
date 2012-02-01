@@ -22,8 +22,13 @@ namespace Skk {
         Map<string,string> entries = new HashMap<string,string> ();
 
         public new void @set (string key, string command) {
-            entries.set (new KeyEvent.from_string (key).to_string (),
-                         command);
+            try {
+                var ev = new KeyEvent.from_string (key);
+                entries.set (ev.to_string (), command);
+            } catch (KeyEventFormatError e) {
+                warning ("can't get key event from string %s: %s",
+                         key, e.message);
+            }
         }
 
         public string? lookup_key (KeyEvent key) {
@@ -35,7 +40,13 @@ namespace Skk {
             if (iter.first ()) {
                 do {
                     if (iter.get_value () == command) {
-                        return new KeyEvent.from_string (iter.get_key ());
+                        var key = iter.get_key ();
+                        try {
+                            return new KeyEvent.from_string (key);
+                        } catch (KeyEventFormatError e) {
+                            warning ("can't get key event from string %s: %s",
+                                     key, e.message);
+                        }
                     }
                 } while (iter.next ());
             }

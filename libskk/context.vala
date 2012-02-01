@@ -480,7 +480,15 @@ namespace Skk {
                     key = "\n";
                 else if (key == "DEL")
                     key = "\b";
-                var ev = new KeyEvent.from_string (key);
+
+                KeyEvent ev;
+                try {
+                    ev = new KeyEvent.from_string (key);
+                } catch (KeyEventFormatError e) {
+                    warning ("can't get key event from string %s: %s",
+                             key, e.message);
+                    return false;
+                }
                 if (process_key_event (ev) && !retval)
                     retval = true;
             }

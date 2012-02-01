@@ -75,6 +75,7 @@ libskk_la_SOURCES =				\
 	nicola.vala				\
 	expr.vala				\
 	util.vala				\
+	keysyms.vala				\
 	$(NULL)
 
 if HAVE_INTROSPECTION
