@@ -1,4 +1,6 @@
 #!/bin/sh
 
-@bindir@/skk -e &
+: ${FEP:=@FEP@}
+
+$FEP &
 exec "$SHELL" "$@"

@@ -24,7 +24,6 @@ namespace Skk {
         static string skkserv;
         static string typing_rule;
         static bool list_typing_rules;
-        static bool run_under_fep;
 
         const OptionEntry[] options = {
             {"file-dict", 'f', 0, OptionArg.STRING, ref file_dict,
@@ -37,10 +36,6 @@ namespace Skk {
              N_("Typing rule (default: \"default\")"), null },
             {"list-rules", 'l', 0, OptionArg.NONE, ref list_typing_rules,
              N_("List typing rules"), null },
-#if ENABLE_FEP
-            {"fep", 'e', 0, OptionArg.NONE, ref run_under_fep,
-             N_("Run under FEP"), null },
-#endif
             { null }
         };
 
@@ -142,13 +137,7 @@ namespace Skk {
                     return 1;
                 }
             }
-            Tool tool;
-#if ENABLE_FEP
-            if (run_under_fep)
-                tool = new FepTool (context);
-            else
-#endif
-                tool = new DebugTool (context);
+            var tool = new SkkTool (context);
             if (!tool.run ())
                 return 1;
             return 0;
@@ -157,7 +146,7 @@ namespace Skk {
         public abstract bool run ();
     }
 
-    class DebugTool : Tool {
+    class SkkTool : Tool {
         Skk.Context context;
 
         public override bool run () {
@@ -179,7 +168,7 @@ namespace Skk {
             return true;
         }
 
-        public DebugTool (Skk.Context context) {
+        public SkkTool (Skk.Context context) {
             this.context = context;
         }
     }

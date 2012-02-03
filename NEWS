@@ -3,6 +3,8 @@ Noteworthy changes in version 0.0.10 (unreleased)
 
  * Respect coding cookie in file dictionaries (Issue#10).
  * Change DictEdit preedit format to make Firefox forms happy.
+ * Support libfep and add skkfep replacement.
+   To enable, pass --enable-fep to configure.
 
 Noteworthy changes in version 0.0.9 (2012-01-25)
 ------------------------------------------------

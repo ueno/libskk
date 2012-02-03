@@ -1,3 +1,4 @@
 libskk/context.c
 libskk/state.c
-tools/tool.c
+tools/skk.c
+tools/fep.c

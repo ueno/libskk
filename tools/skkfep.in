@@ -1,6 +1,6 @@
 #!/bin/sh
 
 : ${FEP:=@FEP@}
-: ${LIBEXECDIR:=@libexecdir@}
+: ${WRAPPER:=@WRAPPER@}
 
-exec "$FEP" -e ${LIBEXECDIR}/skkfep.wrapper
+exec "$FEP" -e "$WRAPPER"
