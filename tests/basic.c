@@ -59,7 +59,9 @@ rom_kana (void)
     /* Issue#36 */
     { SKK_INPUT_MODE_HIRAGANA, "W o", "▽を", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "\t K a", "▽か", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_LATIN, "a \t", "", "a", SKK_INPUT_MODE_LATIN }
+    { SKK_INPUT_MODE_LATIN, "a \t", "", "a", SKK_INPUT_MODE_LATIN },
+    /* Issue#11 */
+    { SKK_INPUT_MODE_HIRAGANA, "q s a n S y a", "▽シャ", "サン", SKK_INPUT_MODE_KATAKANA }
   };
 
   context = create_context (TRUE, TRUE);
@@ -252,6 +254,8 @@ dict_edit (void)
     { SKK_INPUT_MODE_HIRAGANA, "K a t a k a n a SPC SPC K a t a k a n a q", "▼かたかな【カタカナ】", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K a t a k a n a SPC SPC K a t a k a n a q l n a", "▼かたかな【カタカナna】", "", SKK_INPUT_MODE_LATIN },
     { SKK_INPUT_MODE_HIRAGANA, "K a t a k a n a SPC SPC K a t a k a n a q C-m", "", "カタカナ", SKK_INPUT_MODE_HIRAGANA },
+    /* Issue#11 */
+    { SKK_INPUT_MODE_HIRAGANA, "t a k K u n SPC", "▼っくん【】", "た", SKK_INPUT_MODE_HIRAGANA }
   };
 
   context = create_context (TRUE, TRUE);

@@ -474,6 +474,9 @@ namespace Skk {
             case InputMode.HANKAKU_KATAKANA:
                 if (key.modifiers == 0 && key.code.isalpha () &&
                     key.code.isupper ()) {
+                    state.rom_kana_converter.output_nn_if_any ();
+                    state.output.append (state.rom_kana_converter.output);
+                    state.rom_kana_converter.output = "";
                     state.handler_type = typeof (StartStateHandler);
                     return false;
                 }

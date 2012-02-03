@@ -557,17 +557,14 @@ namespace Skk {
         }
 
         string retrieve_output (bool clear) {
-            var state = state_stack.peek_head ();
+            // get the output from the top level state
+            var state = state_stack.last ();
             var handler = handlers.get (state.handler_type);
-            if (dict_edit_level () > 0) {
-                return "";
-            } else {
-                var output = handler.get_output (state);
-                if (clear) {
-                    state.output.erase ();
-                }
-                return output;
+            var output = handler.get_output (state);
+            if (clear) {
+                state.output.erase ();
             }
+            return output;
         }
 
         /**
@@ -612,7 +609,9 @@ namespace Skk {
             while (iter.has_previous ()) {
                 var state = iter.get ();
                 var handler = handlers.get (state.handler_type);
-                builder.append (handler.get_output (state));
+                // if state is not top level, need to prepend output to preedit
+                if (iter.has_next ())
+                    builder.append (handler.get_output (state));
                 iter.previous ();
                 state = iter.get ();
                 builder.append ("▼");
