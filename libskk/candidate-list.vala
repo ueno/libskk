@@ -179,9 +179,15 @@ namespace Skk {
         Set<string> seen = new HashSet<string> ();
 
         internal override void clear () {
-            _candidates.clear ();
-            _cursor_pos = -1;
             seen.clear ();
+            if (_candidates.size > 0) {
+                _candidates.clear ();
+                populated ();
+            }
+            if (_cursor_pos >= 0) {
+                _cursor_pos = -1;
+                notify_property ("cursor-pos");
+            }
         }
 
         internal override void add_candidates (Candidate[] array) {
