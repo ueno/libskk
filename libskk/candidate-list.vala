@@ -179,13 +179,23 @@ namespace Skk {
         Set<string> seen = new HashSet<string> ();
 
         internal override void clear () {
+            bool is_populated = false;
+            bool is_cursor_changed = false;
             seen.clear ();
             if (_candidates.size > 0) {
                 _candidates.clear ();
-                populated ();
+                is_populated = true;
             }
             if (_cursor_pos >= 0) {
                 _cursor_pos = -1;
+                is_cursor_changed = true;
+            }
+            // to avoid race condition, emit signals after modifying
+            // _candidates and _cursor_pos
+            if (is_populated) {
+                populated ();
+            }
+            if (is_cursor_changed) {
                 notify_property ("cursor-pos");
             }
         }
