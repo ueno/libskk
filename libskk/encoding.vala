@@ -28,7 +28,8 @@ namespace Skk {
             { "Shift_JIS", "shift_jis" },
             { "ISO-2022-JP", "iso-2022-jp" },
             { "EUC-JISX0213", "euc-jisx0213" },
-            { "EUC-JISX0213", "euc-jis-2004" } // XXX
+            { "EUC-JISX0213", "euc-jis-2004" },
+            { "SHIFT_JISX0213", "shift_jis-2004" }
         };
 
         static Regex coding_cookie_regex;
