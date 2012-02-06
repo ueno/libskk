@@ -159,21 +159,12 @@ namespace Skk {
                 return false;
             }
 
-            return context.process_key_event (key);
-        }
-
-        void process_key_event (uint keyval, uint modifiers) {
+            bool retval = context.process_key_event (key);
             var output = context.poll_output ();
             if (output.length > 0) {
                 client.send_data (output, output.length);
             }
-            if (context.preedit != preedit) {
-                client.set_cursor_text (context.preedit);
-                preedit = context.preedit;
-            }
-            if (context.input_mode != input_mode) {
-                update_input_mode ();
-            }
+            return retval;
         }
 
         struct Entry<K,V> {
@@ -189,6 +180,11 @@ namespace Skk {
             { Skk.InputMode.WIDE_LATIN, "Ａ" }
         };
 
+        void update_preedit () {
+            preedit = context.preedit;
+            client.set_cursor_text (preedit);
+        }
+
         void update_input_mode () {
             input_mode = context.input_mode;
             foreach (var entry in input_mode_labels) {
@@ -203,9 +199,17 @@ namespace Skk {
             client.filter_key_event.connect ((keyval, _modifiers) => {
                     return filter_key_event (keyval, _modifiers);
                 });
-            client.process_key_event.connect ((keyval, _modifiers) => {
-                    process_key_event (keyval, _modifiers);
+            context.notify["preedit"].connect (() => {
+                    if (context.preedit != preedit) {
+                        update_preedit ();
+                    }
                 });
+            context.notify["input-mode"].connect (() => {
+                    if (context.input_mode != input_mode) {
+                        update_input_mode ();
+                    }
+                });
+            update_preedit ();
             update_input_mode ();
             Posix.pollfd pfds[1];
             pfds[0] = Posix.pollfd () {
