@@ -162,7 +162,7 @@ namespace Skk {
             bool retval = context.process_key_event (key);
             var output = context.poll_output ();
             if (output.length > 0) {
-                client.send_data (output, output.length);
+                client.send_text (output);
             }
             return retval;
         }
