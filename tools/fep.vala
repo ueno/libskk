@@ -213,7 +213,7 @@ namespace Skk {
             update_input_mode ();
             Posix.pollfd pfds[1];
             pfds[0] = Posix.pollfd () {
-                fd = client.get_key_event_poll_fd (),
+                fd = client.get_poll_fd (),
                 events = Posix.POLLIN,
                 revents = 0
             };
@@ -222,7 +222,7 @@ namespace Skk {
                 if (retval < 0)
                     break;
                 if (retval > 0) {
-                    client.dispatch_key_event ();
+                    client.dispatch ();
                 }
             }
             return true;
