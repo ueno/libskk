@@ -195,6 +195,11 @@ namespace Skk {
             }
         }
 
+        bool watch_func (IOChannel source, IOCondition condition) {
+            client.dispatch ();
+            return true;
+        }
+
         public override bool run () {
             client.filter_key_event.connect ((keyval, _modifiers) => {
                     return filter_key_event (keyval, _modifiers);
@@ -211,20 +216,13 @@ namespace Skk {
                 });
             update_preedit ();
             update_input_mode ();
-            Posix.pollfd pfds[1];
-            pfds[0] = Posix.pollfd () {
-                fd = client.get_poll_fd (),
-                events = Posix.POLLIN,
-                revents = 0
-            };
-            while (true) {
-                int retval = Posix.poll (pfds, -1);
-                if (retval < 0)
-                    break;
-                if (retval > 0) {
-                    client.dispatch ();
-                }
-            }
+
+            var channel = new IOChannel.unix_new (client.get_poll_fd ());
+            channel.add_watch (IOCondition.IN, watch_func);
+
+            var loop = new MainLoop (null, true);
+            loop.run ();
+
             return true;
         }
 
