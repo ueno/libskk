@@ -150,7 +150,58 @@ namespace Skk {
         Context context;
         Fep.GClient client;
 
+        bool process_lookup_table_key_event (uint keyval, uint state) {
+            if (state == 0 &&
+                ((unichar) keyval).to_string () in LOOKUP_TABLE_LABELS) {
+                var label = ((unichar) keyval).tolower ().to_string ();
+                var end = int.min ((int)context.candidates.page_size,
+                                   LOOKUP_TABLE_LABELS.length);
+                for (var index = 0; index < end; index++) {
+                    if (LOOKUP_TABLE_LABELS[index] == label) {
+                        return context.candidates.select_at (index);
+                    }
+                }
+                return false;
+            }
+
+            if (state == 0) {
+                bool retval = false;
+                switch (keyval) {
+                case Skk.Keysyms.Page_Up:
+                case Skk.Keysyms.KP_Page_Up:
+                    retval = context.candidates.page_up ();
+                    break;
+                case Skk.Keysyms.Page_Down:
+                case Skk.Keysyms.KP_Page_Down:
+                    retval = context.candidates.page_down ();
+                    break;
+                case Skk.Keysyms.Up:
+                case Skk.Keysyms.Left:
+                    retval = context.candidates.cursor_up ();
+                    break;
+                case Skk.Keysyms.Down:
+                case Skk.Keysyms.Right:
+                    retval = context.candidates.cursor_down ();
+                    break;
+                default:
+                    break;
+                }
+
+                if (retval) {
+                    set_lookup_table_cursor_pos ();
+                    update_preedit ();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         bool filter_key_event (uint keyval, uint modifiers) {
+            if (lookup_table_visible &&
+                process_lookup_table_key_event (keyval, modifiers))
+                return true;
+
             KeyEvent key;
             try {
                 key = new KeyEvent.from_x_keysym (keyval,
@@ -159,7 +210,7 @@ namespace Skk {
                 return false;
             }
 
-            bool retval = context.process_key_event (key);
+            var retval = context.process_key_event (key);
             var output = context.poll_output ();
             if (output.length > 0) {
                 client.send_text (output);
@@ -185,20 +236,56 @@ namespace Skk {
             client.set_cursor_text (preedit);
         }
 
-        void update_input_mode () {
+        string[] LOOKUP_TABLE_LABELS = {"a", "s", "d", "f", "j", "k", "l",
+                                        "q", "w", "e", "r", "u", "i", "o"};
+
+        void update_status () {
+            var builder = new StringBuilder ();
             input_mode = context.input_mode;
             foreach (var entry in input_mode_labels) {
                 if (entry.key == input_mode) {
-                    client.set_status_text ("SKK[" + entry.value + "]");
+                    builder.append ("SKK[" + entry.value + "]");
                     break;
                 }
             }
+            if (lookup_table_visible) {
+                var pages = (context.candidates.cursor_pos - context.candidates.page_start) / context.candidates.page_size;
+                var start = pages * context.candidates.page_size + context.candidates.page_start;
+                var end = uint.min (start + context.candidates.page_size,
+                                    context.candidates.size);
+                for (var index = start;
+                     index < end;
+                     index++) {
+                    var candidate = context.candidates.get ((int) index);
+                    builder.append (
+                        " %s: %s".printf (LOOKUP_TABLE_LABELS[index - start],
+                                          candidate.text));
+                }
+            }
+            if (status != builder.str) {
+                client.set_status_text (builder.str);
+                status = builder.str;
+            }
+        }
+
+        void populate_lookup_table () {
+        }
+
+        void set_lookup_table_cursor_pos () {
+            if (context.candidates.page_visible) {
+                lookup_table_visible = true;
+            } else if (lookup_table_visible) {
+                lookup_table_visible = false;
+            }
+            update_status ();
         }
 
         bool watch_func (IOChannel source, IOCondition condition) {
             client.dispatch ();
             return true;
         }
+
+        bool lookup_table_visible = false;
 
         public override bool run () {
             client.filter_key_event.connect ((keyval, _modifiers) => {
@@ -211,11 +298,26 @@ namespace Skk {
                 });
             context.notify["input-mode"].connect (() => {
                     if (context.input_mode != input_mode) {
-                        update_input_mode ();
+                        update_status ();
                     }
                 });
+            context.candidates.populated.connect (() => {
+                    populate_lookup_table ();
+                });
+            context.candidates.notify["cursor-pos"].connect (() => {
+                    set_lookup_table_cursor_pos ();
+                });
+            context.candidates.selected.connect (() => {
+                    var output = context.poll_output ();
+                    if (output.length > 0) {
+                        client.send_text (output);
+                    }
+                    lookup_table_visible = false;
+                    update_status ();
+                });
+
             update_preedit ();
-            update_input_mode ();
+            update_status ();
 
             var channel = new IOChannel.unix_new (client.get_poll_fd ());
             channel.add_watch (IOCondition.IN, watch_func);
@@ -227,6 +329,7 @@ namespace Skk {
         }
 
         string preedit = "";
+        string status = "";
         Skk.InputMode input_mode = Skk.InputMode.HIRAGANA;
 
         public FepTool (Skk.Context context) throws GLib.Error {
