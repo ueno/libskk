@@ -60,6 +60,8 @@ fep_SOURCES = fep.vala
 dist_man_MANS += skkfep.1
 
 EXTRA_DIST = skkfep.in fep.wrapper.in
+DISTCLEANFILES = skkfep fep.wrapper
+
 bin_SCRIPTS = skkfep
 libskklibexecdir = $(pkglibexecdir)
 libskklibexec_SCRIPTS = fep.wrapper

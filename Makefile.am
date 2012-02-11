@@ -15,7 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 SUBDIRS = libskk rules tools tests po
-DISTCHECK_CONFIGURE_FLAGS = --enable-docs
+DISTCHECK_CONFIGURE_FLAGS = --enable-docs --enable-fep
+ACLOCAL_AMFLAGS = -I m4
 
 if HAVE_VALADOC
 SUBDIRS += docs
