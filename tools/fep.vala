@@ -233,7 +233,7 @@ namespace Skk {
 
         void update_preedit () {
             preedit = context.preedit;
-            client.set_cursor_text (preedit);
+            client.set_cursor_text (preedit, null);
         }
 
         string[] LOOKUP_TABLE_LABELS = {"a", "s", "d", "f", "j", "k", "l",
@@ -241,10 +241,11 @@ namespace Skk {
 
         void update_status () {
             var builder = new StringBuilder ();
+            Fep.GAttribute? attr = null;
             input_mode = context.input_mode;
             foreach (var entry in input_mode_labels) {
                 if (entry.key == input_mode) {
-                    builder.append ("SKK[" + entry.value + "]");
+                    builder.append ("[" + entry.value + "] ");
                     break;
                 }
             }
@@ -253,18 +254,29 @@ namespace Skk {
                 var start = pages * context.candidates.page_size + context.candidates.page_start;
                 var end = uint.min (start + context.candidates.page_size,
                                     context.candidates.size);
-                for (var index = start;
-                     index < end;
-                     index++) {
+                for (var index = start; index < end; index++) {
                     var candidate = context.candidates.get ((int) index);
-                    builder.append (
-                        " %s: %s".printf (LOOKUP_TABLE_LABELS[index - start],
-                                          candidate.text));
+                    var text = "%s: %s".printf (
+                        LOOKUP_TABLE_LABELS[index - start],
+                        candidate.text);
+                    if (index == context.candidates.cursor_pos) {
+                        var start_index = builder.str.char_count ();
+                        attr = Fep.GAttribute () {
+                            type = Fep.GAttrType.STANDOUT,
+                            value = 1,
+                            start_index = start_index,
+                            end_index = start_index + text.char_count ()
+                        };
+                    }
+                    builder.append (text);
+                    if (index < end - 1)
+                        builder.append_c (' ');
                 }
             }
-            if (status != builder.str) {
-                client.set_status_text (builder.str);
+            if (status != builder.str || status_attr != attr) {
+                client.set_status_text (builder.str, attr);
                 status = builder.str;
+                status_attr = attr;
             }
         }
 
@@ -330,6 +342,7 @@ namespace Skk {
 
         string preedit = "";
         string status = "";
+        Fep.GAttribute? status_attr = null;
         Skk.InputMode input_mode = Skk.InputMode.HIRAGANA;
 
         public FepTool (Skk.Context context) throws GLib.Error {
