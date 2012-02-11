@@ -224,6 +224,14 @@ namespace Skk {
             { Keysyms.Henkan, "rshift" }
         };
 
+        /**
+         * Create a key event from an X keysym and modifiers.
+         *
+         * @param keyval an X keysym
+         * @param modifiers modifier mask
+         *
+         * @return a new KeyEvent
+         */
         public KeyEvent.from_x_keysym (uint keyval,
                                        ModifierType modifiers) throws KeyEventFormatError {
             foreach (var entry in NAME_KEYVALS) {
