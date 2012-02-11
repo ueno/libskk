@@ -33,7 +33,7 @@ GITIGNOREFILES =				\
 	ltmain.sh				\
 	missing					\
 	mkinstalldirs				\
-	m4					\
+	`find "m4" -type f -name "*.m4" ! -name "vala.m4" -print` \
 	$(top_builddir)/lcov.html/*		\
 	$(NULL)
 
