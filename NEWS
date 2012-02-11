@@ -1,3 +1,9 @@
+Noteworthy changes in version 0.0.11 (2012-02-11)
+------------------------------------------------
+
+ * Fix for candidate list hiding bug (ibus-skk Issue#47).
+ * Decorate selected candidate in FEP mode.
+
 Noteworthy changes in version 0.0.10 (2012-02-03)
 ------------------------------------------------
 
