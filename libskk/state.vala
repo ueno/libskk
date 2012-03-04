@@ -932,7 +932,8 @@ namespace Skk {
                         builder.append (state.rom_kana_converter.output);
                         if (state.okuri) {
                             var prefix = Util.get_okurigana_prefix (
-                                state.okuri_rom_kana_converter.output);
+                                Util.get_hiragana (
+                                state.okuri_rom_kana_converter.output));
                             if (prefix != null) {
                                 builder.append (prefix);
                                 okuri = true;
