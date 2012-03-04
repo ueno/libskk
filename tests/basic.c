@@ -122,6 +122,8 @@ okuri_ari (void)
     { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC >", "▽>", "東", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A z u m a SPC > s h i SPC", "▼氏", "東", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "T y o u >", "▼超", "", SKK_INPUT_MODE_HIRAGANA },
+    // Issue#12
+    { SKK_INPUT_MODE_HIRAGANA, "q S i r o K u", "▼白ク", "", SKK_INPUT_MODE_KATAKANA },
   };
 
   context = create_context (TRUE, TRUE);
