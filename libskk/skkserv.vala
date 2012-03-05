@@ -73,7 +73,7 @@ namespace Skk {
         string read_response () throws SkkServError, GLib.IOError {
             StringBuilder builder = new StringBuilder ();
             // skksearch does not terminate the line with LF on
-            // error (Issue#30)
+            // error (ibus-skk Issue#30)
             while (builder.str.index_of_char ('\n') < 0) {
                 ssize_t len = connection.input_stream.read (buffer);
                 if (len < 0) {
