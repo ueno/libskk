@@ -52,13 +52,12 @@ destroy_context (SkkContext *context)
 }
 
 void
-check_transitions (SkkContext    *context,
-                   SkkTransition *transitions,
-                   int            n_transitions)
+check_transitions (SkkContext          *context,
+                   const SkkTransition *transitions)
 {
   gint i;
 
-  for (i = 0; i < n_transitions; i++) {
+  for (i = 0; transitions[i].keys != NULL; i++) {
     const gchar *preedit;
     gchar *output;
     SkkInputMode input_mode;
