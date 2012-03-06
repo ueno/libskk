@@ -203,9 +203,10 @@ namespace Skk {
          * Output "nn" if preedit ends with "n".
          */
         public bool output_nn_if_any () {
-            if (_preedit.str.has_suffix ("n")) {
+            if (_preedit.str == "n") {
                 _output.append (NN[kana_mode]);
-                _preedit.truncate (_preedit.len - 1);
+                _preedit.erase ();
+                current_node = rule.root_node;
                 return true;
             }
             return false;

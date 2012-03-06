@@ -840,6 +840,9 @@ namespace Skk {
                     }
                     state.rom_kana_converter.output_nn_if_any ();
                     state.okuri = true;
+                    // when okuri-kana is "N [AIUEO]", flush "nn" first
+                    if (key.code.isupper())
+                        state.okuri_rom_kana_converter.output_nn_if_any ();
                     state.okuri_rom_kana_converter.append (key.code.tolower ());
                     if (state.okuri_rom_kana_converter.preedit.length == 0) {
                         state.handler_type = typeof (SelectStateHandler);
