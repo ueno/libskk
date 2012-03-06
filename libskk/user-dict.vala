@@ -122,7 +122,12 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override void reload () throws GLib.Error {
-            FileInfo info = file.query_info (FILE_ATTRIBUTE_ETAG_VALUE,
+#if VALA_0_16
+            string attributes = FileAttribute.ETAG_VALUE;
+#else
+            string attributes = FILE_ATTRIBUTE_ETAG_VALUE;
+#endif
+            FileInfo info = file.query_info (attributes,
                                              FileQueryInfoFlags.NONE);
             if (info.get_etag () != etag) {
                 this.okuri_ari_entries.clear ();
@@ -190,12 +195,20 @@ namespace Skk {
             entries.clear ();
 
             var contents = converter.encode (builder.str);
+#if VALA_0_16
+            file.replace_contents (contents.data,
+                                   etag,
+                                   false,
+                                   FileCreateFlags.PRIVATE,
+                                   out etag);
+#else
             file.replace_contents (contents,
                                    contents.length,
                                    etag,
                                    false,
                                    FileCreateFlags.PRIVATE,
                                    out etag);
+#endif
         }
 
         Map<string,Gee.List<Candidate>> get_entries (bool okuri = false) {

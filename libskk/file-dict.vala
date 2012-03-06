@@ -125,7 +125,12 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override void reload () throws GLib.Error {
-            FileInfo info = file.query_info (FILE_ATTRIBUTE_ETAG_VALUE,
+#if VALA_0_16
+            string attributes = FileAttribute.ETAG_VALUE;
+#else
+            string attributes = FILE_ATTRIBUTE_ETAG_VALUE;
+#endif
+            FileInfo info = file.query_info (attributes,
                                              FileQueryInfoFlags.NONE);
             if (info.get_etag () != etag) {
                 try {
