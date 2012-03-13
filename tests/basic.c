@@ -19,7 +19,7 @@ static SkkTransition input_mode_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "w w q", "", "っ", SKK_INPUT_MODE_KATAKANA },
     /* Issue#10 */
     { SKK_INPUT_MODE_HIRAGANA, "l Q", "", "Q", SKK_INPUT_MODE_LATIN },
-    /* Issue#14 */
+    /* Issue#15 */
     { SKK_INPUT_MODE_HIRAGANA, "n q", "", "ん", SKK_INPUT_MODE_KATAKANA },
     { SKK_INPUT_MODE_KATAKANA, "n q", "", "ン", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "n l", "", "ん", SKK_INPUT_MODE_LATIN },
