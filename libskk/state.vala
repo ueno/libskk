@@ -448,6 +448,7 @@ namespace Skk {
                   state.rom_kana_converter.can_consume (key.code))) {
                 foreach (var entry in input_mode_commands) {
                     if (entry.key == command) {
+                        state.rom_kana_converter.output_nn_if_any ();
                         state.input_mode = entry.value;
                         return true;
                     }
