@@ -15,6 +15,27 @@ list (void) {
 }
 
 static void
+azik (void)
+{
+  SkkContext *context;
+  GError *error;
+  SkkRule *rule;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "x x a", "", "ぁ", SKK_INPUT_MODE_HIRAGANA },
+    { 0, NULL }
+  };
+
+  context = create_context (TRUE, TRUE);
+  error = NULL;
+  rule = skk_rule_new ("azik", &error);
+  g_assert_no_error (error);
+  skk_context_set_typing_rule (context, rule);
+  g_object_unref (rule);
+  check_transitions (context, transitions);
+  destroy_context (context);
+}
+
+static void
 kzik (void)
 {
   SkkContext *context;
@@ -97,6 +118,7 @@ main (int argc, char **argv) {
   skk_init ();
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/libskk/list", list);
+  g_test_add_func ("/libskk/azik", azik);
   g_test_add_func ("/libskk/kzik", kzik);
   g_test_add_func ("/libskk/nicola", nicola);
   return g_test_run ();

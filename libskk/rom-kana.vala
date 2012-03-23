@@ -259,7 +259,7 @@ namespace Skk {
                     current_node = rule.root_node;
                     return append (uc);
                 }
-            } else if (child_node.entry == null) {
+            } else if (child_node.n_children > 0) {
                 // node is not a terminal
                 _preedit.append_unichar (uc);
                 current_node = child_node;
