@@ -16,6 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 : ${FEP:=@FEP@}
-: ${WRAPPER:=@WRAPPER@}
+: ${CLIENT:=@CLIENT@}
 
-exec "$FEP" -- "$WRAPPER" "$@"
+# XXX: handle --help here because the help output from the client will
+# be erased by the terminal reset.
+case "$1" in
+    --help|-h)
+	exec "$CLIENT" --help
+	;;
+esac
+
+exec "$FEP" -- "$CLIENT" "$@"

@@ -98,7 +98,7 @@ AC_ARG_ENABLE([fep],
                              [compile with libfep]),
               [enable_fep=$enableval], [enable_fep=no])
 if test x$enable_fep = xyes; then
-   PKG_CHECK_MODULES([LIBFEP], [libfep-glib], , enable_fep=no)
+   PKG_CHECK_MODULES([LIBFEP], [libfep-glib >= 0.0.7], , enable_fep=no)
    VALA_CHECK_PACKAGES([libfep-glib], , enable_fep=no)
    AC_PATH_PROG([FEP], [fep])
 fi

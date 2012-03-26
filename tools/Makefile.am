@@ -39,15 +39,15 @@ skk_SOURCES = skk.vala
 dist_man_MANS = skk.1
 
 if ENABLE_FEP
-pkglibexec_PROGRAMS = fep
-fep_VALAFLAGS =					\
+libexec_PROGRAMS = skkfep-client
+skkfep_client_VALAFLAGS =			\
 	--vapidir=$(top_srcdir)/libskk		\
 	--vapidir=$(top_srcdir)/tools		\
 	--pkg config				\
 	--pkg skk-1.0				\
 	--pkg libfep-glib			\
 	$(VALAFLAGS)
-fep_CFLAGS =					\
+skkfep_client_CFLAGS =				\
 	-I$(top_srcdir)				\
 	$(LIBSKK_CFLAGS)			\
 	$(LIBFEP_CFLAGS)			\
@@ -55,25 +55,22 @@ fep_CFLAGS =					\
 	-DPKGDATADIR=\"$(pkgdatadir)\"		\
 	-DLOCALEDIR=\"$(datadir)/locale\"	\
 	$(NULL)
-fep_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS) $(LIBFEP_LIBS)
-fep_SOURCES = fep.vala
+skkfep_client_LDADD =				\
+	$(top_builddir)/libskk/libskk.la	\
+	$(LIBSKK_LIBS)				\
+	$(LIBFEP_LIBS)				\
+	$(NULL)
+skkfep_client_SOURCES = fep.vala
 dist_man_MANS += skkfep.1
 
-EXTRA_DIST = skkfep.in fep.wrapper.in
-DISTCLEANFILES = skkfep fep.wrapper
+EXTRA_DIST = skkfep.in
+DISTCLEANFILES = skkfep
 
 bin_SCRIPTS = skkfep
-libskklibexecdir = $(pkglibexecdir)
-libskklibexec_SCRIPTS = fep.wrapper
 
 skkfep: skkfep.in
 	$(AM_V_GEN) sed -e "s!@FEP\@!"$(FEP)"!" \
-	-e "s!@WRAPPER\@!"$(pkglibexecdir)/fep.wrapper"!" \
-	$< > $@.tmp && \
-	mv $@.tmp $@
-
-fep.wrapper: fep.wrapper.in
-	$(AM_V_GEN) sed -e "s!@FEP\@!"$(pkglibexecdir)/fep"!" \
+	-e "s!@CLIENT\@!"$(libexecdir)/skkfep-client"!" \
 	$< > $@.tmp && \
 	mv $@.tmp $@
 endif
@@ -81,6 +78,8 @@ endif
 GITIGNOREFILES =				\
 	$(skk_SOURCES:.vala=.c)			\
 	skk_vala.stamp				\
+	$(skkfep_client_SOURCES:.vala=.c)	\
+	skkfep_client_vala.stamp		\
 	$(NULL)
 
 -include $(top_srcdir)/git.mk
