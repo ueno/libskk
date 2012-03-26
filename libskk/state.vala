@@ -113,6 +113,19 @@ namespace Skk {
             return keymap.where_is (command);
         }
 
+        internal bool isupper (KeyEvent key, out unichar lower_code) {
+            var command = lookup_key (key);
+            if (command != null && command.has_prefix ("upper-")) {
+                lower_code = (unichar) command[6];
+                return true;
+            } else if (key.code.isupper()) {
+                lower_code = key.code.tolower();
+                return true;
+            }
+            lower_code = key.code;
+            return false;
+        }
+
         Regex numeric_regex;
         Regex numeric_ref_regex;
 
@@ -473,8 +486,9 @@ namespace Skk {
             case InputMode.HIRAGANA:
             case InputMode.KATAKANA:
             case InputMode.HANKAKU_KATAKANA:
+                unichar lower_code;
                 if (key.modifiers == 0 && key.code.isalpha () &&
-                    key.code.isupper ()) {
+                    state.isupper (key, out lower_code)) {
                     state.rom_kana_converter.output_nn_if_any ();
                     state.output.append (state.rom_kana_converter.output);
                     state.rom_kana_converter.output = "";
@@ -827,24 +841,26 @@ namespace Skk {
                 }
             }
 
-            if (key.modifiers == 0 && key.code.isalpha ()) {
+            unichar lower_code;
+            bool is_upper = state.isupper (key, out lower_code);
+            if (is_upper || (key.modifiers == 0 && key.code.isalpha ())) {
                 // okuri_rom_kana_converter is started or being started
                 if (state.okuri ||
-                    (key.code.isupper () &&
+                    (is_upper &&
                      state.rom_kana_converter.output.length > 0 &&
                      !state.rom_kana_converter.can_consume (
-                         key.code.tolower (), true))) {
+                         lower_code, true))) {
                     if (!state.okuri &&
                         state.rom_kana_converter.can_consume (
-                            key.code.tolower (), true, false)) {
-                        state.rom_kana_converter.append (key.code.tolower ());
+                            lower_code, true, false)) {
+                        state.rom_kana_converter.append (lower_code);
                     }
                     state.rom_kana_converter.output_nn_if_any ();
                     state.okuri = true;
                     // when okuri-kana is "N [AIUEO]", flush "nn" first
-                    if (key.code.isupper())
+                    if (is_upper)
                         state.okuri_rom_kana_converter.output_nn_if_any ();
-                    state.okuri_rom_kana_converter.append (key.code.tolower ());
+                    state.okuri_rom_kana_converter.append (lower_code);
                     if (state.okuri_rom_kana_converter.preedit.length == 0) {
                         state.handler_type = typeof (SelectStateHandler);
                         key = state.where_is ("next-candidate");

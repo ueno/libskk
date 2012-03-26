@@ -115,6 +115,7 @@ set-input-mode-<mode>
 special-midasi
 start-preedit
 start-preedit-kana
+upper-<lower>
 
 ** Format of rom-kana map files
 

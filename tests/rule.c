@@ -22,6 +22,7 @@ azik (void)
   SkkRule *rule;
   SkkTransition transitions[] = {
     { SKK_INPUT_MODE_HIRAGANA, "x x a", "", "ぁ", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "Y o :", "▼酔っ", "", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
