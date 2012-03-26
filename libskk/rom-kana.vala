@@ -48,6 +48,7 @@ namespace Skk {
         internal RomKanaNode children[128];
         internal char c;
         internal uint n_children = 0;
+        internal bool valid[128];
 
         internal RomKanaNode (RomKanaEntry? entry) {
             this.entry = entry;
@@ -65,6 +66,7 @@ namespace Skk {
                 }
                 node.n_children++;
                 node = node.children[key[i]];
+                valid[key[i]] = true;
             }
             node.entry = entry;
         }
@@ -197,6 +199,12 @@ namespace Skk {
                          e.message);
                 assert_not_reached ();
             }
+        }
+
+        public bool is_valid (unichar uc) {
+            if (uc > 128)
+                return false;
+            return _rule.root_node.valid[(int)uc];
         }
 
         /**

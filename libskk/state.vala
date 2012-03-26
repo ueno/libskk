@@ -487,7 +487,8 @@ namespace Skk {
             case InputMode.KATAKANA:
             case InputMode.HANKAKU_KATAKANA:
                 unichar lower_code;
-                if (state.isupper (key, out lower_code)) {
+                if (state.isupper (key, out lower_code) &&
+                    state.rom_kana_converter.is_valid (lower_code)) {
                     state.rom_kana_converter.output_nn_if_any ();
                     state.output.append (state.rom_kana_converter.output);
                     state.rom_kana_converter.output = "";
@@ -842,7 +843,7 @@ namespace Skk {
 
             unichar lower_code;
             bool is_upper = state.isupper (key, out lower_code);
-            if (is_upper || (key.modifiers == 0 && key.code.isalpha ())) {
+            if (state.rom_kana_converter.is_valid (lower_code)) {
                 // okuri_rom_kana_converter is started or being started
                 if (state.okuri ||
                     (is_upper &&
@@ -868,7 +869,7 @@ namespace Skk {
                     return true;
                 }
                 else {
-                    state.rom_kana_converter.append (key.code.tolower ());
+                    state.rom_kana_converter.append (lower_code);
                     if (check_auto_conversion (state, key)) {
                         state.handler_type = typeof (SelectStateHandler);
                         key = state.where_is ("next-candidate");
@@ -878,7 +879,7 @@ namespace Skk {
                 }
             }
             else if (key.modifiers == 0) {
-                state.rom_kana_converter.append (key.code.tolower ());
+                state.rom_kana_converter.append (lower_code);
                 if (check_auto_conversion (state, key)) {
                     state.handler_type = typeof (SelectStateHandler);
                     key = state.where_is ("next-candidate");
