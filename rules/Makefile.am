@@ -40,6 +40,7 @@ act_files =					\
 
 azik_files =					\
 	azik/metadata.json			\
+	azik/keymap/default.json		\
 	azik/keymap/hankaku-katakana.json	\
 	azik/keymap/hiragana.json		\
 	azik/keymap/katakana.json		\
@@ -50,6 +51,7 @@ azik_files =					\
 
 kzik_files =					\
 	kzik/metadata.json			\
+	kzik/keymap/default.json		\
 	kzik/keymap/hankaku-katakana.json	\
 	kzik/keymap/hiragana.json		\
 	kzik/keymap/katakana.json		\

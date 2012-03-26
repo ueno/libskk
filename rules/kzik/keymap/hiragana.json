@@ -1,5 +1,10 @@
 {
     "include": [
-        "default/default"
-    ]
+        "default"
+    ],
+    "define": {
+        "keymap": {
+            "\\": "set-input-mode-katakana"
+        }
+    }
 }
