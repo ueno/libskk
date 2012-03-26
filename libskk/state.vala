@@ -487,8 +487,7 @@ namespace Skk {
             case InputMode.KATAKANA:
             case InputMode.HANKAKU_KATAKANA:
                 unichar lower_code;
-                if (key.modifiers == 0 && key.code.isalpha () &&
-                    state.isupper (key, out lower_code)) {
+                if (state.isupper (key, out lower_code)) {
                     state.rom_kana_converter.output_nn_if_any ();
                     state.output.append (state.rom_kana_converter.output);
                     state.rom_kana_converter.output = "";
