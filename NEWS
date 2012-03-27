@@ -1,3 +1,13 @@
+Noteworthy changes in version 0.0.12 (unreleased)
+------------------------------------------------
+
+ * Improve AZIK, KZIK, and ACT tables (Issue#16).
+   "upper-<lower>" command is added to keymap.
+ * Fix "nq" and "nl" handling in hiragana input mode (Issue#15).
+ * Fix "NA" handling in hiragana input mode.
+ * Fix okuri-ari conversion in katakana input mode (Issue#12).
+ * --preedit-style option is added to skkfep.
+
 Noteworthy changes in version 0.0.11 (2012-02-11)
 ------------------------------------------------
 
