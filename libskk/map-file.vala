@@ -34,19 +34,13 @@ namespace Skk {
             }
         }
 
-        void load (string rule,
+        void load (RuleMetadata metadata,
                    string type,
                    string name,
                    Set<string> included) throws RuleParseError
         {
-            var metadata = Rule.find_rule (rule);
-            if (metadata == null) {
-                throw new RuleParseError.FAILED ("can't find rule %s", rule);
-            }
-            var filename = Path.build_filename (metadata.base_dir,
-                                                type,
-                                                name + ".json");
-            if (!FileUtils.test (filename, FileTest.EXISTS)) {
+            var filename = metadata.locate_map_file (type, name);
+            if (filename == null) {
                 throw new RuleParseError.FAILED ("no such file %s", filename);
             }
 
@@ -80,15 +74,21 @@ namespace Skk {
                         throw new RuleParseError.FAILED (
                             "found circular include of %s", parent);
                     }
+                    string parent_rule, parent_name;
                     var index = parent.index_of ("/");
                     if (index < 0) {
-                        load (rule, type, parent, included);
+                        parent_rule = metadata.name;
+                        parent_name = parent;
                     } else {
-                        load (parent[0:index],
-                              type,
-                              parent[index + 1:parent.length],
-                              included);
+                        parent_rule = parent[0:index];
+                        parent_name = parent[index + 1:parent.length];
                     }
+                    var parent_metadata = Rule.find_rule (parent_rule);
+                    if (parent_metadata == null) {
+                        throw new RuleParseError.FAILED ("can't find rule %s",
+                                                         parent_rule);
+                    }
+                    load (parent_metadata, type, parent_name, included);
                     included.add (parent);
                 }
             }
@@ -116,12 +116,12 @@ namespace Skk {
             }
         }
 
-        internal MapFile (string rule,
+        internal MapFile (RuleMetadata metadata,
                           string type,
                           string name) throws RuleParseError
         {
             Set<string> included = new HashSet<string> ();
-            load (rule, type, name, included);
+            load (metadata, type, name, included);
         }
 
         internal bool has_map (string name) {

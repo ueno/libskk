@@ -192,7 +192,7 @@ namespace Skk {
 
         public RomKanaConverter () {
             try {
-                _rule = new RomKanaMapFile ("default");
+                _rule = new RomKanaMapFile (Rule.find_rule ("default"));
                 current_node = _rule.root_node;
             } catch (RuleParseError e) {
                 warning ("can't find default rom-kana rule: %s",

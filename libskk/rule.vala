@@ -21,9 +21,9 @@ namespace Skk {
     class KeymapMapFile : MapFile {
         internal Keymap keymap;
 
-        internal KeymapMapFile (string name, string mode) throws RuleParseError
+        internal KeymapMapFile (RuleMetadata metadata, string mode) throws RuleParseError
         {
-            base (name, "keymap", mode);
+            base (metadata, "keymap", mode);
             if (has_map ("keymap")) {
                 var map = get ("keymap");
                 keymap = new Keymap ();
@@ -79,8 +79,8 @@ namespace Skk {
             return node;
         }
 
-        public RomKanaMapFile (string name) throws RuleParseError {
-            base (name, "rom-kana", "default");
+        public RomKanaMapFile (RuleMetadata metadata) throws RuleParseError {
+            base (metadata, "rom-kana", "default");
             if (has_map ("rom-kana")) {
                 root_node = parse_rule (get ("rom-kana"));
             } else {
@@ -121,6 +121,22 @@ namespace Skk {
          * Name of key event filter.
          */
         string filter;
+
+        /**
+         * Return the path of the map file.
+         *
+         * @param type type of the map file
+         * @param name name of the map file
+         *
+         * @return the absolute path of the map file
+         */
+        public string? locate_map_file (string type, string name) {
+            var filename = Path.build_filename (base_dir, type, name + ".json");
+            if (FileUtils.test (filename, FileTest.EXISTS)) {
+                return filename;
+            }
+            return null;
+        }
     }
 
     /**
@@ -134,7 +150,7 @@ namespace Skk {
         internal KeymapMapFile[] keymaps = new KeymapMapFile[InputMode.LAST];
         internal RomKanaMapFile rom_kana;
 
-        static const Entry<InputMode,string>[] keymap_entries = {
+        static const Entry<InputMode,string>[] keymap_names = {
             { InputMode.HIRAGANA, "hiragana" },
             { InputMode.KATAKANA, "katakana" },
             { InputMode.HANKAKU_KATAKANA, "hankaku-katakana" },
@@ -236,11 +252,19 @@ namespace Skk {
             }
             this.metadata = metadata;
 
-            foreach (var entry in keymap_entries) {
-                keymaps[entry.key] = new KeymapMapFile (name, entry.value);
+            var default_metadata = find_rule ("default");
+            foreach (var entry in keymap_names) {
+                var _metadata = metadata;
+                if (metadata.locate_map_file ("keymap", entry.value) == null) {
+                    _metadata = default_metadata;
+                }
+                keymaps[entry.key] = new KeymapMapFile (_metadata, entry.value);
             }
 
-            rom_kana = new RomKanaMapFile (name);
+            if (metadata.locate_map_file ("rom-kana", "default") == null) {
+                _metadata = default_metadata;
+            }
+            rom_kana = new RomKanaMapFile (_metadata);
         }
 
         ~Rule () {
@@ -270,6 +294,7 @@ namespace Skk {
                 if (FileUtils.test (metadata_filename, FileTest.EXISTS)) {
                     try {
                         var metadata = load_metadata (metadata_filename);
+                        metadata.name = name;
                         rule_cache.set (name, metadata);
                         return metadata;
                     } catch (RuleParseError e) {
