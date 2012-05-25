@@ -51,7 +51,10 @@ namespace Skk {
         }
 
         static uint32 read_uint32 (uint8 *p) {
-            return uint32.from_little_endian (*((uint32 *) p));
+            // Make sure that Q does not stride across 4-byte
+            // alignment on ARM (Debian bug#674471).
+            uint8 q[4] = (uint8[]) p;
+            return uint32.from_little_endian (*((uint32 *) q));
         }
 
         /**
