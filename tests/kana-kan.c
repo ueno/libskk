@@ -3,10 +3,21 @@
 static void
 kana_kan (void)
 {
-  SkkKanaKanDict *dict = skk_kana_kan_dict_new ("juman.dic");
-  SkkKanaKanScoreMap *map = skk_kana_kan_score_map_new ("mk.model", dict);
-  SkkKanaKanConverter *converter = skk_kana_kan_converter_new (dict, map);
+  SkkKanaKanDict *dict;
+  SkkKanaKanScoreMap *map;
+  SkkKanaKanConverter *converter;
+  GError *error;
   gchar *output;
+
+  error = NULL;
+  dict = skk_kana_kan_dict_new ("juman.dic", &error);
+  g_assert_no_error (error);
+
+  error = NULL;
+  map = skk_kana_kan_score_map_new ("mk.model", dict, &error);
+  g_assert_no_error (error);
+
+  converter = skk_kana_kan_converter_new (dict, map);
 
   output = skk_kana_kan_converter_convert (converter, "かなかんじへんかんのれい");
   printf ("%s\n", output);
