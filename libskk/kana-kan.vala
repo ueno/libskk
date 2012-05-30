@@ -127,7 +127,7 @@ namespace Skk {
         }
 
         internal double get_edge_score (KanaKanNode prev_node, KanaKanNode node) {
-            var feature = "S%s\tS%s".printf (prev_node.word, node.pron);
+            var feature = "S%s\tS%s".printf (prev_node.word, node.word);
             return get_score (feature);
         }
     }
