@@ -162,8 +162,10 @@ namespace Skk {
 
         KeyEventFilter? filter;
 
-        static Map<string,Type> filter_types = 
-            new HashMap<string,Type> ();
+        // Make the value type boxed to avoid unwanted ulong -> uint cast:
+        // https://bugzilla.gnome.org/show_bug.cgi?id=660621
+        static Map<string,Type?> filter_types = 
+            new HashMap<string,Type?> ();
 
         static construct {
             rules_path = Util.build_data_path ("rules");
