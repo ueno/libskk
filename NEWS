@@ -1,3 +1,11 @@
+Noteworthy changes in version 0.0.13 (2012-07-02)
+------------------------------------------------
+
+ * Fix segfault on 64-bit FreeBSD (Issue#18).
+ * Update required Vala version from 0.12.0 to 0.14.0 (Issue#17).
+ * Fix CDB dictionary integer alignment issue on ARM (Debian bug#674471).
+ * Map files that simply include "default" are now optional.
+
 Noteworthy changes in version 0.0.12 (2012-03-29)
 ------------------------------------------------
 
