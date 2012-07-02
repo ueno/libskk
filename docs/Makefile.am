@@ -38,6 +38,7 @@ $(libskkgtkdoc_DATA): libskk-gtk-doc
 valadoc_flags = \
 	--force \
 	--package-version $(PACKAGE_VERSION) \
+	-D VALA_0_16 \
 	$(NULL)
 
 # libskk documentation

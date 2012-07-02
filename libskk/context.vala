@@ -550,7 +550,7 @@ namespace Skk {
          * This is replaced with {@link poll_output}.
          *
          * @return an output string
-         * @deprecated 0.0.6
+         * Deprecated: 0.0.6
          */
         public string get_output () {
             return poll_output ();

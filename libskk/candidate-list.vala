@@ -129,7 +129,7 @@ namespace Skk {
         /**
          * Select a candidate in the current page.
          *
-         * @param index cursor position in the page to select
+         * @param index_in_page cursor position in the page to select
          *
          * @return `true` if a candidate is selected, `false` otherwise
          */
