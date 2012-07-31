@@ -1,4 +1,5 @@
 #include <libskk/libskk.h>
+#include "common.h"
 
 static void
 dictionary (void)
