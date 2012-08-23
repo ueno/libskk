@@ -539,11 +539,20 @@ namespace Skk {
                 pop_state ();
                 state_stack.peek_head ().cancel_okuri ();
             }
-            // to restore surrounding text after focus change
+
             var state = state_stack.peek_head ();
-            state.output_surrounding_text ();
+
+            // will clear state.candidates but not state.output
             state.reset ();
+
+            // need to manually assign it because
+            // _candidates.candidates may point to a State object different
+            // from state, when dict edit
             ((ProxyCandidateList) _candidates).candidates = state.candidates;
+
+            // clear output and preedit
+            clear_output ();
+            preedit = "";
         }
 
         /**
