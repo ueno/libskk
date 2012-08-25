@@ -195,6 +195,8 @@ namespace Skk {
             entries.clear ();
 
             var contents = converter.encode (builder.str);
+            DirUtils.create_with_parents (Path.get_dirname (file.get_path ()),
+                                          448);
 #if VALA_0_16
             file.replace_contents (contents.data,
                                    etag,
