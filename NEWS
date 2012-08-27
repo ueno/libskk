@@ -1,3 +1,10 @@
+Noteworthy changes in version 1.0.0 (2012-08-27)
+------------------------------------------------
+
+ * Make sure to create parent directory of user-dict (Debian bug#685745).
+ * Clear output and preedit on context reset.
+ * Fix header include in tests (Issue#19).
+
 Noteworthy changes in version 0.0.13 (2012-07-02)
 ------------------------------------------------
 
