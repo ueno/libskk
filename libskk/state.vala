@@ -400,8 +400,15 @@ namespace Skk {
         }
     }
 
+    // We can't use Entry<*,InputMode> here because of Vala bug:
+    // https://bugzilla.gnome.org/show_bug.cgi?id=684262
+    struct InputModeCommandEntry {
+        string key;
+        InputMode value;
+    }
+
     class NoneStateHandler : StateHandler {
-        static const Entry<string,InputMode>[] input_mode_commands = {
+        static const InputModeCommandEntry[] input_mode_commands = {
             { "set-input-mode-hiragana", InputMode.HIRAGANA },
             { "set-input-mode-katakana", InputMode.KATAKANA },
             { "set-input-mode-hankaku-katakana", InputMode.HANKAKU_KATAKANA },
@@ -688,7 +695,7 @@ namespace Skk {
     }
 
     class StartStateHandler : StateHandler {
-        static const Entry<string,InputMode>[] end_preedit_commands = {
+        static const InputModeCommandEntry[] end_preedit_commands = {
             { "set-input-mode-hiragana", InputMode.HIRAGANA },
             { "set-input-mode-katakana", InputMode.KATAKANA },
             { "set-input-mode-hankaku-katakana", InputMode.HANKAKU_KATAKANA }
