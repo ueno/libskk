@@ -269,7 +269,7 @@ namespace Skk {
                         break;
                     }
                 } catch (GLib.RegexError e) {
-                    return_if_reached ();
+                    return_val_if_reached (text);
                 }
                             
                 int match_start_pos, match_end_pos;

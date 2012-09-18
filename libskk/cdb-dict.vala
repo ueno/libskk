@@ -54,7 +54,7 @@ namespace Skk {
             // Make sure that Q does not stride across 4-byte
             // alignment on ARM (Debian bug#674471).
             uint8 q[4] = (uint8[]) p;
-            return uint32.from_little_endian (*((uint32 *) q));
+            return (q[3] << 24) | (q[2] << 16) | (q[1] << 8) | q[0];
         }
 
         /**

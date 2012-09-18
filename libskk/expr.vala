@@ -58,7 +58,7 @@ namespace Skk {
             return node;
         }
 
-        public ExprNode read_string (string expr, ref int index) {
+        public ExprNode? read_string (string expr, ref int index) {
             return_val_if_fail (index < expr.length && expr[index] == '"',
                                 null);
             var builder = new StringBuilder ();
