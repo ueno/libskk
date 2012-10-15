@@ -1,10 +1,13 @@
 {
     "include": [
-        "default"
+        "common",
+        "default/hiragana"
     ],
     "define": {
         "keymap": {
-            "[": "set-input-mode-katakana"
+            "[": "set-input-mode-katakana",
+            "q": null,
+            "Q": "start-preedit insert-kana-ん"
         }
     }
 }

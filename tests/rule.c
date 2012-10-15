@@ -23,6 +23,9 @@ azik (void)
   SkkTransition transitions[] = {
     { SKK_INPUT_MODE_HIRAGANA, "x x a", "", "ぁ", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "Y o :", "▼酔っ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "l", "", "", SKK_INPUT_MODE_LATIN },
+    { SKK_INPUT_MODE_HIRAGANA, "q", "", "ん", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "Q", "▽ん", "", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
