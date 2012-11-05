@@ -213,8 +213,8 @@ namespace Skk {
             if (_candidates.size > 0) {
                 _cursor_pos = 0;
             }
-            notify_property ("cursor-pos");
             populated ();
+            notify_property ("cursor-pos");
         }
 
         public override bool select_at (uint index_in_page) {
