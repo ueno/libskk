@@ -102,6 +102,8 @@ static SkkTransition okuri_ari_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "T y o u >", "▼超", "", SKK_INPUT_MODE_HIRAGANA },
     /* Issue#12 */
     { SKK_INPUT_MODE_HIRAGANA, "q S i r o K u", "▼白ク", "", SKK_INPUT_MODE_KATAKANA },
+    /* Issue#23 */
+    { SKK_INPUT_MODE_HIRAGANA, "T e t u d a I SPC C-g", "▼手伝い", "", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 

@@ -386,7 +386,8 @@ namespace Skk {
                 okuri = state.okuri;
                 pop_state ();
                 state = state_stack.peek_head ();
-                state.cancel_okuri ();
+                if (state.candidates.size == 0)
+                    state.cancel_okuri ();
                 return true;
             }
             midasi = null;
