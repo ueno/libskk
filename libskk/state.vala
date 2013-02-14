@@ -527,7 +527,7 @@ namespace Skk {
                         state.rom_kana_converter.output = "";
                         return true;
                     }
-                    else if (0x20 <= key.code && key.code <= 0x7F) {
+                    else if (0x20 <= key.code && key.code < 0x7F) {
                         state.output.append_c ((char) key.code);
                         state.rom_kana_converter.output = "";
                         return true;
@@ -540,14 +540,14 @@ namespace Skk {
                 break;
             case InputMode.LATIN:
                 if (key.modifiers == 0 &&
-                    0x20 <= key.code && key.code <= 0x7F) {
+                    0x20 <= key.code && key.code < 0x7F) {
                     state.output.append_c ((char) key.code);
                     return true;
                 }
                 break;
             case InputMode.WIDE_LATIN:
                 if (key.modifiers == 0 &&
-                    0x20 <= key.code && key.code <= 0x7F) {
+                    0x20 <= key.code && key.code < 0x7F) {
                     state.output.append_unichar (
                         Util.get_wide_latin_char ((char) key.code));
                     return true;
