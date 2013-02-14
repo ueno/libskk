@@ -245,7 +245,7 @@ namespace Skk {
 
             long start_offset, end_offset;
             start_offset = okuri_nasi_offset;
-            end_offset = (long) mmap.length;
+            end_offset = (long) mmap.length - 1;
 
             string _midasi;
             try {
