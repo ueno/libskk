@@ -273,35 +273,11 @@ namespace Skk {
          * {@inheritDoc}
          */
         public override bool select_candidate (Candidate candidate) {
-            int index;
-
-            // update midasi history
-            for (index = 0;
-                 index < midasi_history.length && midasi_history[index] != null;
-                 index++) {
-                if (midasi_history[index] == candidate.midasi) {
-                    if (index > 0) {
-                        var first = midasi_history[0];
-                        midasi_history[0] = midasi_history[index];
-                        midasi_history[index] = first;
-                        break;
-                    }
-                }
-            }
-            if (index == midasi_history.length ||
-                midasi_history[index] == null) {
-                for (int j = 1; j < index - 1; j++) {
-                    midasi_history[j] = midasi_history[j - 1];
-                }
-            }
-            midasi_history[0] = candidate.midasi;
-
-            // update candidates list associated with midasi
             var entries = get_entries (candidate.okuri);
             if (!entries.has_key (candidate.midasi)) {
                 entries.set (candidate.midasi, new ArrayList<Candidate> ());
             }
-            index = 0;
+            var index = 0;
             var candidates = entries.get (candidate.midasi);
             foreach (var c in candidates) {
                 if (c.text == candidate.text) {
@@ -362,7 +338,6 @@ namespace Skk {
             new HashMap<string,Gee.List<Candidate>> ();
         Map<string,Gee.List<Candidate>> okuri_nasi_entries =
             new HashMap<string,Gee.List<Candidate>> ();
-        string midasi_history[128];
 
         /**
          * Create a new UserDict.
