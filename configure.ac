@@ -17,7 +17,7 @@
 AC_PREREQ(2.63)
 AC_CONFIG_MACRO_DIR([m4])
 
-AC_INIT([libskk], [1.0.0], [ueno@unixuser.org])
+AC_INIT([libskk], [1.0.1], [ueno@unixuser.org])
 
 SKK_API_VERSION=1.0
 SKK_API_MAJOR_VERSION=1
