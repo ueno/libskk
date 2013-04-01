@@ -1,3 +1,12 @@
+Noteworthy changes in version 1.0.1 (2013-04-01)
+------------------------------------------------
+
+ * Cancel okuri-ari conversion only if there is no candidate (Issue#23).
+ * Allow clients to populate lookup table before setting cursor pos
+   (ibus-skk Issue#51).
+ * rules: inherit AZIK keymap from the default keymap (Issue#22).
+ * Don't use type-punning when converting bytes to uint32 (Issue#20).
+
 Noteworthy changes in version 1.0.0 (2012-08-27)
 ------------------------------------------------
 
