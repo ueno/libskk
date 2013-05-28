@@ -19,8 +19,8 @@ INCLUDES = -I$(top_srcdir) $(LIBSKK_CFLAGS)
 TESTS_ENVIRONMENT =					\
 	G_DEBUG=${G_DEBUG:+"${G_DEBUG},"}gc-friendly	\
 	G_SLICE=${G_SLICE},always-malloc		\
-	LIBSKK_DATA_PATH=$(top_srcdir)			\
-	$(LIBTOOL) --mode=execute $(VALGRIND) $(VALGRIND_OPTS)
+	LIBSKK_DATA_PATH=$(top_srcdir)
+LOG_COMPILER = $(LIBTOOL) --mode=execute $(VALGRIND) $(VALGRIND_OPTS)
 TESTS = rom-kana file-dict user-dict cdb-dict skkserv rule context basic
 noinst_PROGRAMS = $(TESTS)
 noinst_HEADERS = common.h
