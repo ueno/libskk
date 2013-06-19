@@ -170,6 +170,8 @@ static SkkTransition abbrev_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "/ a a C-q", "", "ａａ", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ d o s v SPC", "▼DOS/V", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ b s d 3 SPC", "▼BSD/3", "", SKK_INPUT_MODE_HIRAGANA },
+    /* Issue#24 */
+    { SKK_INPUT_MODE_HIRAGANA, "/ t e s t C-j", "", "test", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 

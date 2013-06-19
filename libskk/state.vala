@@ -678,6 +678,11 @@ namespace Skk {
                 }
                 return true;
             }
+            else if (command == "commit") {
+                state.output.assign (state.abbrev.str);
+                state.reset ();
+                return true;
+            }
             else if (key.modifiers == 0 &&
                      0x20 <= key.code && key.code <= 0x7E) {
                 state.abbrev.append_unichar (key.code);
