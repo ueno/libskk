@@ -26,6 +26,7 @@ namespace Skk {
     /**
      * A set of bit-flags to indicate the state of modifier keys.
      */
+    [Flags]
     public enum ModifierType {
         NONE = 0,
         SHIFT_MASK = 1 << 0,
