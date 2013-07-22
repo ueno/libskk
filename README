@@ -16,9 +16,6 @@ Features:
 
 * GObject based API with gobject-introspection support.
 
-* Experimental support for intelligent kana-to-kanji conversion based
-  on Viterbi algorithm.
-
 Documentation:
 
 * file:tests/context.c for basic usage

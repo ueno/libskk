@@ -33,9 +33,6 @@ AM_CPPFLAGS =								\
 rom_kana_SOURCES = rom-kana.c
 rom_kana_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 
-# kana_kan_SOURCES = kana-kan.c
-# kana_kan_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
-
 file_dict_SOURCES = file-dict.c
 file_dict_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 
@@ -57,7 +54,7 @@ context_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 basic_SOURCES = basic.c common.c
 basic_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 
-EXTRA_DIST = file-dict.dat cdb-dict.dat kana-kan.c
+EXTRA_DIST = file-dict.dat cdb-dict.dat
 CLEANFILES = user-dict.dat valgrind.log.*
 
 -include $(top_srcdir)/git.mk
