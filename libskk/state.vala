@@ -443,7 +443,7 @@ namespace Skk {
                     retval = state.recursive_edit_end (state.output.str);
                 }
                 state.reset ();
-                return retval;
+                return command == "commit" ? true : retval;
             } else if (command == "start-preedit" ||
                        command == "start-preedit-kana") {
                 string? text;
