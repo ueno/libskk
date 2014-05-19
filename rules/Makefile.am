@@ -38,6 +38,17 @@ act_files =					\
 	act/rom-kana/default.json		\
 	$(NULL)
 
+act09_files =					\
+	act09/metadata.json			\
+	act09/keymap/default.json		\
+	act09/keymap/hankaku-katakana.json	\
+	act09/keymap/hiragana.json		\
+	act09/keymap/katakana.json		\
+	act09/keymap/latin.json			\
+	act09/keymap/wide-latin.json		\
+	act09/rom-kana/default.json		\
+	$(NULL)
+
 azik_files =					\
 	azik/metadata.json			\
 	azik/keymap/common.json			\
@@ -116,6 +127,7 @@ trycode_files =					\
 nobase_dist_rules_DATA =			\
 	$(default_files)			\
 	$(act_files)				\
+	$(act09_files)				\
 	$(azik_files)				\
 	$(kzik_files)				\
 	$(tutcode_files)			\
