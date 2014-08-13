@@ -159,7 +159,7 @@ namespace Skk {
     class ExprEvaluator : Object {
         public string? eval (ExprNode node) {
             if (node.type == ExprNodeType.ARRAY) {
-                var iter = node.nodes.list_iterator ();
+                var iter = node.nodes.bidir_list_iterator ();
                 if (iter.first ()) {
                     var funcall = iter.get ();
                     if (funcall.type == ExprNodeType.SYMBOL) {

@@ -614,7 +614,7 @@ namespace Skk {
 
         void update_preedit () {
             var builder = new StringBuilder ();
-            var iter = state_stack.list_iterator ();
+            var iter = state_stack.bidir_list_iterator ();
             iter.last ();
             while (iter.has_previous ()) {
                 var state = iter.get ();

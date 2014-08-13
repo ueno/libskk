@@ -24,6 +24,6 @@ includedir=@includedir@
 Name: libskk
 Description: a library to deal with Japanese kana-to-kanji conversion method
 Version: @VERSION@
-Requires: gobject-2.0 gio-2.0 gee-1.0
+Requires: gobject-2.0 gio-2.0 gee-0.8
 Libs: -L${libdir} -lskk
 Cflags: -I${includedir}/skk-@SKK_API_VERSION@

@@ -139,7 +139,7 @@ namespace Skk {
                 }
                 else {
                     if (pending.size > 2) {
-                        var iter = pending.list_iterator ();
+                        var iter = pending.bidir_list_iterator ();
                         iter.last ();
                         do {
                             iter.remove ();
@@ -154,7 +154,7 @@ namespace Skk {
 
         int64 get_next_wait (KeyEvent key, int64 time) {
             if (pending.size > 0) {
-                var iter = pending.list_iterator ();
+                var iter = pending.bidir_list_iterator ();
                 iter.last ();
                 do {
                     var entry = iter.get ();

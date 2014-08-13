@@ -72,7 +72,7 @@ namespace Skk {
         internal StringBuilder kuten = new StringBuilder ();
 
         ArrayList<string> completion = new ArrayList<string> ();
-        internal Iterator<string> completion_iterator;
+        internal BidirListIterator<string> completion_iterator;
 
         internal string[] auto_start_henkan_keywords;
         internal string? auto_start_henkan_keyword = null;
@@ -208,7 +208,7 @@ namespace Skk {
         string extract_numerics (string midasi, out int[] numerics) {
             MatchInfo info = null;
             int start_pos = 0;
-            var numeric_list = new ArrayList<int> ();
+            int[] _numerics = {};
             var builder = new StringBuilder ();
             while (true) {
                 try {
@@ -228,12 +228,12 @@ namespace Skk {
                 info.fetch_pos (0,
                                 out match_start_pos,
                                 out match_end_pos);
-                numeric_list.add (int.parse (numeric));
+                _numerics += int.parse (numeric);
                 builder.append (midasi[start_pos:match_start_pos]);
                 builder.append ("#");
                 start_pos = match_end_pos;
             }
-            numerics = numeric_list.to_array ();
+            numerics = _numerics;
             builder.append (midasi[start_pos:midasi.length]);
             return builder.str;
         }
@@ -351,7 +351,7 @@ namespace Skk {
                 }
                 completion.sort ();
             }
-            completion_iterator = completion.iterator ();
+            completion_iterator = completion.bidir_list_iterator ();
             if (!completion_iterator.first ()) {
                 completion_iterator = null;
             }

@@ -37,18 +37,16 @@ namespace Skk {
 
         public KeyEvent? where_is (string command) {
             var iter = entries.map_iterator ();
-            if (iter.first ()) {
-                do {
-                    if (iter.get_value () == command) {
-                        var key = iter.get_key ();
-                        try {
-                            return new KeyEvent.from_string (key);
-                        } catch (KeyEventFormatError e) {
-                            warning ("can't get key event from string %s: %s",
-                                     key, e.message);
-                        }
+            while (iter.next ()) {
+                if (iter.get_value () == command) {
+                    var key = iter.get_key ();
+                    try {
+                        return new KeyEvent.from_string (key);
+                    } catch (KeyEventFormatError e) {
+                        warning ("can't get key event from string %s: %s",
+                                 key, e.message);
                     }
-                } while (iter.next ());
+                }
             }
             return null;
         }

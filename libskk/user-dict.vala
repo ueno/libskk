@@ -160,14 +160,12 @@ namespace Skk {
                             Gee.List<Map.Entry<string,Gee.List<Candidate>>> entries)
         {
             var iter = entries.iterator ();
-            if (iter.first ()) {
-                do {
-                    var entry = iter.get ();
-                    var line = "%s %s\n".printf (
-                        entry.key,
-                        join_candidates (entry.value.to_array ()));
-                    builder.append (line);
-                } while (iter.next ());
+            while (iter.next ()) {
+                var entry = iter.get ();
+                var line = "%s %s\n".printf (
+                    entry.key,
+                    join_candidates (entry.value.to_array ()));
+                builder.append (line);
             }
         }
 
@@ -184,13 +182,13 @@ namespace Skk {
             builder.append (";; okuri-ari entries.\n");
             var entries = new ArrayList<Map.Entry<string,Gee.List<Candidate>>> ();
             entries.add_all (okuri_ari_entries.entries);
-            entries.sort ((CompareFunc) compare_entry_dsc);
+            entries.sort ((CompareDataFunc) compare_entry_dsc);
             write_entries (builder, entries);
             entries.clear ();
 
             builder.append (";; okuri-nasi entries.\n");
             entries.add_all (okuri_nasi_entries.entries);
-            entries.sort ((CompareFunc) compare_entry_asc);
+            entries.sort ((CompareDataFunc) compare_entry_asc);
             write_entries (builder, entries);
             entries.clear ();
 
@@ -242,28 +240,26 @@ namespace Skk {
             keys.add_all (okuri_nasi_entries.keys);
             keys.sort ();
             var iter = keys.iterator ();
-            if (iter.first ()) {
-                // find the first matching entry
-                do {
-                    var key = iter.get ();
-                    if (key.has_prefix (midasi)) {
-                        // don't add midasi word itself
-                        if (key != midasi) {
-                            completion.add (key);
-                        }
-                        break;
-                    }
-                } while (iter.next ());
-                // loop until the last matching entry
-                while (iter.next ()) {
-                    var key = iter.get ();
-                    if (!key.has_prefix (midasi)) {
-                        break;
-                    }
+            // find the first matching entry
+            while (iter.next ()) {
+                var key = iter.get ();
+                if (key.has_prefix (midasi)) {
                     // don't add midasi word itself
                     if (key != midasi) {
                         completion.add (key);
                     }
+                    break;
+                }
+            }
+            // loop until the last matching entry
+            while (iter.next ()) {
+                var key = iter.get ();
+                if (!key.has_prefix (midasi)) {
+                    break;
+                }
+                // don't add midasi word itself
+                if (key != midasi) {
+                    completion.add (key);
                 }
             }
             return completion.to_array ();
@@ -306,14 +302,13 @@ namespace Skk {
                 var candidates = entries.get (candidate.midasi);
                 if (candidates.size > 0) {
                     var iter = candidates.iterator ();
-                    iter.first ();
-                    do {
+                    while (iter.next ()) {
                         var c = iter.get ();
                         if (c.text == candidate.text) {
                             iter.remove ();
                             modified = true;
                         }
-                    } while (iter.next ());
+                    }
                     if (candidates.size == 0) {
                         entries.unset (candidate.midasi);
                     }
@@ -362,17 +357,13 @@ namespace Skk {
 
         ~UserDict () {
             var okuri_ari_iter = okuri_ari_entries.map_iterator ();
-            if (okuri_ari_iter.first ()) {
-                do {
-                    okuri_ari_iter.get_value ().clear ();
-                } while (okuri_ari_iter.next ());
+            while (okuri_ari_iter.next ()) {
+                okuri_ari_iter.get_value ().clear ();
             }
             okuri_ari_entries.clear ();
             var okuri_nasi_iter = okuri_nasi_entries.map_iterator ();
-            if (okuri_nasi_iter.first ()) {
-                do {
-                    okuri_nasi_iter.get_value ().clear ();
-                } while (okuri_nasi_iter.next ());
+            while (okuri_nasi_iter.next ()) {
+                okuri_nasi_iter.get_value ().clear ();
             }
             okuri_nasi_entries.clear ();
         }
