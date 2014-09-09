@@ -1,3 +1,12 @@
+Noteworthy changes in version 1.0.2 (2014-09-09)
+------------------------------------------------
+
+ * Migrate to libgee 0.8 from 0.6 (Issue#29).
+ * rules: new ACT09 rule contributed by Naoki Mizuno (Issue#28).
+ * Consume key event for "commit" command (Issue#26).  Use
+   "commit-unhandled" for the previous behavior.
+ * Comsume C-j in abbrev mode (Issue#24).
+
 Noteworthy changes in version 1.0.1 (2013-04-01)
 ------------------------------------------------
 
