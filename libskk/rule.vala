@@ -262,6 +262,9 @@ namespace Skk {
             this.metadata = metadata;
 
             var default_metadata = find_rule ("default");
+            if (default_metadata == null) {
+                throw new RuleParseError.FAILED ("can't find default metadata");
+            }
             foreach (var entry in keymap_names) {
                 var _metadata = metadata;
                 if (metadata.locate_map_file ("keymap", entry.value) == null) {
