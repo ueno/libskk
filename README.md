@@ -1,4 +1,4 @@
-libskk -- a library to deal with Japanese kana-to-kanji conversion method [![Build Status](https://travis-ci.org/ueno/libskk.svg?branch=master)](https://travis-ci.org/ueno/libskk)
+libskk -- a library to deal with Japanese kana-to-kanji conversion method [![Build Status](https://travis-ci.org/ueno/libskk.svg?branch=master)](https://travis-ci.org/ueno/libskk) [![Coverage Status](https://img.shields.io/coveralls/ueno/libskk.svg)](https://coveralls.io/r/ueno/libskk)
 ======
 
 Features
