@@ -2,13 +2,13 @@ language: c
 
 env:
   matrix:
-    - VALA=vala-0.24
+    - VALAC=valac-0.24
 
 install:
-  - if [ "$VALA" = "vala-0.24" ]; then
+  - if [ "$VALAC" = "valac-0.24" ]; then
       sudo add-apt-repository -y ppa:vala-team &&
       sudo apt-get update -qq &&
-      sudo apt-get install -qq autotools-dev gnome-common gobject-introspection intltool libgee-0.8-dev libgirepository1.0-dev libjson-glib-dev "$VALA";
+      sudo apt-get install -qq autotools-dev gnome-common gobject-introspection intltool libgee-0.8-dev libgirepository1.0-dev libjson-glib-dev "$VALAC";
     fi
 
 script:
