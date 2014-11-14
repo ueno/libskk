@@ -458,6 +458,9 @@ namespace Skk {
                 }
                 state.handler_type = typeof (StartStateHandler);
                 return true;
+            } else if (command == "start-preedit-no-delete") {
+                state.handler_type = typeof (StartStateHandler);
+                return true;
             }
             // check mode switch events
             if (command != null && command.has_prefix ("set-input-mode-") &&
@@ -826,7 +829,8 @@ namespace Skk {
             else if (command == "start-preedit") {
                 return true;
             }
-            else if (command == "start-preedit-kana") {
+            else if (command == "start-preedit-kana" ||
+                     command == "start-preedit-no-delete") {
                 if (state.rom_kana_converter.output.length > 0) {
                     state.okuri = true;
                 }
