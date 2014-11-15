@@ -40,13 +40,13 @@ $ echo "a (usleep 50000) b (usleep 200000)" | skk -r nicola
 { "input": "a (usleep 50000) b (usleep 200000)", "output": "うへ", "preedit": "" }
 ```
 
-License:
+License
 ------
 ```
 GPLv3+
 
-Copyright (C) 2011-2012 Daiki Ueno <ueno@unixuser.org>
-Copyright (C) 2011-2012 Red Hat, Inc.
+Copyright (C) 2011-2014 Daiki Ueno <ueno@gnu.org>
+Copyright (C) 2011-2014 Red Hat, Inc.
 
 This file is free software; as a special exception the author gives
 unlimited permission to copy and/or distribute it, with or without
