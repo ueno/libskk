@@ -70,10 +70,8 @@ namespace Skk {
                 var elements = include.get_elements ();
                 foreach (var element in elements) {
                     var parent = element.get_string ();
-                    if (parent in included) {
-                        throw new RuleParseError.FAILED (
-                            "found circular include of %s", parent);
-                    }
+                    if (parent in included)
+                        continue;
                     string parent_rule, parent_name;
                     var index = parent.index_of ("/");
                     if (index < 0) {
