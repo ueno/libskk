@@ -353,7 +353,6 @@ namespace Skk {
         void start_dict_edit (string midasi, bool okuri) {
             var state = new State (_dictionaries);
             state.midasi = midasi;
-            state.okuri = okuri;
             push_state (state);
             update_preedit ();
         }
@@ -383,9 +382,9 @@ namespace Skk {
             if (dict_edit_level () > 0) {
                 var state = state_stack.peek_head ();
                 midasi = state.midasi;
-                okuri = state.okuri;
                 pop_state ();
                 state = state_stack.peek_head ();
+                okuri = state.okuri;
                 if (state.candidates.size == 0)
                     state.cancel_okuri ();
                 return true;
