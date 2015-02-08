@@ -4,6 +4,10 @@
     ],
     "define": {
         "keymap": {
+            "Q": "start-preedit",
+            "l": "set-input-mode-latin",
+            "L": "set-input-mode-wide-latin",
+            "C-q": "set-input-mode-hankaku-katakana",
             "\\": "set-input-mode-katakana"
         }
     }

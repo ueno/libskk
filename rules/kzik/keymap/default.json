@@ -1,9 +1,17 @@
 {
-    "include": [
-        "default/default"
-    ],
     "define": {
         "keymap": {
+            "C-g": "abort",
+            "\n": "commit-unhandled",
+            "\b": "delete",
+            "C-h": "delete",
+            "/": "abbrev",
+            " ": "next-candidate",
+            "\t": "complete",
+            "C-i": "complete",
+            ">": "special-midasi",
+            "x": "previous-candidate",
+            "X": "purge-candidate",
             ":": "upper-;"
         }
     }
