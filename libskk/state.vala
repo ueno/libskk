@@ -310,7 +310,9 @@ namespace Skk {
             int[] numerics = new int[0];
             lookup_internal (midasi, numerics, okuri);
             var numeric_midasi = extract_numerics (midasi, out numerics);
-            lookup_internal (numeric_midasi, numerics, okuri);
+            if (numeric_midasi != midasi) {
+                lookup_internal (numeric_midasi, numerics, okuri);
+            }
             candidates.add_candidates_end ();
         }
 
