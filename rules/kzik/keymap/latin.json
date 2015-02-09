@@ -1,5 +1,6 @@
 {
     "include": [
-        "default/default"
+        "default/latin",
+        "common"
     ]
 }
