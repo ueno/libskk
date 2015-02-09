@@ -63,6 +63,7 @@ azik_files =					\
 
 kzik_files =					\
 	kzik/metadata.json			\
+	kzik/keymap/common.json			\
 	kzik/keymap/default.json		\
 	kzik/keymap/hankaku-katakana.json	\
 	kzik/keymap/hiragana.json		\
