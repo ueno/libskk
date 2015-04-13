@@ -2,7 +2,7 @@ libskk -- a library to deal with Japanese kana-to-kanji conversion method
 ======
 [![Build Status](https://travis-ci.org/ueno/libskk.svg?branch=master)](https://travis-ci.org/ueno/libskk) [![Coverage Status](https://img.shields.io/coveralls/ueno/libskk.svg)](https://coveralls.io/r/ueno/libskk)
 
-*I'm no longer actively maintain this project.  If you use it and want to take it over the maintenance, let [me](mailto:ueno@gnu.org) know.*
+*I'm no longer actively maintain this project.  If you use it and want to take over the maintenance, let [me](mailto:ueno@gnu.org) know.*
 
 Features
 ------
