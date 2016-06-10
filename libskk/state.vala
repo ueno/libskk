@@ -824,7 +824,7 @@ namespace Skk {
                     key = state.where_is ("next-candidate");
                     return false;
                 } else {
-                    state.rom_kana_converter.output = kana;
+                    state.rom_kana_converter.output += kana;
                     return true;
                 }
             }
