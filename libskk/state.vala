@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 using Gee;
+using Gtk;
 
 namespace Skk {
     static const string[] AUTO_START_HENKAN_KEYWORDS = {
@@ -388,6 +389,14 @@ namespace Skk {
             }
             return builder.str;
         }
+	internal static string get_clipboard_text(string[] args){
+	    // FIXME:本当にここにGtk.initを置くことが正しいのか分からない
+	    // FIXME:Gtk.initの引数について何も考えていない、これで動いたのでそのままにしている
+	    Gtk.init(ref args);
+	    var clipboard = Gtk.Clipboard.get_for_display (Gdk.Display.get_default (),
+                                                       Gdk.SELECTION_CLIPBOARD);
+	    return clipboard.wait_for_text ();
+	}
     }
 
     delegate bool CommandHandler (State state);
@@ -493,6 +502,12 @@ namespace Skk {
                 }
                 return false;
             }
+
+	    if (command == "paste") {
+		string clipboard_text = state.get_clipboard_text ({"libskk","paste"});
+		state.output.append(clipboard_text);
+		return true;
+	    }
 
             switch (state.input_mode) {
             case InputMode.HIRAGANA:
@@ -688,6 +703,11 @@ namespace Skk {
                 state.reset ();
                 return true;
             }
+	    else if(command == "paste") {
+		string clipboard_text = state.get_clipboard_text ({"libskk","paste"});
+		state.abbrev.append(clipboard_text);
+		return true;
+	    }
             else if (key.modifiers == 0 &&
                      0x20 <= key.code && key.code <= 0x7E) {
                 state.abbrev.append_unichar (key.code);
@@ -858,6 +878,11 @@ namespace Skk {
                     return true;
                 }
             }
+	    else if (command == "paste") {
+		string clipboard_text = state.get_clipboard_text ({"libskk","paste"});
+		state.rom_kana_converter.output += clipboard_text;
+		return true;
+	    }
 
             unichar lower_code;
             bool is_upper = state.isupper (key, out lower_code);
