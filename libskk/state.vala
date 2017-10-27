@@ -730,7 +730,7 @@ namespace Skk {
             foreach (var entry in end_preedit_commands) {
                 if (entry.key == command) {
                     state.rom_kana_converter.output_nn_if_any ();
-                    state.output.assign (
+                    state.output.append (
                         Util.convert_by_input_mode (
                             state.rom_kana_converter.output,
                             entry.value));
