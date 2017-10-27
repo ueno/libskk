@@ -688,6 +688,11 @@ namespace Skk {
                 state.reset ();
                 return true;
             }
+            else if (command == "commit-unhandled") {
+                state.output.assign (state.abbrev.str);
+                state.reset ();
+                return state.egg_like_newline;
+            }
             else if (key.modifiers == 0 &&
                      0x20 <= key.code && key.code <= 0x7E) {
                 state.abbrev.append_unichar (key.code);
