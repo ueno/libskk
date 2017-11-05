@@ -202,6 +202,9 @@ static SkkTransition dict_edit_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "K a t a k a n a SPC SPC K a t a k a n a q C-m", "", "カタカナ", SKK_INPUT_MODE_HIRAGANA },
     /* Issue#11 */
     { SKK_INPUT_MODE_HIRAGANA, "t a k K u n SPC", "▼っくん【】", "た", SKK_INPUT_MODE_HIRAGANA },
+    /* Pull request#41 */
+    { SKK_INPUT_MODE_HIRAGANA, "K a n j i k a t a k a n a k a n j i SPC K a n j i SPC K a t a k a n a q K a n j i SPC C-j", "▼かんじかたかなかんじ【漢字カタカナ漢字】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "T e s u t o t e s u t o t e s u t o t e s u t o SPC t e s u t o T e s u t o q q T e s u t o q T e s u t o C-q  C-q T e s u t o q", "▼てすとてすとてすとてすと【てすとテストてすとﾃｽﾄてすと】", "", SKK_INPUT_MODE_HANKAKU_KATAKANA},
     { 0, NULL }
   };
 
