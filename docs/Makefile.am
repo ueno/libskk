@@ -3,7 +3,7 @@ distclean_dirs = \
 	gtk-doc \
 	$(NULL)
 
-phony_deps = \
+docs = \
 	libskk-doc \
 	libskk-gtk-doc \
 	$(NULL)
@@ -32,13 +32,14 @@ libskkimg_DATA = \
 	libskk/libskk/img/*.png \
 	$(NULL)
 
-$(libskkdoc_DATA) $(libskkimg_DATA): libskk-doc
-$(libskkgtkdoc_DATA): libskk-gtk-doc
+$(libskkdoc_DATA) $(libskkimg_DATA): libskk-doc.stamp
+$(libskkgtkdoc_DATA): libskk-gtk-doc.stamp
 
 valadoc_flags = \
 	--force \
 	--package-version $(PACKAGE_VERSION) \
-	-D VALA_0_16 \
+	--no-protected \
+	--driver "$(shell valac --api-version)" \
 	$(NULL)
 
 # libskk documentation
@@ -70,30 +71,35 @@ valadoc_flags_libskk = \
 	$(libskk_doc_files) \
 	$(NULL)
 
-libskk-doc: $(libskk_doc_files)
+libskk-doc.stamp: $(libskk_doc_files)
 	$(AM_V_GEN)$(VALADOC) \
 		-o libskk/ \
 		--doclet=devhelp \
 		$(valadoc_flags_libskk) \
 		$(NULL)
+	@touch $@
 
-libskk-gtk-doc: $(libskk_doc_files)
+libskk-gtk-doc.stamp: $(libskk_doc_files)
 	$(AM_V_GEN)$(VALADOC) \
 		-X -l -X $(top_builddir)/libskk/.libs/libskk.so \
 		-o gtk-doc/libskk \
 		--doclet=gtkdoc \
 		$(valadoc_flags_libskk) \
 		$(NULL)
+	@touch $@
 
-.PHONY: $(phony_deps)
+stamps = libskk-doc.stamp libskk-gtk-doc.stamp
+
+all: $(stamps)
+
+CLEANFILES = $(stamps)
 
 distclean-local: distclean-docs
 distclean-docs:
 	rm -rf $(distclean_dirs)
 
 GITIGNOREFILES = \
-	libskk/ \
-	gtk-doc/ \
+	$(distclean_dirs) \
 	$(NULL)
 
 -include $(top_srcdir)/git.mk
