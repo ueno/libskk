@@ -40,7 +40,7 @@ namespace Skk {
         }
     }
 
-    static const string[] PERIOD_RULE = {"。、", "．，", "。，", "．、"};
+    const string[] PERIOD_RULE = {"。、", "．，", "。，", "．、"};
 
     class RomKanaNode : Object {
         internal RomKanaEntry? entry;
@@ -188,7 +188,7 @@ namespace Skk {
             }
         }
 
-        static const string[] NN = { "ん", "ン", "ﾝ" };
+        const string[] NN = { "ん", "ン", "ﾝ" };
 
         public RomKanaConverter () {
             try {

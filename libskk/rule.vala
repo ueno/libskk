@@ -157,7 +157,7 @@ namespace Skk {
             string value;
         }
 
-        static const KeymapNameEntry[] keymap_names = {
+        const KeymapNameEntry[] keymap_names = {
             { InputMode.HIRAGANA, "hiragana" },
             { InputMode.KATAKANA, "katakana" },
             { InputMode.HANKAKU_KATAKANA, "hankaku-katakana" },

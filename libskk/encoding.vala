@@ -19,10 +19,10 @@ namespace Skk {
     // XXX: we use Vala string to represent byte array, assuming that
     // it does not contain null element
     class EncodingConverter : Object {
-        static const int BUFSIZ = 4096;
-        static const string INTERNAL_ENCODING = "UTF-8";
+        const int BUFSIZ = 4096;
+        const string INTERNAL_ENCODING = "UTF-8";
 
-        static const Entry<string,string> ENCODING_TO_CODING_SYSTEM_RULE[] = {
+        const Entry<string,string> ENCODING_TO_CODING_SYSTEM_RULE[] = {
             { "UTF-8", "utf-8" },
             { "EUC-JP", "euc-jp" },
             { "Shift_JIS", "shift_jis" },
