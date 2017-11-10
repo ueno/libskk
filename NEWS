@@ -1,3 +1,16 @@
+Noteworthy changes in version 1.0.3 (2017-11-10)
+------------------------------------------------
+
+ * Fix hiragana to katakana conversion in abbrev mode [#41]
+ * Make "commit-unhandled" actually commit in abbrev mode [#39]
+ * Avoid redundant dictionary lookup in non-numeric conversion cases [#36]
+ * Fix KZIK rules [#35, #37]
+ * Fix okuri-ari word registration [#33, #34]
+ * Add command for sticky-shift [#32]
+ * Don't crash when a rule has no default metadata [#31]
+ * Bind C-j to go back to hiragana in AZIK latin [#30]
+ * Build fixes [#42, #43]
+
 Noteworthy changes in version 1.0.2 (2014-09-09)
 ------------------------------------------------
 
@@ -5,7 +18,7 @@ Noteworthy changes in version 1.0.2 (2014-09-09)
  * rules: new ACT09 rule contributed by Naoki Mizuno (Issue#28).
  * Consume key event for "commit" command (Issue#26).  Use
    "commit-unhandled" for the previous behavior.
- * Comsume C-j in abbrev mode (Issue#24).
+ * Consume C-j in abbrev mode (Issue#24).
 
 Noteworthy changes in version 1.0.1 (2013-04-01)
 ------------------------------------------------
