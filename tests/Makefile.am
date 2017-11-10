@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-INCLUDES = -I$(top_srcdir) $(LIBSKK_CFLAGS)
-
 TESTS_ENVIRONMENT =					\
 	G_DEBUG=${G_DEBUG:+"${G_DEBUG},"}gc-friendly	\
 	G_SLICE=${G_SLICE},always-malloc		\
@@ -26,6 +24,7 @@ noinst_PROGRAMS = $(TESTS)
 noinst_HEADERS = common.h
 
 AM_CPPFLAGS =								\
+	-I$(top_srcdir) $(LIBSKK_CFLAGS)				\
 	-DLIBSKK_FILE_DICT=\"$(top_srcdir)/tests/file-dict.dat\"	\
 	-DLIBSKK_CDB_DICT=\"$(top_srcdir)/tests/cdb-dict.dat\"		\
 	$(NULL)
