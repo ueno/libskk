@@ -38,6 +38,8 @@ GITIGNOREFILES =				\
 	mkinstalldirs				\
 	`find "m4" -type f -name "*.m4" ! -name "vala.m4" -print` \
 	$(top_builddir)/lcov.html/*		\
+	$(top_builddir)/docs/gtk-doc		\
+	$(top_builddir)/docs/libskk		\
 	po/Makevars.template			\
 	po/Rules-quot				\
 	po/boldquot.sed				\
@@ -48,6 +50,7 @@ GITIGNOREFILES =				\
 	po/remove-potcdate.sed			\
 	po/remove-potcdate.sin			\
 	po/stamp-po				\
+	test-driver				\
 	$(NULL)
 
 distclean-local:
