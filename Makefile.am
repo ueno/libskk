@@ -22,6 +22,8 @@ if HAVE_VALADOC
 SUBDIRS += docs
 endif
 
+DIST_SUBDIRS = libskk rules tools tests docs po
+
 GITIGNOREFILES =				\
 	ABOUT-NLS				\
 	config.rpath				\
