@@ -19,7 +19,7 @@
 using Gee;
 
 namespace Skk {
-    static const string[] AUTO_START_HENKAN_KEYWORDS = {
+    const string[] AUTO_START_HENKAN_KEYWORDS = {
         "を", "、", "。", "．", "，", "？", "」",
         "！", "；", "：", ")", ";", ":", "）",
         "”", "】", "』", "》", "〉", "｝", "］",
@@ -410,7 +410,7 @@ namespace Skk {
     }
 
     class NoneStateHandler : StateHandler {
-        static const InputModeCommandEntry[] input_mode_commands = {
+        const InputModeCommandEntry[] input_mode_commands = {
             { "set-input-mode-hiragana", InputMode.HIRAGANA },
             { "set-input-mode-katakana", InputMode.KATAKANA },
             { "set-input-mode-hankaku-katakana", InputMode.HANKAKU_KATAKANA },
@@ -710,7 +710,7 @@ namespace Skk {
     }
 
     class StartStateHandler : StateHandler {
-        static const InputModeCommandEntry[] end_preedit_commands = {
+        const InputModeCommandEntry[] end_preedit_commands = {
             { "set-input-mode-hiragana", InputMode.HIRAGANA },
             { "set-input-mode-katakana", InputMode.KATAKANA },
             { "set-input-mode-hankaku-katakana", InputMode.HANKAKU_KATAKANA }

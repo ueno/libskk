@@ -56,7 +56,7 @@ namespace Skk {
          */
         public int64 maxwait = 10000000;
 
-        static const string[] SPECIAL_DOUBLES = {
+        const string[] SPECIAL_DOUBLES = {
             "[fj]", "[gh]", "[dk]", "[LR]"
         };
 

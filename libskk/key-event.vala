@@ -217,7 +217,7 @@ namespace Skk {
             unichar value;
         }
 
-        static const CodeKeyvalEntry[] CODE_KEYVALS = {
+        const CodeKeyvalEntry[] CODE_KEYVALS = {
             { Keysyms.Tab, '\t' },
             { Keysyms.Return, '\n' },
             { Keysyms.BackSpace, '\b' }
@@ -228,7 +228,7 @@ namespace Skk {
             string value;
         }
 
-        static const NameKeyvalEntry[] NAME_KEYVALS = {
+        const NameKeyvalEntry[] NAME_KEYVALS = {
             { Keysyms.Up, "Up" },
             { Keysyms.Down, "Down" },
             { Keysyms.Left, "Left" },
