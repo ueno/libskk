@@ -19,7 +19,8 @@ TESTS_ENVIRONMENT =					\
 	G_SLICE=${G_SLICE},always-malloc		\
 	LIBSKK_DATA_PATH=$(top_srcdir):$(top_srcdir)/tests
 LOG_COMPILER = $(LIBTOOL) --mode=execute $(VALGRIND) $(VALGRIND_OPTS)
-TESTS = rom-kana file-dict user-dict cdb-dict skkserv rule context basic
+check_PROGRAMS = rom-kana file-dict user-dict cdb-dict skkserv rule context basic
+TESTS = $(check_PROGRAMS)
 noinst_PROGRAMS = $(TESTS)
 noinst_HEADERS = common.h
 
