@@ -413,7 +413,6 @@ start_preedit_no_delete (void) {
 
 int
 main (int argc, char **argv) {
-  g_type_init ();
   skk_init ();
   g_test_init (&argc, &argv, NULL);
   g_test_add ("/libskk/input-mode",

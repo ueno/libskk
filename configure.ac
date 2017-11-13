@@ -67,7 +67,7 @@ AC_SUBST([LT_REVISION])
 AC_SUBST([LT_AGE])
 
 # check gio
-PKG_CHECK_MODULES([GIO], [gio-2.0], ,
+PKG_CHECK_MODULES([GIO], [gio-2.0 >= 2.36], ,
   [AC_MSG_ERROR([can't find gio-2.0])])
 
 # check gee
