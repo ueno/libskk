@@ -39,4 +39,4 @@ script:
 
 after_success:
   - docker exec $CONTAINER pip install cpp-coveralls
-  - docker exec $CONTAINER su - user sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp'"
+  - docker exec -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" $CONTAINER sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp'"
