@@ -22,7 +22,7 @@ before_install:
   - docker exec $CONTAINER dnf -y builddep libskk
   - docker exec $CONTAINER dnf -y install libtool make which
   - docker exec $CONTAINER dnf -y install gcc-c++
-  - docker exec $CONTAINER dnf -y install libubsan
+  - docker exec $CONTAINER dnf -y install libasan libubsan
   - docker exec $CONTAINER dnf -y install vala vala-devel
   - docker exec $CONTAINER dnf -y install gnome-common
   - docker exec $CONTAINER dnf -y install python-pip
