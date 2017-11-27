@@ -38,5 +38,8 @@ script:
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && ./configure $BUILD_OPTS"
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && make V=1 && touch po/libskk.pot && make check V=1"
 
+after_failure:
+  - docker exec $CONTAINER su - user sh -c "cd /srcdir && cat tests/test-suite.log"
+
 after_success:
   - if test x"$COVERAGE" = xyes; then docker exec $CONTAINER pip install cpp-coveralls; docker exec -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" $CONTAINER sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp'"; fi
