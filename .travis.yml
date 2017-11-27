@@ -39,4 +39,4 @@ script:
 
 after_success:
   - docker exec $CONTAINER pip install cpp-coveralls
-  - docker exec $CONTAINER su - user sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp' -t $COVERALLS_REPO_TOKEN"
+  - docker exec $CONTAINER su - user sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp'"
