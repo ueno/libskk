@@ -243,7 +243,8 @@ namespace Skk {
             { Keysyms.Page_Down, "Page_Down" },
             { Keysyms.KP_Page_Down, "Page_Down" },
             { Keysyms.Muhenkan, "lshift" },
-            { Keysyms.Henkan, "rshift" }
+            { Keysyms.Henkan, "rshift" },
+            { Keysyms.Escape, "Escape" }
         };
 
         /**
