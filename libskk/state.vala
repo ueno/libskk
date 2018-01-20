@@ -423,15 +423,34 @@ namespace Skk {
         {
             var command = state.lookup_key (key);
             // check abort and commit event
-            if (command == "abort") {
-                bool retval;
+            if (command == "abort" ||
+                command == "abort-to-latin" ||
+                command == "abort-to-latin-passthrough") {
+                bool something_changed;
+                bool allow_passthrough;
                 if (state.rom_kana_converter.preedit.length > 0) {
-                    retval = true;
+                    something_changed = true;
                 } else {
-                    retval = state.recursive_edit_abort ();
+                    something_changed = state.recursive_edit_abort ();
                 }
+                allow_passthrough = !something_changed;
                 state.reset ();
-                return retval;
+                if (command == "abort") {
+                    return something_changed;
+                }
+                // change to latin mode
+                if (state.input_mode != InputMode.LATIN) {
+                    state.input_mode = InputMode.LATIN;
+                    // this change doesn't affect `should_passthrough`
+                    something_changed = true;
+                }
+                // if nothing changed by "abort-to-latin-passthrough" command,
+                // let key event pass through
+                if (command == "abort-to-latin-passthrough" &&
+                    allow_passthrough) {
+                    return false;
+                }
+                return something_changed;
             } else if (command == "commit" ||
                        command == "commit-unhandled") {
                 bool retval;
@@ -613,7 +632,9 @@ namespace Skk {
                                                   ref KeyEvent key)
         {
             var command = state.lookup_key (key);
-            if (command == "abort") {
+            if (command == "abort" ||
+                command == "abort-to-latin" ||
+                command == "abort-to-latin-passthrough") {
                 state.reset ();
                 return true;
             }
@@ -660,7 +681,9 @@ namespace Skk {
                                                   ref KeyEvent key)
         {
             var command = state.lookup_key (key);
-            if (command == "abort") {
+            if (command == "abort" ||
+                command == "abort-to-latin" ||
+                command == "abort-to-latin-passthrough") {
                 state.reset ();
                 return true;
             }
@@ -720,7 +743,9 @@ namespace Skk {
                                                   ref KeyEvent key)
         {
             var command = state.lookup_key (key);
-            if (command == "abort") {
+            if (command == "abort" ||
+                command == "abort-to-latin" ||
+                command == "abort-to-latin-passthrough") {
                 state.reset ();
                 return true;
             }
@@ -1000,7 +1025,9 @@ namespace Skk {
                 }
                 return true;
             }
-            else if (command == "abort") {
+            else if (command == "abort" ||
+                     command == "abort-to-latin" ||
+                     command == "abort-to-latin-passthrough") {
                 state.candidates.clear ();
                 state.cancel_okuri ();
                 state.handler_type = typeof (StartStateHandler);
