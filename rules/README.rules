@@ -104,7 +104,7 @@ The current available commands are:
 abbrev
 abort
 abort-to-latin
-abort-to-latin-passthrough
+abort-to-latin-unhandled
 commit
 commit-unhandled
 complete
