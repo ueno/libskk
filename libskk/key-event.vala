@@ -242,8 +242,8 @@ namespace Skk {
             { Keysyms.KP_Page_Up, "Page_Up" },
             { Keysyms.Page_Down, "Page_Down" },
             { Keysyms.KP_Page_Down, "Page_Down" },
-            { Keysyms.Muhenkan, "Muhenkan" },
-            { Keysyms.Henkan, "Henkan" },
+            { Keysyms.Muhenkan, "lshift" },
+            { Keysyms.Henkan, "rshift" },
             { Keysyms.Escape, "Escape" }
         };
 
