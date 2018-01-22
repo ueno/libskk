@@ -1,0 +1,11 @@
+{
+    "include": [
+        "default/hiragana"
+    ],
+    "define": {
+        "keymap": {
+            "C-l": "abort-to-latin",
+            "Q": "abort-to-latin-unhandled"
+        }
+    }
+}
