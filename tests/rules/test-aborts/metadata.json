@@ -1,0 +1,4 @@
+{
+    "name": "abort-to-latin* test rule",
+    "description": "Test case for abort-to-latin and abort-to-latin-unhandled"
+}

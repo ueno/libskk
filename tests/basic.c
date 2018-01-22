@@ -449,6 +449,52 @@ inherit_typing_rule_for_dict_edit (void) {
   destroy_context (context);
 }
 
+static void
+abort_to_latin_commands (void) {
+  SkkContext *context;
+  GError *error;
+  SkkRule *rule;
+  SkkTransition transitions[] = {
+    // abort-to-latin: Test cases with no discarded inputs.
+    // In these cases, input mode should be changed to latin mode.
+    { SKK_INPUT_MODE_HIRAGANA, "C-l", "", "", SKK_INPUT_MODE_LATIN },
+    { SKK_INPUT_MODE_HIRAGANA, "a C-l", "", "あ", SKK_INPUT_MODE_LATIN },
+    // abort-to-latin: Test cases with discarded inputs.
+    // In these cases, the behaviour of `abort-to-latin` should be same as `abort`.
+    { SKK_INPUT_MODE_HIRAGANA, "A C-l", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P C-l", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P o p C-l", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P o p o", "▽ぽぽ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P o p o SPC C-l", "▽ぽぽ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P o p o C-l", "", "", SKK_INPUT_MODE_HIRAGANA },
+    // abort-to-latin-unhandled: Test cases with no discarded inputs.
+    // In these cases, input mode should be changed to latin mode.
+    // Note: While these tests cannot represent, the key event will be
+    //       propageted because it is "unhandled" by libskk.
+    //       This enables "vi-cooperative" Escape key behaviour for example.
+    { SKK_INPUT_MODE_HIRAGANA, "Q", "", "", SKK_INPUT_MODE_LATIN },
+    { SKK_INPUT_MODE_HIRAGANA, "a Q", "", "あ", SKK_INPUT_MODE_LATIN },
+    // abort-to-latin-unhandled: Test cases with discarded inputs.
+    // These should be exactly the same behaviour as `abort-to-latin`.
+    { SKK_INPUT_MODE_HIRAGANA, "A Q", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P Q", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P o p Q", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P o p o", "▽ぽぽ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P o p o SPC Q", "▽ぽぽ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P o p o Q", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { 0, NULL }
+  };
+
+  context = create_context (TRUE, TRUE);
+  error = NULL;
+  rule = skk_rule_new ("test-aborts", &error);
+  g_assert_no_error (error);
+  skk_context_set_typing_rule (context, rule);
+  g_object_unref (rule);
+  check_transitions (context, transitions);
+  destroy_context (context);
+}
+
 int
 main (int argc, char **argv) {
   skk_init ();
@@ -496,5 +542,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/surrounding", surrounding);
   g_test_add_func ("/libskk/start_preedit_no_delete", start_preedit_no_delete);
   g_test_add_func ("/libskk/inherit_typing_rule_for_dict_edit", inherit_typing_rule_for_dict_edit);
+  g_test_add_func ("/libskk/abort_to_latin_commands", abort_to_latin_commands);
   return g_test_run ();
 }
