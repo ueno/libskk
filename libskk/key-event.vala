@@ -159,6 +159,18 @@ namespace Skk {
                     name = key;
                     code = name.char_count () == 1 ? name.get_char () : '\0';
                 }
+                // FIXME: Temporary workaround to enable `Muhenkan` and `Henkan`
+                //        keysyms in typing rule files.
+                //        These will be interpreted as "lshift" and "rshift", respectively.
+                //        See the comment of `NAME_KEYVALS` constant and
+                //        <https://github.com/ueno/libskk/pull/47#pullrequestreview-90426727>.
+                if (name == "Muhenkan") {
+                    name = "lshift";
+                    assert (code == '\0');
+                } else if (name == "Henkan") {
+                    name = "rshift";
+                    assert (code == '\0');
+                }
             }
         }
 
@@ -242,6 +254,9 @@ namespace Skk {
             { Keysyms.KP_Page_Up, "Page_Up" },
             { Keysyms.Page_Down, "Page_Down" },
             { Keysyms.KP_Page_Down, "Page_Down" },
+            // NICOLA wants "lshift" and "rshift" keysyms.
+            // See <https://github.com/ueno/libskk/pull/47#pullrequestreview-90426727>
+            // for detail.
             { Keysyms.Muhenkan, "lshift" },
             { Keysyms.Henkan, "rshift" },
             { Keysyms.Escape, "Escape" }
