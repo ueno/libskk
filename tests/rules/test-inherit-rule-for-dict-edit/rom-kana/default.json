@@ -1,0 +1,8 @@
+{
+    "include": ["default/default"],
+    "define": {
+        "rom-kana": {
+            "pgo": ["", "ぽよ"]
+        }
+    }
+}

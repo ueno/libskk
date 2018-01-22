@@ -411,6 +411,44 @@ start_preedit_no_delete (void) {
   destroy_context (context);
 }
 
+static void
+inherit_typing_rule_for_dict_edit (void) {
+  SkkContext *context;
+  GError *error;
+  SkkRule *rule;
+  SkkTransition transitions[] = {
+    // Custom rom-kana rule.
+    { SKK_INPUT_MODE_HIRAGANA, "p g o", "", "ぽよ", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "P g o", "▽ぽよ", "", SKK_INPUT_MODE_HIRAGANA },
+    // Custom keymap (`C-a` to "abort").
+    { SKK_INPUT_MODE_HIRAGANA, "P g o C-a", "", "", SKK_INPUT_MODE_HIRAGANA },
+    // Ensure no words registered.
+    { SKK_INPUT_MODE_HIRAGANA, "P g o SPC", "▼ぽよ【】", "", SKK_INPUT_MODE_HIRAGANA },
+    // Custom keymap `C-a` in dict edit.
+    { SKK_INPUT_MODE_HIRAGANA, "P g o SPC C-a", "▽ぽよ", "", SKK_INPUT_MODE_HIRAGANA },
+    // Custom rom-kana rule in dict edit.
+    { SKK_INPUT_MODE_HIRAGANA, "P g o SPC p g o", "▼ぽよ【ぽよ】", "", SKK_INPUT_MODE_HIRAGANA },
+    // Custom rom-kana rule in dict edit.
+    { SKK_INPUT_MODE_HIRAGANA, "P g o SPC P g o", "▼ぽよ【▽ぽよ】", "", SKK_INPUT_MODE_HIRAGANA },
+    // Custom keymap `C-a` in nested dict edit.
+    { SKK_INPUT_MODE_HIRAGANA, "P g o SPC P g o SPC C-a", "▼ぽよ【▽ぽよ】", "", SKK_INPUT_MODE_HIRAGANA },
+    // Custom keymap `C-a` in dict edit.
+    { SKK_INPUT_MODE_HIRAGANA, "P g o SPC P g o C-a", "▼ぽよ【】", "", SKK_INPUT_MODE_HIRAGANA },
+    // Custom keymap `C-a` in dict edit.
+    { SKK_INPUT_MODE_HIRAGANA, "P g o SPC P g o C-a C-a", "▽ぽよ", "", SKK_INPUT_MODE_HIRAGANA },
+    { 0, NULL }
+  };
+
+  context = create_context (TRUE, TRUE);
+  error = NULL;
+  rule = skk_rule_new ("test-inherit-rule-for-dict-edit", &error);
+  g_assert_no_error (error);
+  skk_context_set_typing_rule (context, rule);
+  g_object_unref (rule);
+  check_transitions (context, transitions);
+  destroy_context (context);
+}
+
 int
 main (int argc, char **argv) {
   skk_init ();
@@ -457,5 +495,6 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/candidate-list", candidate_list);
   g_test_add_func ("/libskk/surrounding", surrounding);
   g_test_add_func ("/libskk/start_preedit_no_delete", start_preedit_no_delete);
+  g_test_add_func ("/libskk/inherit_typing_rule_for_dict_edit", inherit_typing_rule_for_dict_edit);
   return g_test_run ();
 }
