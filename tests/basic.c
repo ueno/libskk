@@ -140,6 +140,8 @@ static SkkTransition hankaku_katakana_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "C-q n o b a - s u", "", "ﾉﾊﾞｰｽ", SKK_INPUT_MODE_HANKAKU_KATAKANA },
     { SKK_INPUT_MODE_HIRAGANA, "C-q [ ]", "", "｢｣", SKK_INPUT_MODE_HANKAKU_KATAKANA },
     { SKK_INPUT_MODE_HIRAGANA, "C-q z /", "", "･", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HANKAKU_KATAKANA, "A SPC", "▼阿", "", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HANKAKU_KATAKANA, "A w o C-j", "", "阿ｦ", SKK_INPUT_MODE_HANKAKU_KATAKANA },
     { 0, NULL }
   };
 
