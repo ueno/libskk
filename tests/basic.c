@@ -48,6 +48,7 @@ static SkkTransition rom_kana_transitions[] =
     { SKK_INPUT_MODE_KATAKANA, "V u q", "", "う゛", SKK_INPUT_MODE_KATAKANA },
     { SKK_INPUT_MODE_HIRAGANA, "Q n q", "", "ン", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "Q Q", "▽", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "N o b a - s u C-q", "", "ﾉﾊﾞｰｽ", SKK_INPUT_MODE_HIRAGANA },
     /* Issue#9 */
     { SKK_INPUT_MODE_HIRAGANA, "n SPC", "", "ん ", SKK_INPUT_MODE_HIRAGANA },
     /* ibus-skk Issue#36 */
@@ -136,6 +137,9 @@ static SkkTransition delete_transitions[] =
 static SkkTransition hankaku_katakana_transitions[] =
   {
     { SKK_INPUT_MODE_HIRAGANA, "C-q Z e n k a k u", "▽ｾﾞﾝｶｸ", "", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HIRAGANA, "C-q n o b a - s u", "", "ﾉﾊﾞｰｽ", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HIRAGANA, "C-q [ ]", "", "｢｣", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HIRAGANA, "C-q z /", "", "･", SKK_INPUT_MODE_HANKAKU_KATAKANA },
     { 0, NULL }
   };
 
