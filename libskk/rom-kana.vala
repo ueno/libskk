@@ -254,7 +254,10 @@ namespace Skk {
                 if (index >= 0) {
                     index = PERIOD_RULE[period_style].index_of_nth_char (index);
                     unichar period = PERIOD_RULE[period_style].get_char (index);
-                    _output.append_unichar (period);
+                    string kana_period = Util.convert_by_input_mode(
+                        period.to_string(),
+                        (InputMode)kana_mode);
+                    _output.append (kana_period);
                     _preedit.erase ();
                     current_node = rule.root_node;
                     return true;
