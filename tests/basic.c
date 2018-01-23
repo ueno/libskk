@@ -139,8 +139,12 @@ static SkkTransition hankaku_katakana_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "C-q Z e n k a k u", "▽ｾﾞﾝｶｸ", "", SKK_INPUT_MODE_HANKAKU_KATAKANA },
     { SKK_INPUT_MODE_HIRAGANA, "C-q n o b a - s u", "", "ﾉﾊﾞｰｽ", SKK_INPUT_MODE_HANKAKU_KATAKANA },
     { SKK_INPUT_MODE_HIRAGANA, "C-q [ ]", "", "｢｣", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HIRAGANA, "C-q , .", "", "､｡", SKK_INPUT_MODE_HANKAKU_KATAKANA },
     { SKK_INPUT_MODE_HIRAGANA, "C-q z /", "", "･", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    // Test cases for henkan auto-start and punctuation conversion of hankaku katakana.
     { SKK_INPUT_MODE_HANKAKU_KATAKANA, "A SPC", "▼阿", "", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HANKAKU_KATAKANA, "A , o", "", "阿､ｵ", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HANKAKU_KATAKANA, "A . o", "", "阿｡ｵ", SKK_INPUT_MODE_HANKAKU_KATAKANA },
     { SKK_INPUT_MODE_HANKAKU_KATAKANA, "A w o C-j", "", "阿ｦ", SKK_INPUT_MODE_HANKAKU_KATAKANA },
     { 0, NULL }
   };
