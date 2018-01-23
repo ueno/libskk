@@ -54,12 +54,7 @@ context_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 basic_SOURCES = basic.c common.c
 basic_LDADD = $(top_builddir)/libskk/libskk.la $(LIBSKK_LIBS)
 
-nobase_check_DATA =				\
-	rules/test-sticky/metadata.json		\
-	rules/test-sticky/keymap/hiragana.json	\
-	rules/test-sticky/rom-kana/default.json
-
-EXTRA_DIST = file-dict.dat cdb-dict.dat $(nobase_check_DATA)
+EXTRA_DIST = file-dict.dat cdb-dict.dat rules
 CLEANFILES = user-dict.dat valgrind.log.*
 
 -include $(top_srcdir)/git.mk
