@@ -505,8 +505,14 @@ namespace Skk {
          */
         public bool process_key_event (KeyEvent key) {
             KeyEvent? _key = key_event_filter.filter_key_event (key);
-            if (_key == null)
-                return true;
+            if (_key == null) {
+                // Let key release events pass through when not editing
+                // dictionary, because they would be necessary for some
+                // web applications to correctly handle key events when
+                // focused to text box.
+                return ((key.modifiers & ModifierType.RELEASE_MASK) == 0 &&
+                        dict_edit_level () == 0);
+            }
             return process_key_event_internal (_key);
         }
 
