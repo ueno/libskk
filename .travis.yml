@@ -5,7 +5,7 @@ language: c
 env:
   - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64"
   - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 --enable-docs" DOCS=yes EXTRA_PKGS="gtk-doc valadoc valadoc-devel"
-  - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 --enable-code-coverage" COVERAGE=yes
+  - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 --enable-code-coverage" COVERAGE=yes EXTRA_PKGS="python-pip"
   - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'" EXTRA_PKGS="libasan"
   - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'" EXTRA_PKGS="libubsan"
 
@@ -21,7 +21,7 @@ before_install:
   - export CONTAINER=$(docker run -d fedora sleep 1800)
   - docker exec $CONTAINER dnf -y install 'dnf-command(builddep)'
   - docker exec $CONTAINER dnf -y builddep libskk
-  - docker exec $CONTAINER dnf -y install libtool make which gcc-c++ vala vala-devel python-pip git $EXTRA_PKGS
+  - docker exec $CONTAINER dnf -y install libtool make which gcc-c++ vala vala-devel git $EXTRA_PKGS
   - docker exec $CONTAINER useradd user
 
 install:
@@ -38,13 +38,13 @@ after_failure:
 
 after_success:
   - if test x"$COVERAGE" = xyes; then docker exec $CONTAINER pip install cpp-coveralls; docker exec -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" $CONTAINER sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp'"; fi
-  - if test x"$DOCS" = xyes; then docker cp $CONTAINER:/srcdir/docs docs-generated; fi
+  - if test x"$DOCS" = xyes; then docker exec $CONTAINER ls -R /srcdir/docs; docker cp $CONTAINER:/srcdir/docs ./docs-generated; fi
 
 deploy:
   provider: pages
   skip-cleanup: true
   github-token: $GITHUB_TOKEN
-  local-dir: docs-generated
+  local-dir: "./docs-generated"
   on:
     branch: master
     condition: $DOCS = yes
