@@ -34,13 +34,13 @@ after_failure:
 
 after_success:
   - if test x"$COVERAGE" = xyes; then docker exec $CONTAINER pip install cpp-coveralls; docker exec -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" $CONTAINER sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp'"; fi
-  - if test x"$DOCS" = xyes; then docker exec $CONTAINER ls -R /srcdir/docs; docker cp $CONTAINER:/srcdir ./docs-generated; ls -R ./docs-generated; fi
+  - if test x"$DOCS" = xyes; then docker exec $CONTAINER ls -R /srcdir/docs; docker cp $CONTAINER:/srcdir/docs/gtk-doc/libskk dist; ls -R dist; fi
 
 deploy:
   provider: pages
   skip_cleanup: true
-  github-token: $GITHUB_TOKEN
-  local_dir: "./docs-generated"
+  github_token: $GITHUB_TOKEN
+  local_dir: dist
   on:
     branch: master
     condition: $DOCS = yes
