@@ -24,8 +24,8 @@ Documentation
 
 * [Basic usage](https://github.com/ueno/libskk/blob/master/tests/context.c)
 * [Keymap and Romaji-to-Kana table customization](https://github.com/ueno/libskk/blob/master/rules/README.rules)
-* [Vala binding reference](http://du-a.org/docs/libskk/libskk/)
-* [C binding reference](http://du-a.org/docs/gtk-doc/libskk/html/)
+* [Vala binding reference](https://ueno.github.io/libskk/vala/)
+* [C binding reference](https://ueno.github.io/libskk/c/)
 
 Test
 ------
