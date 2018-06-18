@@ -33,8 +33,15 @@ after_failure:
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && cat tests/test-suite.log"
 
 after_success:
-  - if test x"$COVERAGE" = xyes; then docker exec $CONTAINER pip install cpp-coveralls; docker exec -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" $CONTAINER sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp'"; fi
-  - if test x"$DOCS" = xyes; then docker exec $CONTAINER ls -R /srcdir/docs; docker cp $CONTAINER:/srcdir/docs/gtk-doc/libskk dist; ls -R dist; fi
+  -| if test x"$COVERAGE" = xyes; then
+         docker exec $CONTAINER pip install cpp-coveralls
+         docker exec -e TRAVIS_JOB_ID="$TRAVIS_JOB_ID" -e TRAVIS_BRANCH="$TRAVIS_BRANCH" $CONTAINER sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp'"
+     fi
+  -| if test x"$DOCS" = xyes; then
+         mkdir dist
+         docker cp $CONTAINER:/srcdir/docs/libskk/libskk dist/vala
+         docker cp $CONTAINER:/srcdir/docs/gtk-doc/libskk/html dist/c
+     fi
 
 deploy:
   provider: pages
