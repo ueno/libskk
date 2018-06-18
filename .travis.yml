@@ -47,4 +47,4 @@ deploy:
   local-dir: docs
   on:
     branch: master
-    condition: "$DOCS" = yes
+    condition: $DOCS = yes
