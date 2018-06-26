@@ -1,3 +1,14 @@
+Noteworthy changes in version 1.0.4 (2018-06-26)
+------------------------------------------------
+
+ * Don't consume key release events [#52]
+ * Improve hankaku katakana conversion [#51]
+ * Use the same typing rule in dict-edit mode [#50]
+ * Add `abort-to-latin` and `abort-to-latin-unhandled` command [#48]
+ * Add more z-* shortcuts from DDSKK
+ * Fix memory leak caused by Vala array conversion
+ * Bump build requirements (glib >= 2.36, valadoc >= 0.40)
+
 Noteworthy changes in version 1.0.3 (2017-11-10)
 ------------------------------------------------
 
