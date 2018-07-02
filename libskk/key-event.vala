@@ -106,59 +106,96 @@ namespace Skk {
          * @return a new KeyEvent
          */
         public KeyEvent.from_string (string key) throws KeyEventFormatError {
-            if (key.has_prefix ("(") && key.has_suffix (")")) {
+            ModifierType _modifiers = 0;
+            uint _keyval = Keysyms.VoidSymbol;
+            if (key.has_prefix ("(usleep ") && key.has_suffix (")")) {
+                // special key event for SKK-NICOLA
+                var strv = key[1:-1].split (" ");
+                if (strv.length != 2) {
+                    throw new KeyEventFormatError.PARSE_FAILED (
+                        "usleep requires duration");
+                }
+                name = strv[1];
+                code = '\0';
+                modifiers |= ModifierType.USLEEP_MASK;
+            } else if (key.has_prefix ("(") && key.has_suffix (")")) {
                 var strv = key[1:-1].split (" ");
                 int index = 0;
                 for (; index < strv.length - 1; index++) {
-                    if (strv[index] == "control") {
-                        modifiers |= ModifierType.CONTROL_MASK;
+                    if (strv[index] == "shift") {
+                        _modifiers |= ModifierType.SHIFT_MASK;
+                    } else if (strv[index] == "control") {
+                        _modifiers |= ModifierType.CONTROL_MASK;
                     } else if (strv[index] == "meta") {
-                        modifiers |= ModifierType.META_MASK;
+                        _modifiers |= ModifierType.META_MASK;
                     } else if (strv[index] == "hyper") {
-                        modifiers |= ModifierType.HYPER_MASK;
+                        _modifiers |= ModifierType.HYPER_MASK;
                     } else if (strv[index] == "super") {
-                        modifiers |= ModifierType.SUPER_MASK;
+                        _modifiers |= ModifierType.SUPER_MASK;
                     } else if (strv[index] == "alt") {
-                        modifiers |= ModifierType.MOD1_MASK;
+                        _modifiers |= ModifierType.MOD1_MASK;
                     } else if (strv[index] == "lshift") {
-                        modifiers |= ModifierType.LSHIFT_MASK;
+                        _modifiers |= ModifierType.LSHIFT_MASK;
                     } else if (strv[index] == "rshift") {
-                        modifiers |= ModifierType.RSHIFT_MASK;
-                    } else if (strv[index] == "usleep") {
-                        modifiers |= ModifierType.USLEEP_MASK;
+                        _modifiers |= ModifierType.RSHIFT_MASK;
                     } else if (strv[index] == "release") {
-                        modifiers |= ModifierType.RELEASE_MASK;
+                        _modifiers |= ModifierType.RELEASE_MASK;
                     } else {
                         throw new KeyEventFormatError.PARSE_FAILED (
                             "unknown modifier %s", strv[index]);
                     }
                 }
-                name = strv[index];
-                code = name.char_count () == 1 ? name.get_char () : '\0';
-            }
-            else {
+                // special key event for SKK-NICOLA
+                if (strv[index] == "lshift" || strv[index] == "rshift") {
+                    name = strv[index];
+                    code = '\0';
+                    modifiers = ModifierType.NONE;
+                } else {
+                    _keyval = KeyEventUtils.keyval_from_name (strv[index]);
+                    if (_keyval == Keysyms.VoidSymbol)
+                        throw new KeyEventFormatError.PARSE_FAILED (
+                            "unknown keyval %s", strv[index]);
+                    name = KeyEventUtils.keyval_name (_keyval);
+                    code = KeyEventUtils.keyval_unicode (_keyval);
+                    modifiers = _modifiers;
+                }
+            } else if (key.has_prefix ("[") && key.has_suffix ("]") &&
+                       key.char_count () == 4) {
+                // special double key press events (SKK-NICOLA extension)
+                name = key;
+                code = '\0';
+                modifiers = ModifierType.NONE;
+            } else {
                 int index = key.last_index_of ("-");
+                string? _name = null;
                 if (index > 0) {
                     // support only limited modifiers in this form
                     string[] mods = key.substring (0, index).split ("-");
                     foreach (var mod in mods) {
-                        if (mod == "C") {
-                            modifiers |= ModifierType.CONTROL_MASK;
+                        if (mod == "S") {
+                            _modifiers |= ModifierType.SHIFT_MASK;
+                        } else if (mod == "C") {
+                            _modifiers |= ModifierType.CONTROL_MASK;
                         } else if (mod == "A") {
-                            modifiers |= ModifierType.MOD1_MASK;
+                            _modifiers |= ModifierType.MOD1_MASK;
                         } else if (mod == "M") {
-                            modifiers |= ModifierType.META_MASK;
+                            _modifiers |= ModifierType.META_MASK;
                         } else if (mod == "G") {
-                            modifiers |= ModifierType.MOD5_MASK;
+                            _modifiers |= ModifierType.MOD5_MASK;
                         }
                     }
-                    name = key.substring (index + 1);
-                    code = name.char_count () == 1 ? name.get_char () : '\0';
+                    _name = key.substring (index + 1);
                 } else {
-                    modifiers = ModifierType.NONE;
-                    name = key;
-                    code = name.char_count () == 1 ? name.get_char () : '\0';
+                    _modifiers = ModifierType.NONE;
+                    _name = key;
                 }
+                _keyval = KeyEventUtils.keyval_from_name (_name);
+                if (_keyval == Keysyms.VoidSymbol)
+                    throw new KeyEventFormatError.PARSE_FAILED (
+                        "unknown keyval %s", _name);
+                name = KeyEventUtils.keyval_name (_keyval);
+                code = KeyEventUtils.keyval_unicode (_keyval);
+                modifiers = _modifiers;
             }
         }
 
@@ -215,37 +252,6 @@ namespace Skk {
             }
         }
 
-        // We can't use Entry<uint,*> here because of Vala bug:
-        // https://bugzilla.gnome.org/show_bug.cgi?id=684262
-        struct CodeKeyvalEntry {
-            uint key;
-            unichar value;
-        }
-
-        const CodeKeyvalEntry[] CODE_KEYVALS = {
-            { Keysyms.Tab, '\t' },
-            { Keysyms.Return, '\n' },
-            { Keysyms.BackSpace, '\b' }
-        };
-
-        struct NameKeyvalEntry {
-            uint key;
-            string value;
-        }
-
-        const NameKeyvalEntry[] NAME_KEYVALS = {
-            { Keysyms.Up, "Up" },
-            { Keysyms.Down, "Down" },
-            { Keysyms.Left, "Left" },
-            { Keysyms.Right, "Right" },
-            { Keysyms.Page_Up, "Page_Up" },
-            { Keysyms.KP_Page_Up, "Page_Up" },
-            { Keysyms.Page_Down, "Page_Down" },
-            { Keysyms.KP_Page_Down, "Page_Down" },
-            { Keysyms.Muhenkan, "lshift" },
-            { Keysyms.Henkan, "rshift" }
-        };
-
         /**
          * Create a key event from an X keysym and modifiers.
          *
@@ -256,27 +262,9 @@ namespace Skk {
          */
         public KeyEvent.from_x_keysym (uint keyval,
                                        ModifierType modifiers) throws KeyEventFormatError {
-            foreach (var entry in NAME_KEYVALS) {
-                if (entry.key == keyval) {
-                    name = entry.value;
-                    break;
-                }
-            }
-            foreach (var entry in CODE_KEYVALS) {
-                if (entry.key == keyval) {
-                    code = entry.value;
-                    break;
-                }
-            }
-            assert (name == null || code == '\0');
-            if (name == null && code == '\0') {
-                if (0x20 <= keyval && keyval < 0x7F) {
-                    code = (unichar) keyval;
-                } else {
-                    throw new KeyEventFormatError.KEYSYM_NOT_FOUND (
-                        "unknown keysym %u", keyval);
-                }
-            }
+            name = KeyEventUtils.keyval_name (keyval);
+            code = KeyEventUtils.keyval_unicode (keyval);
+
             this.modifiers = modifiers;
         }
 

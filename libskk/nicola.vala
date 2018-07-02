@@ -91,11 +91,11 @@ namespace Skk {
         }
 
         static bool is_lshift (KeyEvent key) {
-            return key.name == "lshift";
+            return key.name == "lshift" || key.name == "Muhenkan";
         }
 
         static bool is_rshift (KeyEvent key) {
-            return key.name == "rshift";
+            return key.name == "rshift" || key.name == "Henkan";
         }
 
         static bool is_shift (KeyEvent key) {
@@ -180,9 +180,9 @@ namespace Skk {
         }
 
         void apply_shift (KeyEvent s, KeyEvent c) {
-            if (s.name == "lshift") {
+            if (is_lshift (s)) {
                 c.modifiers |= ModifierType.LSHIFT_MASK;
-            } else if (s.name == "rshift") {
+            } else if (is_rshift (s)) {
                 c.modifiers |= ModifierType.RSHIFT_MASK;
             }
         }

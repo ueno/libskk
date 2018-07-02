@@ -31,6 +31,7 @@ libskk_la_VALAFLAGS =						\
 	--pkg gee-0.8						\
 	--pkg posix						\
 	--pkg json-glib-1.0					\
+	--pkg xkbcommon						\
 	--internal-vapi skk-internals-@SKK_API_VERSION@.vapi	\
 	--library skk-@SKK_API_VERSION@				\
 	--gir Skk-@SKK_API_VERSION@.gir				\
@@ -112,6 +113,6 @@ pkgconfig_DATA = libskk.pc
 vapi_DATA = skk-1.0.vapi skk-1.0.deps
 vapidir = $(datadir)/vala/vapi
 
-EXTRA_DIST = config.vapi skk-1.0.deps libskk.symbols
+EXTRA_DIST = config.vapi skk-1.0.deps libskk.symbols xkbcommon.vapi
 
 -include $(top_srcdir)/git.mk
