@@ -110,12 +110,8 @@ AC_ARG_ENABLE([docs],
               [enable_docs=$enableval], [enable_docs=no])
 AM_CONDITIONAL([ENABLE_DOCS], [test x$enable_docs = xyes])
 
-VALADOC_REQUIRED=0.3.1
-
 have_valadoc=no
 if test x$enable_docs = xyes; then
-  # make sure the library is new enough and the program exists
-  PKG_CHECK_MODULES([VALADOC], [valadoc-0.40 >= $VALADOC_REQUIRED])
   AC_PATH_PROG([VALADOC], [valadoc], [:])
   AS_IF([test "$VALADOC" != :], have_valadoc=yes)
 fi
