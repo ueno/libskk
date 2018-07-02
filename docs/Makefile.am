@@ -62,6 +62,7 @@ libskk_doc_deps = \
 	gee-0.8 \
 	posix \
 	json-glib-1.0 \
+	xkbcommon \
 	$(NULL)
 valadoc_flags_libskk = \
 	$(valadoc_flags) \

@@ -494,4 +494,70 @@ namespace Skk {
             _length = stat.st_size;
         }
     }
+
+    abstract class KeyEventUtils : Object {
+        public static string? keyval_name (uint keyval) {
+            uint8[] buffer = new uint8[64];
+            int ret = -1;
+
+            do {
+                ret = Xkb.keysym_get_name ((uint32) keyval, buffer);
+                if (ret == -1)
+                    return null;
+                if (ret < buffer.length)
+                    return (string) buffer;
+                buffer = new uint8[buffer.length * 2];
+            } while (ret >= buffer.length);
+
+            return null;
+        }
+
+        public static uint keyval_from_name (string name) {
+            // special cases for compatibilty with older libskk
+            if (name == " ")
+                name = "space";
+            else if (name == "\t")
+                name = "Tab";
+            else if (name == "\n")
+                name = "Return";
+            else if (name == "\b")
+                name = "BackSpace";
+
+            var keysym = Xkb.keysym_from_name (name, Xkb.KeysymFlags.NO_FLAGS);
+            if (keysym == Xkb.Keysym.NoSymbol) {
+                // handle ASCII keyvals with differnet name (e.g. at,
+                // percent, etc.)
+                if (name.char_count () == 1) {
+                    unichar code = name.get_char ();
+                    if (0x20 <= code && code < 0x7F)
+                        return code;
+                }
+                return Keysyms.VoidSymbol;
+            }
+            return (uint) keysym;
+        }
+
+        public static unichar keyval_unicode (uint keyval) {
+            // handle ASCII keyvals with differnet name (e.g. at,
+            // percent, etc.)
+            if (0x20 <= keyval && keyval < 0x7F)
+                return keyval;
+
+            // special case
+            if (keyval == Keysyms.yen)
+                return "\xc2\xa5".get_char ();
+
+            uint8[] buffer = new uint8[8];
+            int ret = -1;
+
+            do {
+                ret = Xkb.keysym_to_utf8 ((uint32) keyval, buffer);
+                if (ret == 0)
+                    return '\0';
+                buffer = new uint8[buffer.length * 2];
+            } while (ret == -1);
+
+            return '\0';
+        }
+    }
 }
