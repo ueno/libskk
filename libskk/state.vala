@@ -745,6 +745,11 @@ namespace Skk {
                                                   ref KeyEvent key)
         {
             var command = state.lookup_key (key);
+
+            // if no command nor code is assigned to key, we can't proceed
+            if (command == null && key.code == 0)
+                return true;
+
             if (command == "abort" ||
                 command == "abort-to-latin" ||
                 command == "abort-to-latin-unhandled") {
@@ -976,6 +981,11 @@ namespace Skk {
                                                   ref KeyEvent key)
         {
             var command = state.lookup_key (key);
+
+            // if no command nor code is assigned to key, we can't proceed
+            if (command == null && key.code == 0)
+                return true;
+
             if (command == "previous-candidate") {
                 if (!state.candidates.previous ()) {
                     state.candidates.clear ();

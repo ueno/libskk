@@ -57,6 +57,7 @@ static SkkTransition rom_kana_transitions[] =
     { SKK_INPUT_MODE_LATIN, "a \t", "", "a", SKK_INPUT_MODE_LATIN },
     /* Issue#11 */
     { SKK_INPUT_MODE_HIRAGANA, "q s a n S y a", "▽シャ", "サン", SKK_INPUT_MODE_KATAKANA },
+    { SKK_INPUT_MODE_HIRAGANA, "H o h Control_L a a a a a", "▽ほはああああ", "", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
@@ -78,6 +79,7 @@ static SkkTransition okuri_nasi_transitions[] =
     { SKK_INPUT_MODE_KATAKANA, "K a n j i SPC q", "", "漢字", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "N A N A", "▼な*んあ【】", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "N A N a", "▼な*な【】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A o SPC Control_L", "▼青", "", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
