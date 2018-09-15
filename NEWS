@@ -1,3 +1,8 @@
+Noteworthy changes in version 1.0.5 (2018-09-15)
+------------------------------------------------
+
+ * build: Use libxkbcommon to resolve keysyms [#54]
+
 Noteworthy changes in version 1.0.4 (2018-06-26)
 ------------------------------------------------
 
