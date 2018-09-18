@@ -27,6 +27,34 @@ Documentation
 * [Vala binding reference](https://ueno.github.io/libskk/vala/)
 * [C binding reference](https://ueno.github.io/libskk/c/)
 
+Compile (macOS Darwin)
+------
+Install the build tools
+
+```
+brew install automake
+brew install libtool
+brew install gettext
+brew install vala
+```
+
+and add `gettext` to the path
+
+```
+vi ~/.bash_profile
+export PATH=${PATH}:/usr/local/opt/gettext/bin
+```
+
+Install the libraries
+
+```
+brew install libgee
+brew install json-glib
+brew install libxkbcommon
+```
+
+Now run `make`.
+
 Test
 ------
 ```
