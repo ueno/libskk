@@ -31,7 +31,7 @@ Compile (macOS Darwin)
 ------
 Install the build tools
 
-```
+```bash
 brew install automake
 brew install libtool
 brew install gettext
@@ -40,20 +40,28 @@ brew install vala
 
 and add `gettext` to the path
 
-```
+```bash
 vi ~/.bash_profile
 export PATH=${PATH}:/usr/local/opt/gettext/bin
 ```
 
 Install the libraries
 
-```
+```bash
 brew install libgee
 brew install json-glib
 brew install libxkbcommon
 ```
 
 Now run `make`.
+
+To execute without install, please set `LIBSKK_DATA_PATH` to the directory containing rules:
+
+```bash
+export LIBSKK_DATA_PATH=$PWD ./tools/skk
+```
+
+To install run `make install`.
 
 Test
 ------
