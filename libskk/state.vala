@@ -423,6 +423,11 @@ namespace Skk {
                                                   ref KeyEvent key)
         {
             var command = state.lookup_key (key);
+
+            // if no command nor code is assigned to key, we can't proceed
+            if (command == null && key.code == 0)
+                return false;
+
             // check abort and commit event
             if (command == "abort" ||
                 command == "abort-to-latin" ||
