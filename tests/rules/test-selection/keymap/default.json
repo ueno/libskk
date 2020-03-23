@@ -1,0 +1,12 @@
+{
+    "define": {
+        "keymap": {
+            "C-g": "abort",
+            "\n": "commit-unhandled",
+            "C-m": "commit-unhandled",
+            "C-y": "register",
+            " ": "next-candidate",
+            "/": "abbrev"
+        }
+    }
+}

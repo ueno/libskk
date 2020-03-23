@@ -1,0 +1,11 @@
+{
+    "include": [
+        "default"
+    ],
+    "define": {
+        "keymap": {
+            "Q": "start-preedit",
+            "C-j": "commit"
+        }
+    }
+}

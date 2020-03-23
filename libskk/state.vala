@@ -68,6 +68,7 @@ namespace Skk {
         // Used by Context for dict edit.
         internal string midasi;
 
+        internal StringBuilder selection = new StringBuilder ();
         internal StringBuilder output = new StringBuilder ();
         internal StringBuilder abbrev = new StringBuilder ();
         internal StringBuilder kuten = new StringBuilder ();
@@ -195,6 +196,7 @@ namespace Skk {
             candidates.clear ();
             abbrev.erase ();
             kuten.erase ();
+            selection.erase();
             auto_start_henkan_keyword = null;
             surrounding_text = null;
             surrounding_end = 0;
@@ -371,6 +373,7 @@ namespace Skk {
                                                         out uint cursor_pos);
         internal signal bool delete_surrounding_text (int offset,
                                                       uint nchars);
+        public signal void request_selection_text ();
 
         internal string get_yomi () {
             StringBuilder builder = new StringBuilder ();
@@ -513,6 +516,13 @@ namespace Skk {
                     return true;
                 }
                 return false;
+            }
+
+            if (command == "register") {
+                state.request_selection_text();
+                state.output.append(state.selection.str);
+                state.selection.erase();
+                return true;
             }
 
             switch (state.input_mode) {
@@ -718,6 +728,12 @@ namespace Skk {
                 state.reset ();
                 return state.egg_like_newline;
             }
+            else if (command == "register") {
+                state.request_selection_text();
+                state.abbrev.append(state.selection.str);
+                state.selection.erase();
+                return true;
+            }
             else if (key.modifiers == 0 &&
                      0x20 <= key.code && key.code <= 0x7E) {
                 state.abbrev.append_unichar (key.code);
@@ -894,6 +910,12 @@ namespace Skk {
                             0, state.surrounding_end);
                     return true;
                 }
+            }
+            else if (command == "register") {
+                state.request_selection_text();
+                state.rom_kana_converter.output += state.selection.str;
+                state.selection.erase();
+                return true;
             }
 
             unichar lower_code;
