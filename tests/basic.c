@@ -397,6 +397,58 @@ surrounding (void) {
 }
 
 static void
+request_selection_text_cb (SkkContext* self,
+                           gpointer   user_data)
+{
+  skk_context_set_selection_text(self, "test message");
+}
+
+static void
+selection (void) {
+  SkkContext *context = create_context (TRUE, TRUE);
+  g_signal_connect (context, "request-selection-text",
+                    G_CALLBACK (request_selection_text_cb), NULL);
+  const gchar *preedit;
+  GError *error;
+  SkkRule *rule;
+  error = NULL;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "/ C-y", "▽test message", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ C-y C-g", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ C-y C-j", "", "test message", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ t e s t t e x t SPC C-y", "▼testtext【test message】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ t e s t t e x t SPC C-y C-g", "▽testtext", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ t e s t t e x t SPC C-y C-j", "", "test message", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ t e s t t e x t SPC C-y C-m", "", "test message", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A a a a SPC C-y", "▼ああああ【test message】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_KATAKANA, "A a a a SPC C-y", "▼アアアア【test message】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HANKAKU_KATAKANA, "A a a a SPC C-y", "▼ｱｱｱｱ【test message】", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A a a a SPC C-y C-m", "", "test message", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A a a a SPC C-y RET", "", "test message", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_KATAKANA, "A a a a SPC C-y C-m", "", "test message", SKK_INPUT_MODE_KATAKANA },
+    { SKK_INPUT_MODE_KATAKANA, "A a a a SPC C-y RET", "", "test message", SKK_INPUT_MODE_KATAKANA },
+    { SKK_INPUT_MODE_HANKAKU_KATAKANA, "A a a a SPC C-y C-m", "", "test message", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HANKAKU_KATAKANA, "A a a a SPC C-y RET", "", "test message", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HIRAGANA, "C-y", "", "test message", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "Q C-y", "▽test message", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_KATAKANA, "C-y", "", "test message", SKK_INPUT_MODE_KATAKANA },
+    { SKK_INPUT_MODE_KATAKANA, "Q C-y", "▽test message", "", SKK_INPUT_MODE_KATAKANA },
+    { SKK_INPUT_MODE_HANKAKU_KATAKANA, "C-y", "", "test message", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_HANKAKU_KATAKANA, "Q C-y", "▽test message", "", SKK_INPUT_MODE_HANKAKU_KATAKANA },
+    { SKK_INPUT_MODE_LATIN, "C-y", "", "test message", SKK_INPUT_MODE_LATIN },
+    { SKK_INPUT_MODE_WIDE_LATIN, "C-y", "", "test message", SKK_INPUT_MODE_WIDE_LATIN },
+    { 0, NULL }
+  };
+
+  rule = skk_rule_new ("test-selection", &error);
+  g_assert_no_error(error);
+  skk_context_set_typing_rule(context, rule);
+  g_object_unref(rule);
+  check_transitions (context, transitions);
+  destroy_context(context);
+}
+
+static void
 start_preedit_no_delete (void) {
   SkkContext *context;
   GError *error;
@@ -552,6 +604,7 @@ main (int argc, char **argv) {
               context_setup, test_transitions, context_teardown);
   g_test_add_func ("/libskk/candidate-list", candidate_list);
   g_test_add_func ("/libskk/surrounding", surrounding);
+  g_test_add_func ("/libskk/selection", selection);
   g_test_add_func ("/libskk/start_preedit_no_delete", start_preedit_no_delete);
   g_test_add_func ("/libskk/inherit_typing_rule_for_dict_edit", inherit_typing_rule_for_dict_edit);
   g_test_add_func ("/libskk/abort_to_latin_commands", abort_to_latin_commands);
