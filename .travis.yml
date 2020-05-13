@@ -31,6 +31,7 @@ script:
 
 after_failure:
   - docker exec $CONTAINER su - user sh -c "cd /srcdir && cat tests/test-suite.log"
+  - docker exec $CONTAINER su - user sh -c "cd /srcdir && cat config.log"
 
 after_success:
   - |
