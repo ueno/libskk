@@ -1,0 +1,1606 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>SkkContext:  Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<link rel="home" href="index.html" title="Reference Manual">
+<link rel="up" href="ch01.html" title="libskk API Reference">
+<link rel="prev" href="ch01.html" title="libskk API Reference">
+<link rel="next" href="SkkKeyEventFilter.html" title="SkkKeyEventFilter">
+<meta name="generator" content="GTK-Doc V1.32 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#SkkContext.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#SkkContext.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_properties">  <span class="dim">|</span> 
+                  <a href="#SkkContext.properties" class="shortcut">Properties</a></span><span id="nav_signals">  <span class="dim">|</span> 
+                  <a href="#SkkContext.signals" class="shortcut">Signals</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="ch01.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="SkkKeyEventFilter.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="SkkContext"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="SkkContext.top_of_page"></a>SkkContext</span></h2>
+<p>SkkContext — Main entry point of libskk.</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="SkkContext.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_proto_type">
+<col class="functions_proto_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-add-dictionary" title="skk_context_add_dictionary ()">skk_context_add_dictionary</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-remove-dictionary" title="skk_context_remove_dictionary ()">skk_context_remove_dictionary</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-set-selection-text" title="skk_context_set_selection_text ()">skk_context_set_selection_text</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-process-key-events" title="skk_context_process_key_events ()">skk_context_process_key_events</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-process-key-event" title="skk_context_process_key_event ()">skk_context_process_key_event</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-reset" title="skk_context_reset ()">skk_context_reset</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-output" title="skk_context_get_output ()">skk_context_get_output</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-peek-output" title="skk_context_peek_output ()">skk_context_peek_output</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-poll-output" title="skk_context_poll_output ()">skk_context_poll_output</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-clear-output" title="skk_context_clear_output ()">skk_context_clear_output</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-preedit-underline" title="skk_context_get_preedit_underline ()">skk_context_get_preedit_underline</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-save-dictionaries" title="skk_context_save_dictionaries ()">skk_context_save_dictionaries</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkContext.html" title="SkkContext"><span class="returnvalue">SkkContext</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-new" title="skk_context_new ()">skk_context_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkDict.html" title="SkkDict"><span class="returnvalue">SkkDict</span></a> **
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-dictionaries" title="skk_context_get_dictionaries ()">skk_context_get_dictionaries</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-set-dictionaries" title="skk_context_set_dictionaries ()">skk_context_set_dictionaries</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkCandidateList.html" title="SkkCandidateList"><span class="returnvalue">SkkCandidateList</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-candidates" title="skk_context_get_candidates ()">skk_context_get_candidates</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkContext.html#SkkInputMode" title="enum SkkInputMode"><span class="returnvalue">SkkInputMode</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-input-mode" title="skk_context_get_input_mode ()">skk_context_get_input_mode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-set-input-mode" title="skk_context_set_input_mode ()">skk_context_set_input_mode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gchar</span> **
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-auto-start-henkan-keywords" title="skk_context_get_auto_start_henkan_keywords ()">skk_context_get_auto_start_henkan_keywords</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-set-auto-start-henkan-keywords" title="skk_context_set_auto_start_henkan_keywords ()">skk_context_set_auto_start_henkan_keywords</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-egg-like-newline" title="skk_context_get_egg_like_newline ()">skk_context_get_egg_like_newline</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-set-egg-like-newline" title="skk_context_set_egg_like_newline ()">skk_context_set_egg_like_newline</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="returnvalue">SkkPeriodStyle</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-period-style" title="skk_context_get_period_style ()">skk_context_get_period_style</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-set-period-style" title="skk_context_set_period_style ()">skk_context_set_period_style</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkRule.html" title="SkkRule"><span class="returnvalue">SkkRule</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-typing-rule" title="skk_context_get_typing_rule ()">skk_context_get_typing_rule</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-set-typing-rule" title="skk_context_set_typing_rule ()">skk_context_set_typing_rule</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkKeyEventFilter.html" title="SkkKeyEventFilter"><span class="returnvalue">SkkKeyEventFilter</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-key-event-filter" title="skk_context_get_key_event_filter ()">skk_context_get_key_event_filter</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-context-get-preedit" title="skk_context_get_preedit ()">skk_context_get_preedit</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkContext.html#skk-init" title="skk_init ()">skk_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkContext.properties"></a><h2>Properties</h2>
+<div class="informaltable"><table class="informaltable" border="0">
+<colgroup>
+<col width="150px" class="properties_type">
+<col width="300px" class="properties_name">
+<col width="200px" class="properties_flags">
+</colgroup>
+<tbody>
+<tr>
+<td class="property_type"><span class="type">GStrv</span></td>
+<td class="property_name"><a class="link" href="SkkContext.html#SkkContext--auto-start-henkan-keywords" title="The “auto-start-henkan-keywords” property">auto-start-henkan-keywords</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type">
+<a class="link" href="SkkCandidateList.html" title="SkkCandidateList"><span class="type">SkkCandidateList</span></a> *</td>
+<td class="property_name"><a class="link" href="SkkContext.html#SkkContext--candidates" title="The “candidates” property">candidates</a></td>
+<td class="property_flags">Read</td>
+</tr>
+<tr>
+<td class="property_type"><span class="type">gboolean</span></td>
+<td class="property_name"><a class="link" href="SkkContext.html#SkkContext--egg-like-newline" title="The “egg-like-newline” property">egg-like-newline</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a class="link" href="SkkContext.html#SkkInputMode" title="enum SkkInputMode"><span class="type">SkkInputMode</span></a></td>
+<td class="property_name"><a class="link" href="SkkContext.html#SkkContext--input-mode" title="The “input-mode” property">input-mode</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type">
+<a class="link" href="SkkKeyEventFilter.html" title="SkkKeyEventFilter"><span class="type">SkkKeyEventFilter</span></a> *</td>
+<td class="property_name"><a class="link" href="SkkContext.html#SkkContext--key-event-filter" title="The “key-event-filter” property">key-event-filter</a></td>
+<td class="property_flags">Read</td>
+</tr>
+<tr>
+<td class="property_type"><a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="type">SkkPeriodStyle</span></a></td>
+<td class="property_name"><a class="link" href="SkkContext.html#SkkContext--period-style" title="The “period-style” property">period-style</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type">
+<span class="type">gchar</span> *</td>
+<td class="property_name"><a class="link" href="SkkContext.html#SkkContext--preedit" title="The “preedit” property">preedit</a></td>
+<td class="property_flags">Read</td>
+</tr>
+<tr>
+<td class="property_type">
+<a class="link" href="SkkRule.html" title="SkkRule"><span class="type">SkkRule</span></a> *</td>
+<td class="property_name"><a class="link" href="SkkContext.html#SkkContext--typing-rule" title="The “typing-rule” property">typing-rule</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkContext.signals"></a><h2>Signals</h2>
+<div class="informaltable"><table class="informaltable" border="0">
+<colgroup>
+<col width="150px" class="signal_proto_type">
+<col width="300px" class="signal_proto_name">
+<col width="200px" class="signal_proto_flags">
+</colgroup>
+<tbody>
+<tr>
+<td class="signal_type"><span class="returnvalue">gboolean</span></td>
+<td class="signal_name"><a class="link" href="SkkContext.html#SkkContext-delete-surrounding-text" title="The “delete-surrounding-text” signal">delete-surrounding-text</a></td>
+<td class="signal_flags">Run Last</td>
+</tr>
+<tr>
+<td class="signal_type"><span class="returnvalue">void</span></td>
+<td class="signal_name"><a class="link" href="SkkContext.html#SkkContext-request-selection-text" title="The “request-selection-text” signal">request-selection-text</a></td>
+<td class="signal_flags">Run Last</td>
+</tr>
+<tr>
+<td class="signal_type"><span class="returnvalue">gboolean</span></td>
+<td class="signal_name"><a class="link" href="SkkContext.html#SkkContext-retrieve-surrounding-text" title="The “retrieve-surrounding-text” signal">retrieve-surrounding-text</a></td>
+<td class="signal_flags">Run Last</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkContext.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="other_proto_type">
+<col class="other_proto_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="SkkContext.html#SKK-TYPE-CONTEXT:CAPS" title="SKK_TYPE_CONTEXT">SKK_TYPE_CONTEXT</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="SkkContext.html#SkkContext-struct" title="struct SkkContext">SkkContext</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="SkkContext.html#SkkContextClass" title="struct SkkContextClass">SkkContextClass</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="SkkContext.html#SkkInputMode" title="enum SkkInputMode">SkkInputMode</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkContext.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    GEnum
+    <span class="lineart">╰──</span> SkkInputMode
+    GObject
+    <span class="lineart">╰──</span> SkkContext
+</pre>
+</div>
+<div class="refsect1">
+<a name="SkkContext.description"></a><h2>Description</h2>
+<p>Context represents an input context with support for SKK kana-kanji conversion method.</p>
+</div>
+<div class="refsect1">
+<a name="SkkContext.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="skk-context-add-dictionary"></a><h3>skk_context_add_dictionary ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_add_dictionary (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                            <em class="parameter"><code><a class="link" href="SkkDict.html" title="SkkDict"><span class="type">SkkDict</span></a> *dict</code></em>);</pre>
+<p>Register dictionary.</p>
+<div class="refsect3">
+<a name="skk-context-add-dictionary.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>dict</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>a dictionary </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-0-0-8.html#api-index-0.0.8">0.0.8</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-remove-dictionary"></a><h3>skk_context_remove_dictionary ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_remove_dictionary (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                               <em class="parameter"><code><a class="link" href="SkkDict.html" title="SkkDict"><span class="type">SkkDict</span></a> *dict</code></em>);</pre>
+<p>Unregister dictionary.</p>
+<div class="refsect3">
+<a name="skk-context-remove-dictionary.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>dict</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>a dictionary </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-0-0-8.html#api-index-0.0.8">0.0.8</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-set-selection-text"></a><h3>skk_context_set_selection_text ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_set_selection_text (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                                <em class="parameter"><code>const <span class="type">gchar</span> *text</code></em>);</pre>
+<p>Set the current selection text.</p>
+<div class="refsect3">
+<a name="skk-context-set-selection-text.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>text</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>selection text </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-process-key-events"></a><h3>skk_context_process_key_events ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+skk_context_process_key_events (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                                <em class="parameter"><code>const <span class="type">gchar</span> *keyseq</code></em>);</pre>
+<p>Pass key events (separated by spaces) to the context.</p>
+<p>This function is rarely used in programs but in unit tests.</p>
+<div class="refsect3">
+<a name="skk-context-process-key-events.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>keyseq</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>a string representing key events, separated by " " </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-process-key-events.returns"></a><h4>Returns</h4>
+<p>`true` if any of key events are handled, `false` otherwise </p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-process-key-event"></a><h3>skk_context_process_key_event ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+skk_context_process_key_event (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                               <em class="parameter"><code><a class="link" href="SkkKeyEvent.html" title="SkkKeyEvent"><span class="type">SkkKeyEvent</span></a> *key</code></em>);</pre>
+<p>Pass one key event to the context.</p>
+<div class="refsect3">
+<a name="skk-context-process-key-event.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>key</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>a key event </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-process-key-event.returns"></a><h4>Returns</h4>
+<p>`true` if the key event is handled, `false` otherwise </p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-reset"></a><h3>skk_context_reset ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_reset (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Reset the context.</p>
+<div class="refsect3">
+<a name="skk-context-reset.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-output"></a><h3>skk_context_get_output ()</h3>
+<pre class="programlisting"><span class="returnvalue">gchar</span> *
+skk_context_get_output (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>This is replaced with <a class="link" href="SkkContext.html#skk-context-poll-output" title="skk_context_poll_output ()"><code class="function">skk_context_poll_output()</code></a>.</p>
+<div class="refsect3">
+<a name="skk-context-get-output.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-output.returns"></a><h4>Returns</h4>
+<p>an output string Deprecated: 0.0.6 </p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-peek-output"></a><h3>skk_context_peek_output ()</h3>
+<pre class="programlisting"><span class="returnvalue">gchar</span> *
+skk_context_peek_output (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Peek (retrieve, but not remove) the current output string.</p>
+<div class="refsect3">
+<a name="skk-context-peek-output.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-peek-output.returns"></a><h4>Returns</h4>
+<p>an output string </p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-0-0-6.html#api-index-0.0.6">0.0.6</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-poll-output"></a><h3>skk_context_poll_output ()</h3>
+<pre class="programlisting"><span class="returnvalue">gchar</span> *
+skk_context_poll_output (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Poll (retrieve and remove) the current output string.</p>
+<div class="refsect3">
+<a name="skk-context-poll-output.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-poll-output.returns"></a><h4>Returns</h4>
+<p>an output string </p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-0-0-6.html#api-index-0.0.6">0.0.6</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-clear-output"></a><h3>skk_context_clear_output ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_clear_output (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Clear the output buffer.</p>
+<div class="refsect3">
+<a name="skk-context-clear-output.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-0-0-6.html#api-index-0.0.6">0.0.6</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-preedit-underline"></a><h3>skk_context_get_preedit_underline ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_get_preedit_underline (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                                   <em class="parameter"><code><span class="type">guint</span> *offset</code></em>,
+                                   <em class="parameter"><code><span class="type">guint</span> *nchars</code></em>);</pre>
+<p>Get underlined range of preedit.</p>
+<div class="refsect3">
+<a name="skk-context-get-preedit-underline.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>offset</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>starting offset (in chars) of underline </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>nchars</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>number of characters to be underlined </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-0-0-6.html#api-index-0.0.6">0.0.6</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-save-dictionaries"></a><h3>skk_context_save_dictionaries ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_save_dictionaries (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                               <em class="parameter"><code><span class="type">GError</span> **error</code></em>);</pre>
+<p>Save dictionaries on to disk.</p>
+<div class="refsect3">
+<a name="skk-context-save-dictionaries.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>error</p></td>
+<td class="parameter_description"><p>location to store the error occurring, or <code class="literal">NULL</code> to ignore</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-new"></a><h3>skk_context_new ()</h3>
+<pre class="programlisting"><a class="link" href="SkkContext.html" title="SkkContext"><span class="returnvalue">SkkContext</span></a> *
+skk_context_new (<em class="parameter"><code><a class="link" href="SkkDict.html" title="SkkDict"><span class="type">SkkDict</span></a> **dictionaries</code></em>,
+                 <em class="parameter"><code><span class="type">gint</span> dictionaries_length1</code></em>);</pre>
+<p>Create a new Context.</p>
+<div class="refsect3">
+<a name="skk-context-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>dictionaries</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>an array of Dict </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=dictionaries_length1]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>dictionaries_length1</p></td>
+<td class="parameter_description"><p>length of the <em class="parameter"><code>dictionaries</code></em>
+array</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-new.returns"></a><h4>Returns</h4>
+<p>a new Context </p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-dictionaries"></a><h3>skk_context_get_dictionaries ()</h3>
+<pre class="programlisting"><a class="link" href="SkkDict.html" title="SkkDict"><span class="returnvalue">SkkDict</span></a> **
+skk_context_get_dictionaries (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                              <em class="parameter"><code><span class="type">gint</span> *result_length1</code></em>);</pre>
+<p>Get and return the current value of the <span class="type">"dictionaries"</span> property.</p>
+<p>Dictionaries.</p>
+<div class="refsect3">
+<a name="skk-context-get-dictionaries.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-dictionaries.returns"></a><h4>Returns</h4>
+<p> the value of the <span class="type">"dictionaries"</span> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-set-dictionaries"></a><h3>skk_context_set_dictionaries ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_set_dictionaries (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                              <em class="parameter"><code><a class="link" href="SkkDict.html" title="SkkDict"><span class="type">SkkDict</span></a> **value</code></em>,
+                              <em class="parameter"><code><span class="type">gint</span> value_length1</code></em>);</pre>
+<p>Set the value of the <span class="type">"dictionaries"</span> property to <em class="parameter"><code>value</code></em>
+.</p>
+<p>Dictionaries.</p>
+<div class="refsect3">
+<a name="skk-context-set-dictionaries.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the new value of the <span class="type">"dictionaries"</span> property</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-candidates"></a><h3>skk_context_get_candidates ()</h3>
+<pre class="programlisting"><a class="link" href="SkkCandidateList.html" title="SkkCandidateList"><span class="returnvalue">SkkCandidateList</span></a> *
+skk_context_get_candidates (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkContext.html#SkkContext--candidates" title="The “candidates” property"><span class="type">"candidates"</span></a> property.</p>
+<p>Current candidates.</p>
+<div class="refsect3">
+<a name="skk-context-get-candidates.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-candidates.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkContext.html#SkkContext--candidates" title="The “candidates” property"><span class="type">"candidates"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-input-mode"></a><h3>skk_context_get_input_mode ()</h3>
+<pre class="programlisting"><a class="link" href="SkkContext.html#SkkInputMode" title="enum SkkInputMode"><span class="returnvalue">SkkInputMode</span></a>
+skk_context_get_input_mode (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkContext.html#SkkContext--input-mode" title="The “input-mode” property"><span class="type">"input-mode"</span></a> property.</p>
+<p>Current input mode.</p>
+<div class="refsect3">
+<a name="skk-context-get-input-mode.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-input-mode.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkContext.html#SkkContext--input-mode" title="The “input-mode” property"><span class="type">"input-mode"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-set-input-mode"></a><h3>skk_context_set_input_mode ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_set_input_mode (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                            <em class="parameter"><code><a class="link" href="SkkContext.html#SkkInputMode" title="enum SkkInputMode"><span class="type">SkkInputMode</span></a> value</code></em>);</pre>
+<p>Set the value of the <a class="link" href="SkkContext.html#SkkContext--input-mode" title="The “input-mode” property"><span class="type">"input-mode"</span></a> property to <em class="parameter"><code>value</code></em>
+.</p>
+<p>Current input mode.</p>
+<div class="refsect3">
+<a name="skk-context-set-input-mode.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the new value of the <a class="link" href="SkkContext.html#SkkContext--input-mode" title="The “input-mode” property"><span class="type">"input-mode"</span></a> property</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-auto-start-henkan-keywords"></a><h3>skk_context_get_auto_start_henkan_keywords ()</h3>
+<pre class="programlisting"><span class="returnvalue">gchar</span> **
+skk_context_get_auto_start_henkan_keywords
+                               (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                                <em class="parameter"><code><span class="type">gint</span> *result_length1</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkContext.html#SkkContext--auto-start-henkan-keywords" title="The “auto-start-henkan-keywords” property"><span class="type">"auto-start-henkan-keywords"</span></a> property.</p>
+<p>Array of strings which triggers automatic conversion.</p>
+<div class="refsect3">
+<a name="skk-context-get-auto-start-henkan-keywords.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-auto-start-henkan-keywords.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkContext.html#SkkContext--auto-start-henkan-keywords" title="The “auto-start-henkan-keywords” property"><span class="type">"auto-start-henkan-keywords"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-set-auto-start-henkan-keywords"></a><h3>skk_context_set_auto_start_henkan_keywords ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_set_auto_start_henkan_keywords
+                               (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                                <em class="parameter"><code><span class="type">gchar</span> **value</code></em>,
+                                <em class="parameter"><code><span class="type">gint</span> value_length1</code></em>);</pre>
+<p>Set the value of the <a class="link" href="SkkContext.html#SkkContext--auto-start-henkan-keywords" title="The “auto-start-henkan-keywords” property"><span class="type">"auto-start-henkan-keywords"</span></a> property to <em class="parameter"><code>value</code></em>
+.</p>
+<p>Array of strings which triggers automatic conversion.</p>
+<div class="refsect3">
+<a name="skk-context-set-auto-start-henkan-keywords.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the new value of the <a class="link" href="SkkContext.html#SkkContext--auto-start-henkan-keywords" title="The “auto-start-henkan-keywords” property"><span class="type">"auto-start-henkan-keywords"</span></a> property</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-egg-like-newline"></a><h3>skk_context_get_egg_like_newline ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+skk_context_get_egg_like_newline (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkContext.html#SkkContext--egg-like-newline" title="The “egg-like-newline” property"><span class="type">"egg-like-newline"</span></a> property.</p>
+<p>Flag to indicate whether or not "\n" is consumed on commit.</p>
+<div class="refsect3">
+<a name="skk-context-get-egg-like-newline.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-egg-like-newline.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkContext.html#SkkContext--egg-like-newline" title="The “egg-like-newline” property"><span class="type">"egg-like-newline"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-set-egg-like-newline"></a><h3>skk_context_set_egg_like_newline ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_set_egg_like_newline (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                                  <em class="parameter"><code><span class="type">gboolean</span> value</code></em>);</pre>
+<p>Set the value of the <a class="link" href="SkkContext.html#SkkContext--egg-like-newline" title="The “egg-like-newline” property"><span class="type">"egg-like-newline"</span></a> property to <em class="parameter"><code>value</code></em>
+.</p>
+<p>Flag to indicate whether or not "\n" is consumed on commit.</p>
+<div class="refsect3">
+<a name="skk-context-set-egg-like-newline.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the new value of the <a class="link" href="SkkContext.html#SkkContext--egg-like-newline" title="The “egg-like-newline” property"><span class="type">"egg-like-newline"</span></a> property</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-period-style"></a><h3>skk_context_get_period_style ()</h3>
+<pre class="programlisting"><a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="returnvalue">SkkPeriodStyle</span></a>
+skk_context_get_period_style (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkContext.html#SkkContext--period-style" title="The “period-style” property"><span class="type">"period-style"</span></a> property.</p>
+<p>Period style used in romaji-to-kana conversion.</p>
+<div class="refsect3">
+<a name="skk-context-get-period-style.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-period-style.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkContext.html#SkkContext--period-style" title="The “period-style” property"><span class="type">"period-style"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-set-period-style"></a><h3>skk_context_set_period_style ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_set_period_style (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                              <em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="type">SkkPeriodStyle</span></a> value</code></em>);</pre>
+<p>Set the value of the <a class="link" href="SkkContext.html#SkkContext--period-style" title="The “period-style” property"><span class="type">"period-style"</span></a> property to <em class="parameter"><code>value</code></em>
+.</p>
+<p>Period style used in romaji-to-kana conversion.</p>
+<div class="refsect3">
+<a name="skk-context-set-period-style.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the new value of the <a class="link" href="SkkContext.html#SkkContext--period-style" title="The “period-style” property"><span class="type">"period-style"</span></a> property</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-typing-rule"></a><h3>skk_context_get_typing_rule ()</h3>
+<pre class="programlisting"><a class="link" href="SkkRule.html" title="SkkRule"><span class="returnvalue">SkkRule</span></a> *
+skk_context_get_typing_rule (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkContext.html#SkkContext--typing-rule" title="The “typing-rule” property"><span class="type">"typing-rule"</span></a> property.</p>
+<p>The name of typing rule.</p>
+<div class="refsect3">
+<a name="skk-context-get-typing-rule.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-typing-rule.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkContext.html#SkkContext--typing-rule" title="The “typing-rule” property"><span class="type">"typing-rule"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-set-typing-rule"></a><h3>skk_context_set_typing_rule ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_context_set_typing_rule (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>,
+                             <em class="parameter"><code><a class="link" href="SkkRule.html" title="SkkRule"><span class="type">SkkRule</span></a> *value</code></em>);</pre>
+<p>Set the value of the <a class="link" href="SkkContext.html#SkkContext--typing-rule" title="The “typing-rule” property"><span class="type">"typing-rule"</span></a> property to <em class="parameter"><code>value</code></em>
+.</p>
+<p>The name of typing rule.</p>
+<div class="refsect3">
+<a name="skk-context-set-typing-rule.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the new value of the <a class="link" href="SkkContext.html#SkkContext--typing-rule" title="The “typing-rule” property"><span class="type">"typing-rule"</span></a> property</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-key-event-filter"></a><h3>skk_context_get_key_event_filter ()</h3>
+<pre class="programlisting"><a class="link" href="SkkKeyEventFilter.html" title="SkkKeyEventFilter"><span class="returnvalue">SkkKeyEventFilter</span></a> *
+skk_context_get_key_event_filter (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkContext.html#SkkContext--key-event-filter" title="The “key-event-filter” property"><span class="type">"key-event-filter"</span></a> property.</p>
+<p>Filter which runs before process_key_event.</p>
+<p>This is particularly useful for NICOLA.</p>
+<div class="refsect3">
+<a name="skk-context-get-key-event-filter.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-key-event-filter.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkContext.html#SkkContext--key-event-filter" title="The “key-event-filter” property"><span class="type">"key-event-filter"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-context-get-preedit"></a><h3>skk_context_get_preedit ()</h3>
+<pre class="programlisting">const <span class="returnvalue">gchar</span> *
+skk_context_get_preedit (<em class="parameter"><code><a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkContext.html#SkkContext--preedit" title="The “preedit” property"><span class="type">"preedit"</span></a> property.</p>
+<p>Current preedit string.</p>
+<div class="refsect3">
+<a name="skk-context-get-preedit.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-context-get-preedit.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkContext.html#SkkContext--preedit" title="The “preedit” property"><span class="type">"preedit"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-init"></a><h3>skk_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_init (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<p>Initialize libskk.</p>
+<p>Must be called before using any functions in libskk.</p>
+<div class="refsect3">
+<a name="skk-init.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the (null) instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="SkkContext.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="SKK-TYPE-CONTEXT:CAPS"></a><h3>SKK_TYPE_CONTEXT</h3>
+<pre class="programlisting">#define SKK_TYPE_CONTEXT (skk_context_get_type ())
+</pre>
+<p>The type for <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a>.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext-struct"></a><h3>struct SkkContext</h3>
+<pre class="programlisting">struct SkkContext;</pre>
+<p>Main entry point of libskk.</p>
+<p>Context represents an input context with support for SKK kana-kanji conversion method.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContextClass"></a><h3>struct SkkContextClass</h3>
+<pre class="programlisting">struct SkkContextClass {
+	GObjectClass parent_class;
+};
+</pre>
+<p>The class structure for <a class="link" href="SkkContext.html#SKK-TYPE-CONTEXT:CAPS" title="SKK_TYPE_CONTEXT"><code class="literal">SKK_TYPE_CONTEXT</code></a>. All the fields in this structure are private and should never be accessed directly.</p>
+<div class="refsect3">
+<a name="SkkContextClass.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="300px" class="struct_members_name">
+<col class="struct_members_description">
+<col width="200px" class="struct_members_annotations">
+</colgroup>
+<tbody></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkInputMode"></a><h3>enum SkkInputMode</h3>
+<p>Type to specify input modes.</p>
+<div class="refsect3">
+<a name="SkkInputMode.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-INPUT-MODE-HIRAGANA:CAPS"></a>SKK_INPUT_MODE_HIRAGANA</p></td>
+<td class="enum_member_description">
+<p>Hiragana like "あいう...".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-INPUT-MODE-KATAKANA:CAPS"></a>SKK_INPUT_MODE_KATAKANA</p></td>
+<td class="enum_member_description">
+<p>Katakana like "アイウ...".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-INPUT-MODE-HANKAKU-KATAKANA:CAPS"></a>SKK_INPUT_MODE_HANKAKU_KATAKANA</p></td>
+<td class="enum_member_description">
+<p>Half-width katakana like "ｱｲｳ...".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-INPUT-MODE-LATIN:CAPS"></a>SKK_INPUT_MODE_LATIN</p></td>
+<td class="enum_member_description">
+<p>Half-width latin like "abc...".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-INPUT-MODE-WIDE-LATIN:CAPS"></a>SKK_INPUT_MODE_WIDE_LATIN</p></td>
+<td class="enum_member_description">
+<p>Full-width latin like "ａｂｃ...".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-INPUT-MODE-LAST:CAPS"></a>SKK_INPUT_MODE_LAST</p></td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-INPUT-MODE-DEFAULT:CAPS"></a>SKK_INPUT_MODE_DEFAULT</p></td>
+<td class="enum_member_description">
+<p>The default.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="SkkContext.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="SkkContext--auto-start-henkan-keywords"></a><h3>The <code class="literal">“auto-start-henkan-keywords”</code> property</h3>
+<pre class="programlisting">  “auto-start-henkan-keywords” <span class="type">GStrv</span></pre>
+<p>Array of strings which triggers automatic conversion.</p>
+<p>Owner: SkkContext</p>
+<p>Flags: Read / Write</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext--candidates"></a><h3>The <code class="literal">“candidates”</code> property</h3>
+<pre class="programlisting">  “candidates”               <a class="link" href="SkkCandidateList.html" title="SkkCandidateList"><span class="type">SkkCandidateList</span></a> *</pre>
+<p>Current candidates.</p>
+<p>Owner: SkkContext</p>
+<p>Flags: Read</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext--egg-like-newline"></a><h3>The <code class="literal">“egg-like-newline”</code> property</h3>
+<pre class="programlisting">  “egg-like-newline”         <span class="type">gboolean</span></pre>
+<p>Flag to indicate whether or not "\n" is consumed on commit.</p>
+<p>Owner: SkkContext</p>
+<p>Flags: Read / Write</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext--input-mode"></a><h3>The <code class="literal">“input-mode”</code> property</h3>
+<pre class="programlisting">  “input-mode”               <a class="link" href="SkkContext.html#SkkInputMode" title="enum SkkInputMode"><span class="type">SkkInputMode</span></a></pre>
+<p>Current input mode.</p>
+<p>Owner: SkkContext</p>
+<p>Flags: Read / Write</p>
+<p>Default value: SKK_INPUT_MODE_HIRAGANA</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext--key-event-filter"></a><h3>The <code class="literal">“key-event-filter”</code> property</h3>
+<pre class="programlisting">  “key-event-filter”         <a class="link" href="SkkKeyEventFilter.html" title="SkkKeyEventFilter"><span class="type">SkkKeyEventFilter</span></a> *</pre>
+<p>Filter which runs before process_key_event.</p>
+<p>This is particularly useful for NICOLA.</p>
+<p><span class="emphasis"><em>See also</em></span>: <a class="link" href="SkkNicolaKeyEventFilter.html" title="SkkNicolaKeyEventFilter"><span class="type">SkkNicolaKeyEventFilter</span></a></p>
+<p>Owner: SkkContext</p>
+<p>Flags: Read</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext--period-style"></a><h3>The <code class="literal">“period-style”</code> property</h3>
+<pre class="programlisting">  “period-style”             <a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="type">SkkPeriodStyle</span></a></pre>
+<p>Period style used in romaji-to-kana conversion.</p>
+<p>Owner: SkkContext</p>
+<p>Flags: Read / Write</p>
+<p>Default value: SKK_PERIOD_STYLE_JA_JA</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext--preedit"></a><h3>The <code class="literal">“preedit”</code> property</h3>
+<pre class="programlisting">  “preedit”                  <span class="type">gchar</span> *</pre>
+<p>Current preedit string.</p>
+<p>Owner: SkkContext</p>
+<p>Flags: Read</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext--typing-rule"></a><h3>The <code class="literal">“typing-rule”</code> property</h3>
+<pre class="programlisting">  “typing-rule”              <a class="link" href="SkkRule.html" title="SkkRule"><span class="type">SkkRule</span></a> *</pre>
+<p>The name of typing rule.</p>
+<p>Owner: SkkContext</p>
+<p>Flags: Read / Write</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="SkkContext.signal-details"></a><h2>Signal Details</h2>
+<div class="refsect2">
+<a name="SkkContext-delete-surrounding-text"></a><h3>The <code class="literal">“delete-surrounding-text”</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+user_function (<a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *context,
+               <span class="type">gint</span>        offset,
+               <span class="type">guint</span>       nchars,
+               <span class="type">gpointer</span>    user_data)</pre>
+<p>Signal emitted when the context requests deletion of surrounding-text.</p>
+<div class="refsect3">
+<a name="SkkContext-delete-surrounding-text.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>context</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance that received the signal</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>offset</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>character offset from the cursor position. </p>
+<p></p>
+</td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>nchars</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>number of characters to delete. </p>
+<p></p>
+</td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>user data set when the signal handler was connected.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="SkkContext-delete-surrounding-text.returns"></a><h4>Returns</h4>
+<p>`true` on success, `false` on failure </p>
+</div>
+<p>Flags: Run Last</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext-request-selection-text"></a><h3>The <code class="literal">“request-selection-text”</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+user_function (<a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *context,
+               <span class="type">gpointer</span>    user_data)</pre>
+<div class="refsect3">
+<a name="SkkContext-request-selection-text.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>context</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance that received the signal</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>user data set when the signal handler was connected.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p>Flags: Run Last</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkContext-retrieve-surrounding-text"></a><h3>The <code class="literal">“retrieve-surrounding-text”</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+user_function (<a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> *context,
+               <span class="type">gpointer</span>    text,
+               <span class="type">gpointer</span>    cursor_pos,
+               <span class="type">gpointer</span>    user_data)</pre>
+<p>Signal emitted when the context requires surrounding-text.</p>
+<div class="refsect3">
+<a name="SkkContext-retrieve-surrounding-text.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>context</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkContext.html" title="SkkContext"><span class="type">SkkContext</span></a> instance that received the signal</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>text</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>surrounding text </p>
+<p></p>
+</td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>cursor_pos</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>cursor position in text </p>
+<p></p>
+</td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>user data set when the signal handler was connected.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="SkkContext-retrieve-surrounding-text.returns"></a><h4>Returns</h4>
+<p>`true` on success, `false` on failure </p>
+</div>
+<p>Flags: Run Last</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.32</div>
+</body>
+</html>

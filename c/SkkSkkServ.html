@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>SkkSkkServ:  Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<link rel="home" href="index.html" title="Reference Manual">
+<link rel="up" href="ch01.html" title="libskk API Reference">
+<link rel="prev" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter">
+<link rel="next" href="SkkFileDict.html" title="SkkFileDict">
+<meta name="generator" content="GTK-Doc V1.32 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#SkkSkkServ.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#SkkSkkServ.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_properties">  <span class="dim">|</span> 
+                  <a href="#SkkSkkServ.properties" class="shortcut">Properties</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="SkkRomKanaConverter.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="SkkFileDict.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="SkkSkkServ"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="SkkSkkServ.top_of_page"></a>SkkSkkServ</span></h2>
+<p>SkkSkkServ — Network based Implementation of Dict.</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="SkkSkkServ.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_proto_type">
+<col class="functions_proto_name">
+</colgroup>
+<tbody><tr>
+<td class="function_type">
+<a class="link" href="SkkSkkServ.html" title="SkkSkkServ"><span class="returnvalue">SkkSkkServ</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkSkkServ.html#skk-skk-serv-new" title="skk_skk_serv_new ()">skk_skk_serv_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkSkkServ.properties"></a><h2>Properties</h2>
+<div class="informaltable"><table class="informaltable" border="0">
+<colgroup>
+<col width="150px" class="properties_type">
+<col width="300px" class="properties_name">
+<col width="200px" class="properties_flags">
+</colgroup>
+<tbody><tr>
+<td class="property_type"><span class="type">gboolean</span></td>
+<td class="property_name"><a class="link" href="SkkSkkServ.html#SkkSkkServ--read-only" title="The “read-only” property">read-only</a></td>
+<td class="property_flags">Read</td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkSkkServ.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="other_proto_type">
+<col class="other_proto_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="SkkSkkServ.html#SKK-TYPE-SKK-SERV:CAPS" title="SKK_TYPE_SKK_SERV">SKK_TYPE_SKK_SERV</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="SkkSkkServ.html#SkkSkkServ-struct" title="struct SkkSkkServ">SkkSkkServ</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="SkkSkkServ.html#SkkSkkServClass" title="struct SkkSkkServClass">SkkSkkServClass</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkSkkServ.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    GObject
+    <span class="lineart">╰──</span> <a class="link" href="SkkDict.html" title="SkkDict">SkkDict</a>
+        <span class="lineart">╰──</span> SkkSkkServ
+</pre>
+</div>
+<div class="refsect1">
+<a name="SkkSkkServ.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="SkkSkkServ.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="skk-skk-serv-new"></a><h3>skk_skk_serv_new ()</h3>
+<pre class="programlisting"><a class="link" href="SkkSkkServ.html" title="SkkSkkServ"><span class="returnvalue">SkkSkkServ</span></a> *
+skk_skk_serv_new (<em class="parameter"><code>const <span class="type">gchar</span> *host</code></em>,
+                  <em class="parameter"><code><span class="type">guint16</span> port</code></em>,
+                  <em class="parameter"><code>const <span class="type">gchar</span> *encoding</code></em>,
+                  <em class="parameter"><code><span class="type">GError</span> **error</code></em>);</pre>
+<p>Create a new SkkServ.</p>
+<p><span class="type">GError</span> will be returned in <em class="parameter"><code>error</code></em> </p>
+<p>if opening a connection is failed </p>
+<div class="refsect3">
+<a name="skk-skk-serv-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>host</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>host to connect </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>port</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>port at the host </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>encoding</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>encoding to convert text over network traffic </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>error</p></td>
+<td class="parameter_description"><p>location to store the error occurring, or <code class="literal">NULL</code> to ignore</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-skk-serv-new.returns"></a><h4>Returns</h4>
+<p>a new SkkServ. </p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="SkkSkkServ.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="SKK-TYPE-SKK-SERV:CAPS"></a><h3>SKK_TYPE_SKK_SERV</h3>
+<pre class="programlisting">#define SKK_TYPE_SKK_SERV (skk_skk_serv_get_type ())
+</pre>
+<p>The type for <a class="link" href="SkkSkkServ.html" title="SkkSkkServ"><span class="type">SkkSkkServ</span></a>.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkSkkServ-struct"></a><h3>struct SkkSkkServ</h3>
+<pre class="programlisting">struct SkkSkkServ;</pre>
+<p>Network based Implementation of Dict.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkSkkServClass"></a><h3>struct SkkSkkServClass</h3>
+<pre class="programlisting">struct SkkSkkServClass {
+	SkkDictClass parent_class;
+};
+</pre>
+<p>The class structure for <a class="link" href="SkkSkkServ.html#SKK-TYPE-SKK-SERV:CAPS" title="SKK_TYPE_SKK_SERV"><code class="literal">SKK_TYPE_SKK_SERV</code></a>. All the fields in this structure are private and should never be accessed directly.</p>
+<div class="refsect3">
+<a name="SkkSkkServClass.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="300px" class="struct_members_name">
+<col class="struct_members_description">
+<col width="200px" class="struct_members_annotations">
+</colgroup>
+<tbody></tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="SkkSkkServ.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="SkkSkkServ--read-only"></a><h3>The <code class="literal">“read-only”</code> property</h3>
+<pre class="programlisting">  “read-only”                <span class="type">gboolean</span></pre>
+<p>read-only.</p>
+<p>Owner: SkkSkkServ</p>
+<p>Flags: Read</p>
+<p>Default value: FALSE</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.32</div>
+</body>
+</html>

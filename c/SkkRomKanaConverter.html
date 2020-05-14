@@ -1,0 +1,814 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>SkkRomKanaConverter:  Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<link rel="home" href="index.html" title="Reference Manual">
+<link rel="up" href="ch01.html" title="libskk API Reference">
+<link rel="prev" href="libskk-keysyms.html" title="keysyms">
+<link rel="next" href="SkkSkkServ.html" title="SkkSkkServ">
+<meta name="generator" content="GTK-Doc V1.32 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#SkkRomKanaConverter.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#SkkRomKanaConverter.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_properties">  <span class="dim">|</span> 
+                  <a href="#SkkRomKanaConverter.properties" class="shortcut">Properties</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="libskk-keysyms.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="SkkSkkServ.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="SkkRomKanaConverter"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="SkkRomKanaConverter.top_of_page"></a>SkkRomKanaConverter</span></h2>
+<p>SkkRomKanaConverter — Romaji-to-kana converter.</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="SkkRomKanaConverter.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_proto_type">
+<col class="functions_proto_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-is-valid" title="skk_rom_kana_converter_is_valid ()">skk_rom_kana_converter_is_valid</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-output-nn-if-any" title="skk_rom_kana_converter_output_nn_if_any ()">skk_rom_kana_converter_output_nn_if_any</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-append-text" title="skk_rom_kana_converter_append_text ()">skk_rom_kana_converter_append_text</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-append" title="skk_rom_kana_converter_append ()">skk_rom_kana_converter_append</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-can-consume" title="skk_rom_kana_converter_can_consume ()">skk_rom_kana_converter_can_consume</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-reset" title="skk_rom_kana_converter_reset ()">skk_rom_kana_converter_reset</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-delete" title="skk_rom_kana_converter_delete ()">skk_rom_kana_converter_delete</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="returnvalue">SkkRomKanaConverter</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-new" title="skk_rom_kana_converter_new ()">skk_rom_kana_converter_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkRomKanaConverter.html#SkkKanaMode" title="enum SkkKanaMode"><span class="returnvalue">SkkKanaMode</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-get-kana-mode" title="skk_rom_kana_converter_get_kana_mode ()">skk_rom_kana_converter_get_kana_mode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-set-kana-mode" title="skk_rom_kana_converter_set_kana_mode ()">skk_rom_kana_converter_set_kana_mode</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="returnvalue">SkkPeriodStyle</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-get-period-style" title="skk_rom_kana_converter_get_period_style ()">skk_rom_kana_converter_get_period_style</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-set-period-style" title="skk_rom_kana_converter_set_period_style ()">skk_rom_kana_converter_set_period_style</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-get-output" title="skk_rom_kana_converter_get_output ()">skk_rom_kana_converter_get_output</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="SkkRomKanaConverter.html#skk-rom-kana-converter-get-preedit" title="skk_rom_kana_converter_get_preedit ()">skk_rom_kana_converter_get_preedit</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkRomKanaConverter.properties"></a><h2>Properties</h2>
+<div class="informaltable"><table class="informaltable" border="0">
+<colgroup>
+<col width="150px" class="properties_type">
+<col width="300px" class="properties_name">
+<col width="200px" class="properties_flags">
+</colgroup>
+<tbody>
+<tr>
+<td class="property_type"><a class="link" href="SkkRomKanaConverter.html#SkkKanaMode" title="enum SkkKanaMode"><span class="type">SkkKanaMode</span></a></td>
+<td class="property_name"><a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--kana-mode" title="The “kana-mode” property">kana-mode</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type">
+<span class="type">gchar</span> *</td>
+<td class="property_name"><a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--output" title="The “output” property">output</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="type">SkkPeriodStyle</span></a></td>
+<td class="property_name"><a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--period-style" title="The “period-style” property">period-style</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type">
+<span class="type">gchar</span> *</td>
+<td class="property_name"><a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--preedit" title="The “preedit” property">preedit</a></td>
+<td class="property_flags">Read</td>
+</tr>
+<tr>
+<td class="property_type">
+<span class="type">SkkRomKanaMapFile</span> *</td>
+<td class="property_name"><a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--rule" title="The “rule” property">rule</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkRomKanaConverter.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="other_proto_type">
+<col class="other_proto_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="SkkRomKanaConverter.html#SKK-TYPE-ROM-KANA-CONVERTER:CAPS" title="SKK_TYPE_ROM_KANA_CONVERTER">SKK_TYPE_ROM_KANA_CONVERTER</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter-struct" title="struct SkkRomKanaConverter">SkkRomKanaConverter</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverterClass" title="struct SkkRomKanaConverterClass">SkkRomKanaConverterClass</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="SkkRomKanaConverter.html#SkkKanaMode" title="enum SkkKanaMode">SkkKanaMode</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle">SkkPeriodStyle</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="SkkRomKanaConverter.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    GEnum
+    <span class="lineart">├──</span> SkkKanaMode
+    <span class="lineart">╰──</span> SkkPeriodStyle
+    GObject
+    <span class="lineart">╰──</span> SkkRomKanaConverter
+</pre>
+</div>
+<div class="refsect1">
+<a name="SkkRomKanaConverter.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="SkkRomKanaConverter.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-is-valid"></a><h3>skk_rom_kana_converter_is_valid ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+skk_rom_kana_converter_is_valid (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>,
+                                 <em class="parameter"><code><span class="type">gunichar</span> uc</code></em>);</pre>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-is-valid.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>uc</p></td>
+<td class="parameter_description"><p> </p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-output-nn-if-any"></a><h3>skk_rom_kana_converter_output_nn_if_any ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+skk_rom_kana_converter_output_nn_if_any
+                               (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>);</pre>
+<p>Output "nn" if preedit ends with "n".</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-output-nn-if-any.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-append-text"></a><h3>skk_rom_kana_converter_append_text ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_rom_kana_converter_append_text (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>,
+                                    <em class="parameter"><code>const <span class="type">gchar</span> *text</code></em>);</pre>
+<p>Append text to the internal buffer.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-append-text.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>text</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>a string </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-append"></a><h3>skk_rom_kana_converter_append ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+skk_rom_kana_converter_append (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>,
+                               <em class="parameter"><code><span class="type">gunichar</span> uc</code></em>);</pre>
+<p>Append a character to the internal buffer.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-append.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>uc</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>an ASCII character </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-append.returns"></a><h4>Returns</h4>
+<p>`true` if the character is handled, `false` otherwise </p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-can-consume"></a><h3>skk_rom_kana_converter_can_consume ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+skk_rom_kana_converter_can_consume (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>,
+                                    <em class="parameter"><code><span class="type">gunichar</span> uc</code></em>,
+                                    <em class="parameter"><code><span class="type">gboolean</span> preedit_only</code></em>,
+                                    <em class="parameter"><code><span class="type">gboolean</span> no_carryover</code></em>);</pre>
+<p>Check if a character will be consumed by the current conversion.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-can-consume.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>uc</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>an ASCII character </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>preedit_only</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>only checks if preedit is active </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+<tr>
+<td class="parameter_name"><p>no_carryover</p></td>
+<td class="parameter_description">
+<p> .  </p>
+<p>return false if there will be carryover </p>
+<p>. </p>
+</td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>]</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-can-consume.returns"></a><h4>Returns</h4>
+<p>`true` if the character can be consumed </p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-reset"></a><h3>skk_rom_kana_converter_reset ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_rom_kana_converter_reset (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>);</pre>
+<p>Reset the internal state of the converter.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-reset.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-delete"></a><h3>skk_rom_kana_converter_delete ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+skk_rom_kana_converter_delete (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>);</pre>
+<p>Delete the trailing character from the internal buffer.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-delete.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-delete.returns"></a><h4>Returns</h4>
+<p>`true` if any character is removed, `false` otherwise </p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-new"></a><h3>skk_rom_kana_converter_new ()</h3>
+<pre class="programlisting"><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="returnvalue">SkkRomKanaConverter</span></a> *
+skk_rom_kana_converter_new (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-get-kana-mode"></a><h3>skk_rom_kana_converter_get_kana_mode ()</h3>
+<pre class="programlisting"><a class="link" href="SkkRomKanaConverter.html#SkkKanaMode" title="enum SkkKanaMode"><span class="returnvalue">SkkKanaMode</span></a>
+skk_rom_kana_converter_get_kana_mode (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--kana-mode" title="The “kana-mode” property"><span class="type">"kana-mode"</span></a> property.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-get-kana-mode.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-get-kana-mode.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--kana-mode" title="The “kana-mode” property"><span class="type">"kana-mode"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-set-kana-mode"></a><h3>skk_rom_kana_converter_set_kana_mode ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_rom_kana_converter_set_kana_mode (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>,
+                                      <em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html#SkkKanaMode" title="enum SkkKanaMode"><span class="type">SkkKanaMode</span></a> value</code></em>);</pre>
+<p>Set the value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--kana-mode" title="The “kana-mode” property"><span class="type">"kana-mode"</span></a> property to <em class="parameter"><code>value</code></em>
+.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-set-kana-mode.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the new value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--kana-mode" title="The “kana-mode” property"><span class="type">"kana-mode"</span></a> property</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-get-period-style"></a><h3>skk_rom_kana_converter_get_period_style ()</h3>
+<pre class="programlisting"><a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="returnvalue">SkkPeriodStyle</span></a>
+skk_rom_kana_converter_get_period_style
+                               (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--period-style" title="The “period-style” property"><span class="type">"period-style"</span></a> property.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-get-period-style.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-get-period-style.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--period-style" title="The “period-style” property"><span class="type">"period-style"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-set-period-style"></a><h3>skk_rom_kana_converter_set_period_style ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+skk_rom_kana_converter_set_period_style
+                               (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>,
+                                <em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="type">SkkPeriodStyle</span></a> value</code></em>);</pre>
+<p>Set the value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--period-style" title="The “period-style” property"><span class="type">"period-style"</span></a> property to <em class="parameter"><code>value</code></em>
+.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-set-period-style.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the new value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--period-style" title="The “period-style” property"><span class="type">"period-style"</span></a> property</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-get-output"></a><h3>skk_rom_kana_converter_get_output ()</h3>
+<pre class="programlisting">const <span class="returnvalue">gchar</span> *
+skk_rom_kana_converter_get_output (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--output" title="The “output” property"><span class="type">"output"</span></a> property.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-get-output.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-get-output.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--output" title="The “output” property"><span class="type">"output"</span></a> property</p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="skk-rom-kana-converter-get-preedit"></a><h3>skk_rom_kana_converter_get_preedit ()</h3>
+<pre class="programlisting">const <span class="returnvalue">gchar</span> *
+skk_rom_kana_converter_get_preedit (<em class="parameter"><code><a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> *self</code></em>);</pre>
+<p>Get and return the current value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--preedit" title="The “preedit” property"><span class="type">"preedit"</span></a> property.</p>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-get-preedit.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>the <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a> instance to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="skk-rom-kana-converter-get-preedit.returns"></a><h4>Returns</h4>
+<p> the value of the <a class="link" href="SkkRomKanaConverter.html#SkkRomKanaConverter--preedit" title="The “preedit” property"><span class="type">"preedit"</span></a> property</p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="SkkRomKanaConverter.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="SKK-TYPE-ROM-KANA-CONVERTER:CAPS"></a><h3>SKK_TYPE_ROM_KANA_CONVERTER</h3>
+<pre class="programlisting">#define SKK_TYPE_ROM_KANA_CONVERTER (skk_rom_kana_converter_get_type ())
+</pre>
+<p>The type for <a class="link" href="SkkRomKanaConverter.html" title="SkkRomKanaConverter"><span class="type">SkkRomKanaConverter</span></a>.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkRomKanaConverter-struct"></a><h3>struct SkkRomKanaConverter</h3>
+<pre class="programlisting">struct SkkRomKanaConverter;</pre>
+<p>Romaji-to-kana converter.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkRomKanaConverterClass"></a><h3>struct SkkRomKanaConverterClass</h3>
+<pre class="programlisting">struct SkkRomKanaConverterClass {
+	GObjectClass parent_class;
+};
+</pre>
+<p>The class structure for <a class="link" href="SkkRomKanaConverter.html#SKK-TYPE-ROM-KANA-CONVERTER:CAPS" title="SKK_TYPE_ROM_KANA_CONVERTER"><code class="literal">SKK_TYPE_ROM_KANA_CONVERTER</code></a>. All the fields in this structure are private and should never be accessed directly.</p>
+<div class="refsect3">
+<a name="SkkRomKanaConverterClass.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="300px" class="struct_members_name">
+<col class="struct_members_description">
+<col width="200px" class="struct_members_annotations">
+</colgroup>
+<tbody></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkKanaMode"></a><h3>enum SkkKanaMode</h3>
+<p>Type representing kana scripts.</p>
+<div class="refsect3">
+<a name="SkkKanaMode.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-KANA-MODE-HIRAGANA:CAPS"></a>SKK_KANA_MODE_HIRAGANA</p></td>
+<td class="enum_member_description">
+<p>Hiragana like "あいう...".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-KANA-MODE-KATAKANA:CAPS"></a>SKK_KANA_MODE_KATAKANA</p></td>
+<td class="enum_member_description">
+<p>Katakana like "アイウ...".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-KANA-MODE-HANKAKU-KATAKANA:CAPS"></a>SKK_KANA_MODE_HANKAKU_KATAKANA</p></td>
+<td class="enum_member_description">
+<p>Half-width katakana like "ｱｲｳ...".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkPeriodStyle"></a><h3>enum SkkPeriodStyle</h3>
+<p>Type to specify how "." and "," are converted.</p>
+<div class="refsect3">
+<a name="SkkPeriodStyle.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-PERIOD-STYLE-JA-JA:CAPS"></a>SKK_PERIOD_STYLE_JA_JA</p></td>
+<td class="enum_member_description">
+<p>Use "。" and "、" for "." and ",".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-PERIOD-STYLE-EN-EN:CAPS"></a>SKK_PERIOD_STYLE_EN_EN</p></td>
+<td class="enum_member_description">
+<p>Use "．" and "，" for "." and ",".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-PERIOD-STYLE-JA-EN:CAPS"></a>SKK_PERIOD_STYLE_JA_EN</p></td>
+<td class="enum_member_description">
+<p>Use "。" and "，" for "." and ",".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="SKK-PERIOD-STYLE-EN-JA:CAPS"></a>SKK_PERIOD_STYLE_EN_JA</p></td>
+<td class="enum_member_description">
+<p>Use "．" and "、" for "." and ",".</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="SkkRomKanaConverter.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="SkkRomKanaConverter--kana-mode"></a><h3>The <code class="literal">“kana-mode”</code> property</h3>
+<pre class="programlisting">  “kana-mode”                <a class="link" href="SkkRomKanaConverter.html#SkkKanaMode" title="enum SkkKanaMode"><span class="type">SkkKanaMode</span></a></pre>
+<p>kana-mode.</p>
+<p>Owner: SkkRomKanaConverter</p>
+<p>Flags: Read / Write</p>
+<p>Default value: SKK_KANA_MODE_HIRAGANA</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkRomKanaConverter--output"></a><h3>The <code class="literal">“output”</code> property</h3>
+<pre class="programlisting">  “output”                   <span class="type">gchar</span> *</pre>
+<p>output.</p>
+<p>Owner: SkkRomKanaConverter</p>
+<p>Flags: Read / Write</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkRomKanaConverter--period-style"></a><h3>The <code class="literal">“period-style”</code> property</h3>
+<pre class="programlisting">  “period-style”             <a class="link" href="SkkRomKanaConverter.html#SkkPeriodStyle" title="enum SkkPeriodStyle"><span class="type">SkkPeriodStyle</span></a></pre>
+<p>period-style.</p>
+<p>Owner: SkkRomKanaConverter</p>
+<p>Flags: Read / Write</p>
+<p>Default value: SKK_PERIOD_STYLE_JA_JA</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkRomKanaConverter--preedit"></a><h3>The <code class="literal">“preedit”</code> property</h3>
+<pre class="programlisting">  “preedit”                  <span class="type">gchar</span> *</pre>
+<p>preedit.</p>
+<p>Owner: SkkRomKanaConverter</p>
+<p>Flags: Read</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="SkkRomKanaConverter--rule"></a><h3>The <code class="literal">“rule”</code> property</h3>
+<pre class="programlisting">  “rule”                     <span class="type">SkkRomKanaMapFile</span> *</pre>
+<p>rule.</p>
+<p>Owner: SkkRomKanaConverter</p>
+<p>Flags: Read / Write</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.32</div>
+</body>
+</html>
