@@ -75,6 +75,7 @@ namespace Skk {
 
         ArrayList<string> completion = new ArrayList<string> ();
         internal BidirListIterator<string> completion_iterator;
+        internal Set<string> completion_set = new HashSet<string> ();
 
         internal string[] auto_start_henkan_keywords;
         internal string? auto_start_henkan_keyword = null;
@@ -192,6 +193,7 @@ namespace Skk {
             okuri = false;
             _typing_rule.get_filter ().reset ();
             completion_iterator = null;
+            completion_set.clear ();
             completion.clear ();
             candidates.clear ();
             abbrev.erase ();
@@ -352,7 +354,9 @@ namespace Skk {
             foreach (var dict in dictionaries) {
                 string[] _completion = dict.complete (midasi);
                 foreach (var word in _completion) {
-                    completion.add (word);
+                    if (completion_set.add (word)) {
+                        completion.add (word);
+                    }
                 }
                 completion.sort ();
             }

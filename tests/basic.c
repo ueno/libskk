@@ -166,6 +166,8 @@ static SkkTransition completion_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "K o u k o \t \t", "▽こうこく", "", SKK_INPUT_MODE_HIRAGANA },
     /* no match for midasi word (= "あぱ") */
     { SKK_INPUT_MODE_HIRAGANA, "A p a \t", "▽あぱ", "", SKK_INPUT_MODE_HIRAGANA },
+    /* file dict has midasi word (= あい) while user dict does not */
+    { SKK_INPUT_MODE_HIRAGANA, "A i SPC C-j A \t \t", "▽あいさつ", "愛", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
