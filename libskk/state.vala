@@ -738,6 +738,18 @@ namespace Skk {
                 state.selection.erase();
                 return true;
             }
+            else if (command == "complete") {
+                if (state.completion_iterator == null) {
+                    state.completion_start (state.abbrev.str);
+                }
+                if (state.completion_iterator != null) {
+                    string midasi = state.completion_iterator.get ();
+                    state.abbrev.assign (midasi);
+                    if (state.completion_iterator.has_next ()) {
+                        state.completion_iterator.next ();
+                    }
+                }
+            }
             else if (key.modifiers == 0 &&
                      0x20 <= key.code && key.code <= 0x7E) {
                 state.abbrev.append_unichar (key.code);
