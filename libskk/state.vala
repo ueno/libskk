@@ -66,7 +66,7 @@ namespace Skk {
         internal bool okuri; 
 
         // Used by Context for dict edit.
-        internal string midasi;
+        internal string yomi;
 
         internal StringBuilder selection = new StringBuilder ();
         internal StringBuilder output = new StringBuilder ();
@@ -368,7 +368,7 @@ namespace Skk {
 
         internal signal bool recursive_edit_abort ();
         internal signal bool recursive_edit_end (string text);
-        internal signal void recursive_edit_start (string midasi, bool okuri);
+        internal signal void recursive_edit_start (string yomi);
 
         internal UnicodeString? surrounding_text;
         internal uint surrounding_end;
@@ -395,6 +395,28 @@ namespace Skk {
                 builder.append (rom_kana_converter.preedit);
             }
             return builder.str;
+        }
+
+        internal string get_midasi () {
+            string midasi;
+            if (abbrev.len > 0) {
+                midasi = abbrev.str;
+            }
+            else {
+                StringBuilder builder = new StringBuilder ();
+                rom_kana_converter.output_nn_if_any ();
+                builder.append (rom_kana_converter.output);
+                if (okuri) {
+                    var prefix = Util.get_okurigana_prefix (
+                        Util.get_hiragana (
+                            okuri_rom_kana_converter.output));
+                    if (prefix != null) {
+                        builder.append (prefix);
+                    }
+                }
+                midasi = Util.get_hiragana (builder.str);
+            }
+            return midasi;
         }
     }
 
@@ -1039,27 +1061,7 @@ namespace Skk {
             }
             else if (command == "next-candidate") {
                 if (state.candidates.cursor_pos < 0) {
-                    string midasi;
-                    bool okuri = false;
-                    if (state.abbrev.len > 0) {
-                        midasi = state.abbrev.str;
-                    }
-                    else {
-                        StringBuilder builder = new StringBuilder ();
-                        state.rom_kana_converter.output_nn_if_any ();
-                        builder.append (state.rom_kana_converter.output);
-                        if (state.okuri) {
-                            var prefix = Util.get_okurigana_prefix (
-                                Util.get_hiragana (
-                                state.okuri_rom_kana_converter.output));
-                            if (prefix != null) {
-                                builder.append (prefix);
-                                okuri = true;
-                            }
-                        }
-                        midasi = Util.get_hiragana (builder.str);
-                    }
-                    state.lookup (midasi, okuri);
+                    state.lookup (state.get_midasi (), state.okuri);
                     if (state.candidates.size > 0) {
                         return true;
                     }
@@ -1068,7 +1070,7 @@ namespace Skk {
                     return true;
                 }
                 // no more candidates
-                state.recursive_edit_start (state.get_yomi (), state.okuri);
+                state.recursive_edit_start (state.get_yomi ());
                 if (state.candidates.size == 0) {
                     state.candidates.clear ();
                     state.handler_type = typeof (StartStateHandler);
