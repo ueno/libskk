@@ -240,6 +240,8 @@ static SkkTransition dict_edit_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "G u g u R u G u g u q \n", "", "ググる", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "G u g u R u", "▼ググる", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "G u g u R a", "▼ググら", "", SKK_INPUT_MODE_HIRAGANA },
+    /* Issue#79 */
+    { SKK_INPUT_MODE_HIRAGANA, "H o g e f u g a SPC H o g e q F u g a SPC F u g a q RET", "▼ほげふが【ホゲフガ】", "", SKK_INPUT_MODE_HIRAGANA },
 
     { 0, NULL }
   };
