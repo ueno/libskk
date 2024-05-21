@@ -1,6 +1,6 @@
 {
     "include": [
-        "default"
+        "default/katakana"
     ],
     "define": {
         "keymap": {
