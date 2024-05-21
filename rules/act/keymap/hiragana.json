@@ -1,6 +1,6 @@
 {
     "include": [
-        "default"
+        "default/hiragana"
     ],
     "define": {
         "keymap": {
