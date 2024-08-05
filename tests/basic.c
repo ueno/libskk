@@ -80,6 +80,8 @@ static SkkTransition okuri_nasi_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "N A N A", "▼な*んあ【】", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "N A N a", "▼な*な【】", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A o SPC Control_L", "▼青", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K a k k o r y a k u SPC", "▼(略)", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "O n n o f u SPC", "▼オン/オフ", "", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
