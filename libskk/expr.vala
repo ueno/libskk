@@ -73,6 +73,7 @@ namespace Skk {
                         case '0': case '1': case '2': case '3':
                         case '4': case '5': case '6': case '7':
                             int start = index;
+                            int advance = 0;
                             int num = (int) uc - '0';
                             while (expr.get_next_char (ref index, out uc)) {
                                 if (index - start == 3)
@@ -81,11 +82,14 @@ namespace Skk {
                                     break;
                                 num <<= 3;
                                 num += (int) uc - '0';
+                                advance++;
                             }
-                            index--;
+                            index = start + advance;
                             uc = (unichar) num;
                             break;
                         case 'x':
+                            int start = index;
+                            int advance = 0;
                             int num = 0;
                             while (expr.get_next_char (ref index, out uc)) {
                                 uc = uc.tolower ();
@@ -97,8 +101,9 @@ namespace Skk {
                                     num += (int) uc - 'a' + 10;
                                 } else
                                     break;
+                                advance++;
                             }
-                            index--;
+                            index = start + advance;
                             uc = (unichar) num;
                             break;
                         default:
