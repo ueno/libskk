@@ -374,10 +374,10 @@ namespace Skk {
             }
         }
 
-        void start_dict_edit (string midasi, bool okuri) {
+        void start_dict_edit (string yomi) {
             var state = new State (_dictionaries);
             state.typing_rule = typing_rule;
-            state.midasi = midasi;
+            state.yomi = yomi;
             push_state (state);
             update_preedit ();
         }
@@ -385,7 +385,8 @@ namespace Skk {
         bool end_dict_edit (string text) {
             string? midasi;
             bool? okuri;
-            if (leave_dict_edit (out midasi, out okuri)) {
+            string? output;
+            if (leave_dict_edit (text, out midasi, out okuri, out output)) {
                 var candidate = new Candidate (midasi, okuri, text);
                 if (select_candidate_in_dictionaries (candidate)) {
                     try {
@@ -396,33 +397,42 @@ namespace Skk {
                 }
                 var state = state_stack.peek_head ();
                 state.reset ();
-                state.output.assign (text);
+                state.output.assign (output);
                 update_preedit ();
                 return true;
             }
             return false;
         }
 
-        bool leave_dict_edit (out string? midasi, out bool? okuri) {
+        bool leave_dict_edit (string text, out string? midasi, out bool? okuri, out string? output) {
             if (dict_edit_level () > 0) {
                 var state = state_stack.peek_head ();
-                midasi = state.midasi;
                 pop_state ();
                 state = state_stack.peek_head ();
                 okuri = state.okuri;
+                midasi = state.get_midasi ();
+
+                if (okuri) {
+                    output = text + state.okuri_rom_kana_converter.output;
+                } else {
+                    output = text;
+                }
+
                 if (state.candidates.size == 0)
                     state.cancel_okuri ();
                 return true;
             }
             midasi = null;
             okuri = false;
+            output = null;
             return false;
         }
 
         bool abort_dict_edit () {
             string? midasi;
             bool? okuri;
-            if (leave_dict_edit (out midasi, out okuri)) {
+            string? output;
+            if (leave_dict_edit ("", out midasi, out okuri, out output)) {
                 update_preedit ();
                 return true;
             }
@@ -655,7 +665,7 @@ namespace Skk {
                 iter.previous ();
                 state = iter.get ();
                 builder.append ("▼");
-                builder.append (state.midasi);
+                builder.append (state.yomi);
                 builder.append ("【");
             }
 
