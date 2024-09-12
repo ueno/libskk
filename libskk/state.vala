@@ -351,17 +351,41 @@ namespace Skk {
         }
 
         internal void completion_start (string midasi) {
+            completion.clear();
+            completion_set.clear();
+
+            var user_dict_completions = new Gee.ArrayList<string>();
+            var system_dict_completions = new Gee.ArrayList<string>();
+
             foreach (var dict in dictionaries) {
-                string[] _completion = dict.complete (midasi);
-                foreach (var word in _completion) {
-                    if (completion_set.add (word)) {
-                        completion.add (word);
-                    }
+                string[] completions = dict.complete(midasi);
+                if (!dict.read_only) {
+                    // ユーザー辞書(書き込み可能な辞書)からの補完候補
+                    user_dict_completions.add_all_array(completions);
+                } else {
+                    // システム辞書(読み取り専用の辞書)からの補完候補
+                    system_dict_completions.add_all_array(completions);
                 }
-                completion.sort ();
             }
-            completion_iterator = completion.bidir_list_iterator ();
-            if (!completion_iterator.first ()) {
+
+            // ユーザー辞書の補完候補を追加(最新のものから順に)
+            for (int i = user_dict_completions.size - 1; i >= 0; i--) {
+                string word = user_dict_completions[i];
+                if (completion_set.add(word)) {
+                    completion.add(word);
+                }
+            }
+
+            // システム辞書の補完候補を追加
+            foreach (string word in system_dict_completions) {
+                if (completion_set.add(word)) {
+                    completion.add(word);
+                }
+            }
+
+            // 補完候補のイテレータを設定
+            completion_iterator = completion.bidir_list_iterator();
+            if (!completion_iterator.first()) {
                 completion_iterator = null;
             }
         }
