@@ -376,7 +376,8 @@ namespace Skk {
                 }
             }
 
-            // システム辞書の補完候補を追加
+            // システム辞書の補完候補をソートして追加
+            system_dict_completions.sort();
             foreach (string word in system_dict_completions) {
                 if (completion_set.add(word)) {
                     completion.add(word);
