@@ -92,44 +92,6 @@ namespace Skk {
         }
 
         /**
-         * Get the current completion order for normal mode.
-         */
-        public CompletionOrder completion_order {
-            get {
-                return state_stack.peek_head().completion_order;
-            }
-            set {
-                state_stack.peek_head().completion_order = value;
-            }
-        }
-
-        /**
-         * Get the current completion order for abbrev mode.
-         */
-        public CompletionOrder completion_order_abbrev_mode {
-            get {
-                return state_stack.peek_head().completion_order_abbrev_mode;
-            }
-            set {
-                state_stack.peek_head().completion_order_abbrev_mode = value;
-            }
-        }
-
-        /**
-         * Set the completion order.
-         *
-         * @param order The completion order to set
-         * @param is_abbrev_mode Whether to set the order for abbrev mode
-         */
-        public void set_completion_order(CompletionOrder order, bool is_abbrev_mode) {
-            if (is_abbrev_mode) {
-                completion_order_abbrev_mode = order;
-            } else {
-                completion_order = order;
-            }
-        }
-
-        /**
          * Register dictionary.
          *
          * @param dict a dictionary
@@ -754,5 +716,30 @@ namespace Skk {
                 }
             }
         }
+
+        /**
+         * Get or set the current completion order for normal mode.
+         */
+        public CompletionOrder completion_order {
+            get {
+                return state_stack.peek_head().completion_order;
+            }
+            set {
+                state_stack.peek_head().completion_order = value;
+            }
+        }
+
+        /**
+         * Get or set the current completion order for abbrev mode.
+         */
+        public CompletionOrder completion_order_abbrev_mode {
+            get {
+                return state_stack.peek_head().completion_order_abbrev_mode;
+            }
+            set {
+                state_stack.peek_head().completion_order_abbrev_mode = value;
+            }
+        }
+
     }
 }
