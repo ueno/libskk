@@ -80,9 +80,12 @@ namespace Skk {
         internal StringBuilder abbrev = new StringBuilder ();
         internal StringBuilder kuten = new StringBuilder ();
 
+        // Used by Completion
         ArrayList<string> completion = new ArrayList<string> ();
         internal BidirListIterator<string> completion_iterator;
         internal Set<string> completion_set = new HashSet<string> ();
+        ArrayList<string> user_dict_completions = new ArrayList<string>();
+        ArrayList<string> system_dict_completions = new ArrayList<string>();
 
         internal string[] auto_start_henkan_keywords;
         internal string? auto_start_henkan_keyword = null;
@@ -202,6 +205,8 @@ namespace Skk {
             completion_iterator = null;
             completion_set.clear ();
             completion.clear ();
+            user_dict_completions.clear();
+            system_dict_completions.clear();
             candidates.clear ();
             abbrev.erase ();
             kuten.erase ();
@@ -363,24 +368,19 @@ namespace Skk {
         internal void completion_start (string midasi) {
             completion.clear();
             completion_set.clear();
+            user_dict_completions.clear();
+            system_dict_completions.clear();
 
-            var user_dict_completions = new Gee.ArrayList<string>();
-            var system_dict_completions = new Gee.ArrayList<string>();
-
-            foreach (var dict in dictionaries) {
-                string[] completions = dict.complete(midasi);
-                if (!dict.read_only) {
-                    // ユーザー辞書(書き込み可能な辞書)からの補完候補
-                    user_dict_completions.add_all_array(completions);
-                } else {
-                    // システム辞書(読み取り専用の辞書)からの補完候補
-                    system_dict_completions.add_all_array(completions);
-                }
-            }
-
-            // 補完順序に基づいて候補を追加
             CompletionOrder order = (handler_type == typeof(AbbrevStateHandler)) ?
                 completion_order_abbrev_mode : completion_order;
+
+            foreach (var dict in dictionaries) {
+                if (!(order == CompletionOrder.SYSTEM_DICT) && !dict.read_only) {
+                    user_dict_completions.add_all_array(dict.complete(midasi));
+                } else if (!(order == CompletionOrder.USER_DICT) && dict.read_only) {
+                    system_dict_completions.add_all_array(dict.complete(midasi));
+                }
+            }
 
             switch (order) {
                 case CompletionOrder.USER_DICT:
@@ -405,7 +405,7 @@ namespace Skk {
             }
         }
 
-        private void add_completions(Gee.ArrayList<string> dict_completions) {
+        private void add_completions(ArrayList<string> dict_completions) {
             dict_completions.sort();
             foreach (string word in dict_completions) {
                 if (completion_set.add(word)) {
