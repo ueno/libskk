@@ -18,13 +18,6 @@
  */
 using Gee;
 
-public enum CompletionOrder {
-    USER_DICT,
-    SYSTEM_DICT,
-    USER_DICT_THEN_SYSTEM_DICT,
-    SYSTEM_DICT_THEN_USER_DICT
-}
-
 namespace Skk {
     const string[] AUTO_START_HENKAN_KEYWORDS = {
         "を", "ヲ", "、", "。", "．", "，", "？", "」",
@@ -33,6 +26,13 @@ namespace Skk {
         "”", "】", "』", "》", "〉", "｝", "］",
         "〕", "}", "]", "?", ".", ",", "!"
     };
+
+    public enum CompletionOrder {
+        USER_DICT,
+        SYSTEM_DICT,
+        USER_DICT_THEN_SYSTEM_DICT,
+        SYSTEM_DICT_THEN_USER_DICT
+    }
 
     class State : Object {
         internal Type handler_type;
@@ -98,9 +98,6 @@ namespace Skk {
                 okuri_rom_kana_converter.period_style = value;
             }
         }
-
-        internal CompletionOrder completion_order { get; set; default = CompletionOrder.USER_DICT; }
-        internal CompletionOrder completion_order_abbrev_mode { get; set; default = CompletionOrder.USER_DICT_THEN_SYSTEM_DICT; }
 
         Rule _typing_rule;
         internal Rule typing_rule {
@@ -360,6 +357,9 @@ namespace Skk {
             }
         }
 
+        internal CompletionOrder completion_order { get; set; default = CompletionOrder.USER_DICT_THEN_SYSTEM_DICT; }
+        internal CompletionOrder completion_order_abbrev_mode { get; set; default = CompletionOrder.USER_DICT_THEN_SYSTEM_DICT; }
+
         internal void completion_start (string midasi) {
             completion.clear();
             completion_set.clear();
@@ -384,51 +384,33 @@ namespace Skk {
 
             switch (order) {
                 case CompletionOrder.USER_DICT:
-                    add_user_dict_completions(user_dict_completions);
+                    add_completions(user_dict_completions);
                     break;
                 case CompletionOrder.SYSTEM_DICT:
-                    add_system_dict_completions(system_dict_completions);
+                    add_completions(system_dict_completions);
                     break;
                 case CompletionOrder.USER_DICT_THEN_SYSTEM_DICT:
-                    add_user_dict_completions(user_dict_completions);
-                    add_system_dict_completions(system_dict_completions);
+                    add_completions(user_dict_completions);
+                    add_completions(system_dict_completions);
                     break;
                 case CompletionOrder.SYSTEM_DICT_THEN_USER_DICT:
-                    add_system_dict_completions(system_dict_completions);
-                    add_user_dict_completions(user_dict_completions);
+                    add_completions(system_dict_completions);
+                    add_completions(user_dict_completions);
                     break;
             }
 
-            // 補完候補のイテレータを設定
             completion_iterator = completion.bidir_list_iterator();
             if (!completion_iterator.first()) {
                 completion_iterator = null;
             }
         }
 
-        private void add_user_dict_completions(Gee.ArrayList<string> user_dict_completions) {
-            // ユーザー辞書の補完候補を追加(最新のものから順に)
-            for (int i = user_dict_completions.size - 1; i >= 0; i--) {
-                string word = user_dict_completions[i];
+        private void add_completions(Gee.ArrayList<string> dict_completions) {
+            dict_completions.sort();
+            foreach (string word in dict_completions) {
                 if (completion_set.add(word)) {
                     completion.add(word);
                 }
-            }
-        }
-
-        private void add_system_dict_completions(Gee.ArrayList<string> system_dict_completions) {
-            // システム辞書の補完候補をソートして追加
-            system_dict_completions.sort();
-            foreach (string word in system_dict_completions) {
-                if (completion_set.add(word)) {
-                    completion.add(word);
-                }
-            }
-
-            // 補完候補のイテレータを設定
-            completion_iterator = completion.bidir_list_iterator();
-            if (!completion_iterator.first()) {
-                completion_iterator = null;
             }
         }
 
