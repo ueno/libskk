@@ -27,13 +27,6 @@ namespace Skk {
         "〕", "}", "]", "?", ".", ",", "!"
     };
 
-    public enum CompletionOrder {
-        USER_DICT,
-        SYSTEM_DICT,
-        USER_DICT_THEN_SYSTEM_DICT,
-        SYSTEM_DICT_THEN_USER_DICT
-    }
-
     class State : Object {
         internal Type handler_type;
         InputMode _input_mode;
@@ -84,8 +77,8 @@ namespace Skk {
         ArrayList<string> completion = new ArrayList<string> ();
         internal BidirListIterator<string> completion_iterator;
         internal Set<string> completion_set = new HashSet<string> ();
-        ArrayList<string> user_dict_completions = new ArrayList<string>();
-        ArrayList<string> system_dict_completions = new ArrayList<string>();
+        internal CompletionSourceManager normal_completion_source_manager = null;
+        internal CompletionSourceManager abbrev_completion_source_manager = null;
 
         internal string[] auto_start_henkan_keywords;
         internal string? auto_start_henkan_keyword = null;
@@ -205,8 +198,6 @@ namespace Skk {
             completion_iterator = null;
             completion_set.clear ();
             completion.clear ();
-            user_dict_completions.clear();
-            system_dict_completions.clear();
             candidates.clear ();
             abbrev.erase ();
             kuten.erase ();
@@ -362,55 +353,41 @@ namespace Skk {
             }
         }
 
-        internal CompletionOrder completion_order { get; set; default = CompletionOrder.USER_DICT_THEN_SYSTEM_DICT; }
-        internal CompletionOrder completion_order_abbrev_mode { get; set; default = CompletionOrder.USER_DICT_THEN_SYSTEM_DICT; }
-
-        internal void completion_start (string midasi) {
-            completion.clear();
-            completion_set.clear();
-            user_dict_completions.clear();
-            system_dict_completions.clear();
-
-            CompletionOrder order = (handler_type == typeof(AbbrevStateHandler)) ?
-                completion_order_abbrev_mode : completion_order;
-
-            foreach (var dict in dictionaries) {
-                if (!(order == CompletionOrder.SYSTEM_DICT) && !dict.read_only) {
-                    user_dict_completions.add_all_array(dict.complete(midasi));
-                } else if (!(order == CompletionOrder.USER_DICT) && dict.read_only) {
-                    system_dict_completions.add_all_array(dict.complete(midasi));
+        private void ensure_completion_source_managers() {
+            if (normal_completion_source_manager == null) {
+                normal_completion_source_manager = new CompletionSourceManager();
+                foreach (var dict in dictionaries) {
+                    normal_completion_source_manager.add_source(dict, dict.read_only ? 10 : 20);
                 }
             }
 
-            switch (order) {
-                case CompletionOrder.USER_DICT:
-                    add_completions(user_dict_completions);
-                    break;
-                case CompletionOrder.SYSTEM_DICT:
-                    add_completions(system_dict_completions);
-                    break;
-                case CompletionOrder.USER_DICT_THEN_SYSTEM_DICT:
-                    add_completions(user_dict_completions);
-                    add_completions(system_dict_completions);
-                    break;
-                case CompletionOrder.SYSTEM_DICT_THEN_USER_DICT:
-                    add_completions(system_dict_completions);
-                    add_completions(user_dict_completions);
-                    break;
+            if (abbrev_completion_source_manager == null) {
+                abbrev_completion_source_manager = new CompletionSourceManager();
+                foreach (var dict in dictionaries) {
+                    abbrev_completion_source_manager.add_source(dict, dict.read_only ? 10 : 20);
+                }
+            }
+        }
+
+        internal void completion_start (string midasi) {
+            ensure_completion_source_managers();
+
+            completion.clear();
+            completion_set.clear();
+
+            var manager = (handler_type == typeof(AbbrevStateHandler)) ?
+                abbrev_completion_source_manager : normal_completion_source_manager;
+
+            var completions = manager.get_completions(midasi);
+            foreach (string word in completions) {
+                if (completion_set.add(word)) {
+                    completion.add(word);
+                }
             }
 
             completion_iterator = completion.bidir_list_iterator();
             if (!completion_iterator.first()) {
                 completion_iterator = null;
-            }
-        }
-
-        private void add_completions(ArrayList<string> dict_completions) {
-            dict_completions.sort();
-            foreach (string word in dict_completions) {
-                if (completion_set.add(word)) {
-                    completion.add(word);
-                }
             }
         }
 
