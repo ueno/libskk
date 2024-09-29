@@ -717,29 +717,5 @@ namespace Skk {
             }
         }
 
-        /**
-         * Get or set the current completion order for normal mode.
-         */
-        public CompletionOrder completion_order {
-            get {
-                return state_stack.peek_head().completion_order;
-            }
-            set {
-                state_stack.peek_head().completion_order = value;
-            }
-        }
-
-        /**
-         * Get or set the current completion order for abbrev mode.
-         */
-        public CompletionOrder completion_order_abbrev_mode {
-            get {
-                return state_stack.peek_head().completion_order_abbrev_mode;
-            }
-            set {
-                state_stack.peek_head().completion_order_abbrev_mode = value;
-            }
-        }
-
     }
 }
