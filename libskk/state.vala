@@ -77,8 +77,8 @@ namespace Skk {
         ArrayList<string> completion = new ArrayList<string> ();
         internal BidirListIterator<string> completion_iterator;
         internal Set<string> completion_set = new HashSet<string> ();
-        internal CompletionSourceManager normal_completion_source_manager = null;
-        internal CompletionSourceManager abbrev_completion_source_manager = null;
+        internal CompletionService normal_completion_service = null;
+        internal CompletionService abbrev_completion_service = null;
 
         internal string[] auto_start_henkan_keywords;
         internal string? auto_start_henkan_keyword = null;
@@ -354,41 +354,41 @@ namespace Skk {
         }
 
         internal void update_completion_sources(string mode, CompletionSource[] sources) {
-            var manager = new CompletionSourceManager();
+            var service = new CompletionService();
             foreach (var source in sources) {
-                manager.add_source(source, source.priority);
+                service.add_source(source, source.priority);
             }
 
             if (mode == "normal") {
-                normal_completion_source_manager = manager;
+                normal_completion_service = service;
             } else if (mode == "abbrev") {
-                abbrev_completion_source_manager = manager;
+                abbrev_completion_service = service;
             } else {
                 warning("Invalid mode specified: %s", mode);
             }
         }
 
         internal void completion_start (string midasi) {
-            if (normal_completion_source_manager == null) {
-                normal_completion_source_manager = new CompletionSourceManager();
+            if (normal_completion_service == null) {
+                normal_completion_service = new CompletionService();
                 foreach (var dict in dictionaries) {
-                    normal_completion_source_manager.add_source(dict, dict.read_only ? 10 : 20);
+                    normal_completion_service.add_source(dict, dict.read_only ? 10 : 20);
                 }
             }
-            if (abbrev_completion_source_manager == null) {
-                abbrev_completion_source_manager = new CompletionSourceManager();
+            if (abbrev_completion_service == null) {
+                abbrev_completion_service = new CompletionService();
                 foreach (var dict in dictionaries) {
-                    abbrev_completion_source_manager.add_source(dict, dict.read_only ? 10 : 20);
+                    abbrev_completion_service.add_source(dict, dict.read_only ? 10 : 20);
                 }
             }
 
             completion.clear();
             completion_set.clear();
 
-            var manager = (handler_type == typeof(AbbrevStateHandler)) ?
-                abbrev_completion_source_manager : normal_completion_source_manager;
+            var service = (handler_type == typeof(AbbrevStateHandler)) ?
+                abbrev_completion_service : normal_completion_service;
 
-            var completions = manager.get_completions(midasi);
+            var completions = service.get_completions(midasi);
             foreach (string word in completions) {
                 if (completion_set.add(word)) {
                     completion.add(word);
