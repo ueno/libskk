@@ -353,24 +353,34 @@ namespace Skk {
             }
         }
 
-        private void ensure_completion_source_managers() {
+        internal void update_completion_sources(string mode, CompletionSource[] sources) {
+            var manager = new CompletionSourceManager();
+            foreach (var source in sources) {
+                manager.add_source(source, source.priority);
+            }
+
+            if (mode == "normal") {
+                normal_completion_source_manager = manager;
+            } else if (mode == "abbrev") {
+                abbrev_completion_source_manager = manager;
+            } else {
+                warning("Invalid mode specified: %s", mode);
+            }
+        }
+
+        internal void completion_start (string midasi) {
             if (normal_completion_source_manager == null) {
                 normal_completion_source_manager = new CompletionSourceManager();
                 foreach (var dict in dictionaries) {
                     normal_completion_source_manager.add_source(dict, dict.read_only ? 10 : 20);
                 }
             }
-
             if (abbrev_completion_source_manager == null) {
                 abbrev_completion_source_manager = new CompletionSourceManager();
                 foreach (var dict in dictionaries) {
                     abbrev_completion_source_manager.add_source(dict, dict.read_only ? 10 : 20);
                 }
             }
-        }
-
-        internal void completion_start (string midasi) {
-            ensure_completion_source_managers();
 
             completion.clear();
             completion_set.clear();
