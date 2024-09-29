@@ -25,10 +25,10 @@ namespace Skk {
         }
     }
 
-    public class CompletionSourceManager {
+    public class CompletionService {
         private Gee.List<CompletionSource> sources = new Gee.ArrayList<CompletionSource>();
 
-        public CompletionSourceManager() {}
+        public CompletionService() {}
 
         public void add_source(Object source_object, int priority) {
             CompletionSource completion_source;
