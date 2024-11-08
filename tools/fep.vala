@@ -268,12 +268,14 @@ class Client : Fep.GClient {
         return retval;
     }
 
-    struct Entry<K,V> {
-        K key;
-        V value;
+    // We can't use Entry<InputMode,*> here because of Vala bug:
+    // https://bugzilla.gnome.org/show_bug.cgi?id=684262
+    struct Entry {
+        Skk.InputMode key;
+        string value;
     }
 
-    static const Entry<Skk.InputMode,string>[] input_mode_labels = {
+    static const Entry[] input_mode_labels = {
         { Skk.InputMode.HIRAGANA, "あ" },
         { Skk.InputMode.KATAKANA, "ア" },
         { Skk.InputMode.HANKAKU_KATAKANA, "_ｱ" },
