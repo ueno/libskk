@@ -469,32 +469,27 @@ namespace Skk {
             if (command == "abort" ||
                 command == "abort-to-latin" ||
                 command == "abort-to-latin-unhandled") {
+                // whether or not something (will be) changed by the command
                 bool something_changed;
-                bool event_handled;
                 if (state.rom_kana_converter.preedit.length > 0) {
                     something_changed = true;
                 } else {
                     something_changed = state.recursive_edit_abort ();
                 }
-                event_handled = something_changed;
                 state.reset ();
-                if (command == "abort") {
+                if (something_changed || command == "abort") {
+                    // if the command changes the state (other than input mode),
+                    // it is expected to work as simple "abort" this time.
                     return something_changed;
                 }
-                // change to latin mode
+                // nothing to do as "abort", so change to latin mode
                 if (state.input_mode != InputMode.LATIN) {
                     state.input_mode = InputMode.LATIN;
-                    // this change doesn't affect `event_handled`
                     something_changed = true;
                 }
-                // if the key event will not be handled by
-                // "abort-to-latin-unhandled" command,
-                // let key event pass through
-                if (command == "abort-to-latin-unhandled" &&
-                    !event_handled) {
-                    return false;
-                }
-                return something_changed;
+                // abort-to-latin command should consume (handle) the key event
+                // on mode-only changes. abort-to-latin-unhandled should not.
+                return command == "abort-to-latin";
             } else if (command == "commit" ||
                        command == "commit-unhandled") {
                 bool retval;
