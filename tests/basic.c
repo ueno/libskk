@@ -545,6 +545,8 @@ abort_to_latin_commands (void) {
     { SKK_INPUT_MODE_HIRAGANA, "P o p o", "▽ぽぽ", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "P o p o SPC C-l", "▽ぽぽ", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "P o p o C-l", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "k y C-g", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "k y C-l", "", "", SKK_INPUT_MODE_HIRAGANA },
     // abort-to-latin-unhandled: Test cases with no discarded inputs.
     // In these cases, input mode should be changed to latin mode.
     // Note: While these tests cannot represent, the key event will be
@@ -553,13 +555,14 @@ abort_to_latin_commands (void) {
     { SKK_INPUT_MODE_HIRAGANA, "Q", "", "", SKK_INPUT_MODE_LATIN },
     { SKK_INPUT_MODE_HIRAGANA, "a Q", "", "あ", SKK_INPUT_MODE_LATIN },
     // abort-to-latin-unhandled: Test cases with discarded inputs.
-    // These should be exactly the same behaviour as `abort-to-latin`.
+    // These should be exactly the same behaviour as `abort-to-latin` and `abort`.
     { SKK_INPUT_MODE_HIRAGANA, "A Q", "", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "P Q", "", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "P o p Q", "", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "P o p o", "▽ぽぽ", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "P o p o SPC Q", "▽ぽぽ", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "P o p o Q", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "k y Q", "", "", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
