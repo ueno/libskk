@@ -396,7 +396,7 @@ namespace Skk {
                 }
                 var state = state_stack.peek_head ();
                 state.reset ();
-                state.output.assign (text);
+                state.output.append (text);
                 update_preedit ();
                 return true;
             }
