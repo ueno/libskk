@@ -568,8 +568,9 @@ namespace Skk {
             case InputMode.HIRAGANA:
             case InputMode.KATAKANA:
             case InputMode.HANKAKU_KATAKANA:
-                unichar lower_code;
-                if (state.isupper (key, out lower_code) &&
+                unichar lower_code = 0;
+                if ((command != null || key.modifiers == 0) &&
+                    state.isupper (key, out lower_code) &&
                     state.rom_kana_converter.is_valid (lower_code)) {
                     state.rom_kana_converter.output_nn_if_any ();
                     state.output.append (state.rom_kana_converter.output);
@@ -971,7 +972,8 @@ namespace Skk {
 
             unichar lower_code;
             bool is_upper = state.isupper (key, out lower_code);
-            if (state.rom_kana_converter.is_valid (lower_code)) {
+            if ((command != null || key.modifiers == 0) &&
+                state.rom_kana_converter.is_valid (lower_code)) {
                 // okuri_rom_kana_converter is started or being started
                 if (state.okuri ||
                     (is_upper &&
