@@ -270,6 +270,25 @@ static SkkTransition numeric_transitions[] = {
     { 0, NULL }
   };
 
+// Default insertion rule should not be activated when any modifiers are active.
+// For example, `C-T` should be unhandled (instead of inserting `T`)
+// if no command is assigned.
+static SkkTransition mods_deactivate_default_insert_transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "C-t", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "C-T", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A-t", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A-T", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "M-t", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "M-T", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "G-t", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "G-T", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "k C-t a", "", "か", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "k C-T a", "", "か", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K C-t a", "▽か", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "K C-T a", "▽か", "", SKK_INPUT_MODE_HIRAGANA },
+    { 0, NULL }
+  };
+
 struct _SkkFixture {
   SkkContext *context;
 };
@@ -623,6 +642,9 @@ main (int argc, char **argv) {
               context_setup, test_transitions, context_teardown);
   g_test_add ("/libskk/numeric",
               SkkFixture, numeric_transitions,
+              context_setup, test_transitions, context_teardown);
+  g_test_add ("/libskk/no-default-insert-for-mods",
+              SkkFixture, mods_deactivate_default_insert_transitions,
               context_setup, test_transitions, context_teardown);
   g_test_add_func ("/libskk/candidate-list", candidate_list);
   g_test_add_func ("/libskk/surrounding", surrounding);
