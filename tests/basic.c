@@ -206,7 +206,7 @@ static SkkTransition abbrev_transitions[] =
     /* Issue#24 */
     { SKK_INPUT_MODE_HIRAGANA, "/ t e s t C-j", "", "test", SKK_INPUT_MODE_HIRAGANA },
     /* Pull request#39 */
-    { SKK_INPUT_MODE_HIRAGANA, "/ t e s t C-m", "▽test", "test", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ t e s t C-m", "", "test", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
@@ -291,6 +291,16 @@ static SkkTransition mods_deactivate_default_insert_transitions[] = {
     { SKK_INPUT_MODE_HIRAGANA, "k C-T a", "", "か", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K C-t a", "▽か", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "K C-T a", "▽か", "", SKK_INPUT_MODE_HIRAGANA },
+    { 0, NULL }
+  };
+
+static SkkTransition commit_preedit_transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "A C-m", "", "あ", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A C-j", "", "あ", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "t C-m", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "t C-j", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "n C-m", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "n C-j", "", "", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
@@ -650,6 +660,9 @@ main (int argc, char **argv) {
               context_setup, test_transitions, context_teardown);
   g_test_add ("/libskk/no-default-insert-for-mods",
               SkkFixture, mods_deactivate_default_insert_transitions,
+              context_setup, test_transitions, context_teardown);
+  g_test_add ("/libskk/return-key-preedit",
+              SkkFixture, commit_preedit_transitions,
               context_setup, test_transitions, context_teardown);
   g_test_add_func ("/libskk/candidate-list", candidate_list);
   g_test_add_func ("/libskk/surrounding", surrounding);
