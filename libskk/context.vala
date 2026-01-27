@@ -556,9 +556,10 @@ namespace Skk {
             while (true) {
                 var handler_type = state.handler_type;
                 var handler = handlers.get (handler_type);
-                if (handler.process_key_event (state, ref _key)) {
-                    // FIXME should do this only when preedit is really changed
-                    update_preedit ();
+                var event_was_handled = handler.process_key_event (state, ref _key);
+                // FIXME should do this only when preedit is really changed
+                update_preedit ();
+                if (event_was_handled) {
                     return true;
                 }
                 // state.handler_type may change if handler cannot
