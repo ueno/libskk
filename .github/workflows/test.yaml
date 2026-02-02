@@ -1,0 +1,57 @@
+name: Build and test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+env:
+  BUILDDIR: "builddir"
+  INSTALLDIR: "installdir"
+  RUNUSER: "user"
+  PROFILE: "testable"
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_OPTS: --enable-doc
+      DISTCHECK: true
+    container:
+      image: ghcr.io/ueno/libskk:master
+    steps:
+      # Checkout repo
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: ./.github/actions/basic-autotools
+
+  asan:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_OPTS: --prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'
+      DISTCHECK: true
+    container:
+      image: ghcr.io/ueno/libskk:master
+    steps:
+      # Checkout repo
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: ./.github/actions/basic-autotools
+
+  ubsan:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_OPTS: --prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'
+      DISTCHECK: true
+    container:
+      image: ghcr.io/ueno/libskk:master
+    steps:
+      # Checkout repo
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: ./.github/actions/basic-autotools
