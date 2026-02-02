@@ -24,37 +24,6 @@ endif
 
 DIST_SUBDIRS = libskk rules tools tests docs po
 
-GITIGNOREFILES =				\
-	ABOUT-NLS				\
-	config.rpath				\
-	INSTALL					\
-	aclocal.m4				\
-	compile					\
-	config.guess				\
-	config.h.in				\
-	config.sub				\
-	depcomp					\
-	install-sh				\
-	ltmain.sh				\
-	missing					\
-	mkinstalldirs				\
-	`find "m4" -type f -name "*.m4" ! -name "vala.m4" -print` \
-	$(top_builddir)/lcov.html/*		\
-	$(top_builddir)/docs/gtk-doc		\
-	$(top_builddir)/docs/libskk		\
-	po/Makevars.template			\
-	po/Rules-quot				\
-	po/boldquot.sed				\
-	po/en@boldquot.header			\
-	po/en@quot.header			\
-	po/insert-header.sin			\
-	po/quot.sed				\
-	po/remove-potcdate.sed			\
-	po/remove-potcdate.sin			\
-	po/stamp-po				\
-	test-driver				\
-	$(NULL)
-
 distclean-local:
 	if test "x$(srcdir)" = "x."; then :; else \
 		rm -f ChangeLog; \
@@ -91,5 +60,3 @@ ChangeLog:
 
 # Code coverage support
 include $(top_srcdir)/lcov.mk
-
--include $(top_srcdir)/git.mk
