@@ -16,7 +16,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     env:
-      BUILD_OPTS: --enable-docs
+      BUILD_OPTS: --enable-docs --disable-fep
       DISTCHECK: true
     container:
       image: ghcr.io/ueno/libskk:master
@@ -30,6 +30,7 @@ jobs:
   asan:
     runs-on: ubuntu-latest
     env:
+      BUILD_OPTS: --disable-fep
       CFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
       CXXFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
       LDFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
@@ -47,6 +48,7 @@ jobs:
   ubsan:
     runs-on: ubuntu-latest
     env:
+      BUILD_OPTS: --disable-fep
       CFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
       CXXFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
       LDFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
