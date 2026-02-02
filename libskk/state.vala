@@ -519,18 +519,15 @@ namespace Skk {
                 return command == "abort-to-latin";
             } else if (command == "commit" ||
                        command == "commit-unhandled") {
-                bool retval;
-                if (state.rom_kana_converter.preedit.length > 0) {
-                    retval = true;
-                }
-                else if (state.output.str.length == 0) {
-                    retval = state.recursive_edit_abort ();
+                bool handled;
+                if (state.output.str.length == 0) {
+                    handled = state.recursive_edit_abort ();
                 }
                 else {
-                    retval = state.recursive_edit_end (state.output.str);
+                    handled = state.recursive_edit_end (state.output.str);
                 }
                 state.reset ();
-                return command == "commit" ? true : retval;
+                return command == "commit" ? true : handled;
             } else if (command == "start-preedit" ||
                        command == "start-preedit-kana") {
                 string? text;
