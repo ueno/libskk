@@ -1,3 +1,20 @@
+Noteworthy changes in version 1.1.0 (2026-02-03)
+------------------------------------------------
+
+ * Make commit-unhandled ignore incomplete kana [#101]
+ * Update preedit on commit-unhandled command [#96]
+ * Avoid upper letter insertion when modifiers are active and no commands are assigned [#95]
+ * Return to abbrev mode on abort if abbrev preedit is not empty [#94]
+ * Make "-to-latin" part of abort-to-latin(-unhandled) effective only when "abort" part is no-op [#93]
+ * Make completion order customizable [#91]
+ * Fix invalid escape in JSON file [#90]
+ * Don't overwrite state.output when end_dict_edit [#79, #80]
+ * Fix okuri-ari entry dictionary edit [#77, #78]
+ * Fix keymaps for AZIK and ACT [#76, #86]
+ * Handle completion in abbrev mode [#75]
+ * Uniquify completion candidates [#73]
+ * Add callbacks API for clipboard access [#63, #69]
+
 Noteworthy changes in version 1.0.5 (2018-09-15)
 ------------------------------------------------
 
