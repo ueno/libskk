@@ -11,7 +11,10 @@ runs:
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE
-        NOCONFIGURE=1 ./autogen.sh
+        # FIXME: Ideally this should be run by a different user than
+        # "user" to catch any writing attempt to $(srcdir), which is
+        # sometimes happens when autom4te creates cache files
+        NOCONFIGURE=1 $GITHUB_WORKSPACE/build/run-wrapper.sh ./autogen.sh
         $GITHUB_WORKSPACE/build/run-wrapper.sh $GITHUB_WORKSPACE/configure --prefix=$GITHUB_WORKSPACE/$INSTALLDIR --libdir=$GITHUB_WORKSPACE/$INSTALLDIR/lib $BUILD_OPTS
         $GITHUB_WORKSPACE/build/run-wrapper.sh make -j$(nproc) V=1
       shell: bash
