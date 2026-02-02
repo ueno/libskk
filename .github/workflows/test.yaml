@@ -17,7 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_OPTS: --enable-docs --disable-fep
-      DISTCHECK: true
     container:
       image: ghcr.io/ueno/libskk:master
     steps:
@@ -35,7 +34,6 @@ jobs:
       CXXFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
       LDFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
       LIBS: -ldl -lpthread
-      DISTCHECK: false
     container:
       image: ghcr.io/ueno/libskk:master
     steps:
@@ -53,7 +51,6 @@ jobs:
       CXXFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
       LDFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
       LIBS: -ldl -lpthread
-      DISTCHECK: false
     container:
       image: ghcr.io/ueno/libskk:master
     steps:
