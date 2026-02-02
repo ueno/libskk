@@ -16,7 +16,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     env:
-      BUILD_OPTS: --enable-doc
+      BUILD_OPTS: --enable-docs
       DISTCHECK: true
     container:
       image: ghcr.io/ueno/libskk:master
@@ -30,8 +30,11 @@ jobs:
   asan:
     runs-on: ubuntu-latest
     env:
-      BUILD_OPTS: --prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'
-      DISTCHECK: true
+      CFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
+      CXXFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
+      LDFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
+      LIBS: -ldl -lpthread
+      DISTCHECK: false
     container:
       image: ghcr.io/ueno/libskk:master
     steps:
@@ -44,8 +47,11 @@ jobs:
   ubsan:
     runs-on: ubuntu-latest
     env:
-      BUILD_OPTS: --prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'
-      DISTCHECK: true
+      CFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
+      CXXFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
+      LDFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
+      LIBS: -ldl -lpthread
+      DISTCHECK: false
     container:
       image: ghcr.io/ueno/libskk:master
     steps:
