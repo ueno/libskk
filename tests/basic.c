@@ -615,6 +615,38 @@ abort_to_latin_commands (void) {
   destroy_context (context);
 }
 
+static void
+commit_unhandled_with_incomplete_kana (void)
+{
+  SkkContext *context;
+  SkkTransition transitions[] = {
+    { SKK_INPUT_MODE_HIRAGANA, "t RET", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "T RET", "", "", SKK_INPUT_MODE_HIRAGANA },
+    { 0, NULL }
+  };
+  gint retval;
+
+  context = create_context (TRUE, TRUE);
+  check_transitions (context, transitions);
+
+  retval = skk_context_process_key_events (context, "t");
+  g_assert (retval);
+  retval = skk_context_process_key_events (context, "RET");
+  // `commit-unhandled` command here should let RET pass-through
+  // since it does not commit anything.
+  g_assert (!retval);
+
+  skk_context_reset (context);
+  retval = skk_context_process_key_events (context, "T");
+  g_assert (retval);
+  retval = skk_context_process_key_events (context, "RET");
+  // `commit-unhandled` command here should let RET pass-through
+  // since it does not commit anything.
+  g_assert (!retval);
+
+  destroy_context (context);
+}
+
 int
 main (int argc, char **argv) {
   skk_init ();
@@ -670,5 +702,7 @@ main (int argc, char **argv) {
   g_test_add_func ("/libskk/start_preedit_no_delete", start_preedit_no_delete);
   g_test_add_func ("/libskk/inherit_typing_rule_for_dict_edit", inherit_typing_rule_for_dict_edit);
   g_test_add_func ("/libskk/abort_to_latin_commands", abort_to_latin_commands);
+  g_test_add_func ("/libskk/commit-unhandled-with-incomplete-kana",
+                   commit_unhandled_with_incomplete_kana);
   return g_test_run ();
 }
