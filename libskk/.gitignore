@@ -1,0 +1,10 @@
+/*.c
+/*.gir
+/*.h
+/*.la
+/*.lo
+/*.symbols
+/*.typelib
+
+/libskk.pc
+/skk-*.vapi
