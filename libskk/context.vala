@@ -731,11 +731,9 @@ namespace Skk {
         /**
          * Set the completion order for a specific mode.
          *
-         * @param mode The mode to set the completion order for ("normal" or "abbrev")
-         * @param sources An array of CompletionSource objects
-         *
          * Example usage:
-         * ```
+         *
+         * {{{
          * var context = new Skk.Context(dictionaries);
          *
          * CompletionSource[] sources = {
@@ -745,10 +743,13 @@ namespace Skk {
          *
          * context.set_completion_order("normal", sources);
          * context.set_completion_order("abbrev", sources);
-         * ```
+         * }}}
          *
          * In this example, user_dict completions (priority 20) will be shown before
          * system_dict completions (priority 10).
+         *
+         * @param mode The mode to set the completion order for ("normal" or "abbrev")
+         * @param sources An array of CompletionSource objects
          */
         public void set_completion_order(string mode, CompletionSource[] sources) {
             var state = state_stack.peek_head();
