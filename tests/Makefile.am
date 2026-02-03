@@ -22,6 +22,8 @@ LOG_COMPILER = $(LIBTOOL) --mode=execute $(VALGRIND) $(VALGRIND_OPTS)
 check_PROGRAMS = rom-kana file-dict user-dict cdb-dict skkserv rule context basic
 TESTS = $(check_PROGRAMS)
 
+dist_noinst_HEADERS = common.h
+
 AM_CPPFLAGS =								\
 	-I$(top_srcdir) $(LIBSKK_CFLAGS)				\
 	-DLIBSKK_FILE_DICT=\"$(top_srcdir)/tests/file-dict.dat\"	\

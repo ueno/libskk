@@ -9,13 +9,12 @@ docs = \
 	$(NULL)
 
 libskkdocdir=$(datadir)/devhelp/references/libskk
-libskkimgdir=$(datadir)/devhelp/references/libskk/img
 
 libskkgtkdocdir=$(datadir)/gtk-doc/html/libskk
 
 common_doc_files = \
 	*.css \
-	*.png \
+	*.svg \
 	*.js \
 	index.htm \
 	*.html \
@@ -28,11 +27,7 @@ libskkdoc_DATA = \
 
 libskkgtkdoc_DATA = gtk-doc/libskk/html/*
 
-libskkimg_DATA = \
-	libskk/libskk/img/*.png \
-	$(NULL)
-
-$(libskkdoc_DATA) $(libskkimg_DATA): libskk-doc.stamp
+$(libskkdoc_DATA): libskk-doc.stamp
 $(libskkgtkdoc_DATA): libskk-gtk-doc.stamp
 
 valadoc_flags = \
