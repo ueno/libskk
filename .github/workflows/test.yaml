@@ -13,19 +13,16 @@ env:
   PROFILE: "testable"
 
 jobs:
-  # FIXME: Skip this for now, as valadoc 0.56.18 on Fedora 43
-  # segfaults with newer graphviz:
-  # https://bugzilla.redhat.com/show_bug.cgi?id=2417547
-  #
-  # docs:
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     BUILD_OPTS: --enable-docs --disable-fep
-  #   container:
-  #     image: ghcr.io/ueno/libskk:master
-  #   steps:
-  #     - uses: actions/checkout@v6
-  #     - uses: ./.github/actions/basic-autotools
+  docs:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_OPTS: --enable-docs --enable-fep
+      DISTCHECK: true
+    container:
+      image: ghcr.io/ueno/libskk:master
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/basic-autotools
 
   asan:
     runs-on: ubuntu-latest
