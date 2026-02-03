@@ -41,6 +41,7 @@ libskk_la_VALAFLAGS =						\
 
 libskk_la_CFLAGS =				\
 	$(CODE_COVERAGE_CFLAGS)			\
+	-I$(top_srcdir)				\
 	$(LIBSKK_CFLAGS)			\
 	-DPKGDATADIR=\"$(pkgdatadir)\"		\
 	$(NULL)
@@ -87,7 +88,9 @@ typelibdir = $(libdir)/girepository-1.0
 typelib_DATA = Skk-@SKK_API_VERSION@.typelib
 
 Skk-@SKK_API_VERSION@.typelib: Skk-@SKK_API_VERSION@.gir
-	@INTROSPECTION_COMPILER@ --shared-library=libskk -o $@ $^
+	$(AM_V_GEN) srcdir=''; \
+	test -f ./$< || srcdir=$(srcdir)/; \
+	@INTROSPECTION_COMPILER@ --shared-library=libskk -o $@ $${srcdir}$<
 endif
 
 Skk-@SKK_API_VERSION@.gir skk-internals-@SKK_API_VERSION@.vapi skk-@SKK_API_VERSION@.vapi: libskk.la
