@@ -2,7 +2,7 @@ using Gee;
 
 namespace Skk {
     public abstract class CompletionSource : Object {
-        public abstract ArrayList<string> get_completions(string midasi);
+        public abstract string[] get_completions(string midasi);
         public int priority { get; set; }
     }
 
@@ -14,14 +14,14 @@ namespace Skk {
             this.priority = priority;
         }
 
-        public override ArrayList<string> get_completions(string midasi) {
+        public override string[] get_completions(string midasi) {
             ArrayList<string> completions = new ArrayList<string>();
             string[] dict_completions = dict.complete(midasi);
             if (dict_completions != null && dict_completions.length > 0) {
                 completions.add_all_array(dict_completions);
                 completions.sort((a, b) => a.collate(b));
             }
-            return completions;
+            return completions.to_array();
         }
     }
 
@@ -46,7 +46,7 @@ namespace Skk {
             sources.sort((a, b) => b.priority - a.priority);
         }
 
-        public ArrayList<string> get_completions(string midasi) {
+        public string[] get_completions(string midasi) {
             var completions = new ArrayList<string>();
             var completion_set = new HashSet<string>();
 
@@ -59,7 +59,7 @@ namespace Skk {
                 }
             }
 
-            return completions;
+            return completions.to_array();
         }
     }
 }
