@@ -24,6 +24,27 @@ jobs:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/basic-autotools
 
+  abi:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_OPTS: --enable-docs --enable-fep
+      DISTCHECK: true
+    container:
+      image: ghcr.io/ueno/libskk:master
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/basic-autotools
+      - name: Check out fedora/43/x86_64
+        run: |
+          git config --global --add safe.directory /__w/libskk/libskk
+          git branch fedora/43/x86_64 origin/fedora/43/x86_64
+      - name: Check ABI compatibility
+        run: |
+          git worktree add abi fedora/43/x86_64
+          abidiff --no-added-syms abi/usr/lib64/libskk.so.0/*.xml libskk/.libs/libskk.so.0
+    
   asan:
     runs-on: ubuntu-latest
     env:
