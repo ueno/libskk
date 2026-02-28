@@ -27,4 +27,4 @@ Version: @VERSION@
 Requires: gobject-2.0 gio-2.0
 Requires.private: gee-0.8
 Libs: -L${libdir} -lskk
-Cflags: -I${includedir}/skk-@SKK_API_VERSION@
+Cflags: -I${includedir}
