@@ -7,7 +7,7 @@ ARG dnfflags="--setopt install_weak_deps=False"
 RUN dnf -y update
 RUN dnf -y install 'dnf5-command(builddep)'
 RUN dnf -y builddep libskk
-RUN dnf install $dnfflags -y git libtool make which gcc-c++ libxkbcommon-devel glibc-gconv-extra libasan libubsan python-pip gtk-doc vala vala-devel valadoc valadoc-devel
+RUN dnf install $dnfflags -y git-core libtool make which gcc-c++ libxkbcommon-devel glibc-gconv-extra libasan libubsan python-pip gtk-doc vala vala-devel valadoc valadoc-devel elfutils libabigail
 RUN dnf -y remove graphviz
 RUN dnf clean all
 
