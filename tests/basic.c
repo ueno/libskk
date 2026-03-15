@@ -123,16 +123,25 @@ static SkkTransition abort_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "O K i C-g", "▽おき", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "O K C-g", "", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A o i O C-g", "▽あおいお", "", SKK_INPUT_MODE_HIRAGANA },
+    /* back to abbrev state from selection mode */
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC", "▼メイル", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC C-g", "▽mail", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC C-g SPC", "▼メイル", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC C-g e r", "▽mailer", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC C-g e r SPC", "▼メイラー", "", SKK_INPUT_MODE_HIRAGANA },
+    /* back to abbrev state if dict edit started by next-candidate is aborted */
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i SPC", "▼mai【】", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i SPC C-g", "▽mai", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i SPC C-g l", "▽mail", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i SPC C-g l SPC", "▼メイル", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i SPC C-g C-g /", "▽", "", SKK_INPUT_MODE_HIRAGANA },
+    /* back to abbrev state if selection is canceled by previous-candidate */
+    { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC", "▼メイル", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC x", "▽mail", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC x e r", "▽mailer", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC x e r SPC", "▼メイラー", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC x DEL", "▽mai", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ m a i l SPC x C-g /", "▽", "", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 
