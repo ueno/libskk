@@ -6,49 +6,49 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: libskk 0.0.1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 18:38+0900\n"
+"Report-Msgid-Bugs-To: ueno@gnu.org\n"
+"POT-Creation-Date: 2026-03-24 09:37+0900\n"
 "PO-Revision-Date: 2014-03-06 18:39+0900\n"
 "Last-Translator: Daiki Ueno <ueno@unixuser.org>\n"
 "Language-Team: Japanese\n"
-"Language: \n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../libskk/state.vala:649
-msgid "Kuten([MM]KKTT) "
-msgstr "区点([MM]KKTT) "
+#: libskk/state.vala:776
+msgid "Kuten([M]KKTT) "
+msgstr "区点([M]KKTT) "
 
-#: ../tools/skk.vala:28 ../tools/fep.vala:35
+#: tools/skk.vala:28 tools/fep.vala:35
 msgid "Path to a file dictionary"
 msgstr "ファイル辞書へのパス"
 
-#: ../tools/skk.vala:30 ../tools/fep.vala:37
+#: tools/skk.vala:30 tools/fep.vala:37
 msgid "Path to a user dictionary"
 msgstr "ユーザ辞書へのパス"
 
-#: ../tools/skk.vala:32 ../tools/fep.vala:39
+#: tools/skk.vala:32 tools/fep.vala:39
 msgid "Host and port running skkserv (HOST:PORT)"
 msgstr "skkserv が動いているホストとポート (HOST:PORT)"
 
-#: ../tools/skk.vala:34 ../tools/fep.vala:41
+#: tools/skk.vala:34 tools/fep.vala:41
 msgid "Typing rule (default: \"default\")"
 msgstr "タイピング方式 (既定値: \"default\")"
 
-#: ../tools/skk.vala:36 ../tools/fep.vala:43
+#: tools/skk.vala:36 tools/fep.vala:43
 msgid "List typing rules"
 msgstr "タイピング方式を一覧表示"
 
-#: ../tools/skk.vala:47 ../tools/fep.vala:56
+#: tools/skk.vala:47 tools/fep.vala:56
 msgid "- emulate SKK input method on the command line"
 msgstr "コマンドライン上で SKK 入力メソッドをエミュレート"
 
-#: ../tools/fep.vala:45
+#: tools/fep.vala:45
 msgid "Preedit style"
 msgstr "編集中のテキストのスタイル"
 
-#: ../tools/fep.vala:151
+#: tools/fep.vala:151
 #, c-format
 msgid "unknown preedit style %s"
 msgstr "未知のスタイル %s"
