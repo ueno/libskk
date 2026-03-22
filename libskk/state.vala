@@ -668,12 +668,12 @@ namespace Skk {
 
         internal KutenStateHandler () {
             try {
-                // use EUC-JP to get JISX0208 characters by code
+                // use EUC-JISX0213 to get JISX0213 characters by code
                 // point, this works because EUC-JP maps JISX0208
                 // characters to equivalent bytes.  See:
                 // https://en.wikipedia.org/wiki/EUC-JP
                 // this is generally a wrong approach though
-                converter = new EncodingConverter ("EUC-JP");
+                converter = new EncodingConverter ("EUC-JISX0213");
             } catch (GLib.Error e) {
                 converter = null;
                 assert_not_reached ();
@@ -699,6 +699,36 @@ namespace Skk {
             return builder.str;
         }
 
+        internal string? parse_kuten_to_euc (string mkktt) {
+            int men;
+            if (mkktt.length == 4) {
+                men = 1;
+            }
+            else {
+                men = mkktt[0].digit_value ();
+            }
+            int ku = mkktt[mkktt.length - 3].digit_value ();
+            int ten = mkktt[mkktt.length - 1].digit_value ();
+            if (men < 1 || men > 3 || ku < 0 || ten < 0) {
+                warning ("invalid kuten %s", mkktt);
+                return null;
+            }
+            ku += 10 * mkktt[mkktt.length - 4].digit_value ();
+            ten += 10 * mkktt[mkktt.length - 2].digit_value ();
+            if (ku < 1 || ku > 94 || ten < 1 || ten > 94) {
+                warning ("invalid kuten %s", mkktt);
+                return null;
+            }
+            var builder = new StringBuilder ();
+            if (men == 2) {
+                builder.append_c (0x8F);
+            }
+            // map 1--94 to 0xA1--0xFE.
+            builder.append_c ((char)ku + 0xA0);
+            builder.append_c ((char)ten + 0xA0);
+            return builder.str;
+        }
+
         internal override bool process_key_event (State state,
                                                   ref KeyEvent key)
         {
@@ -710,14 +740,16 @@ namespace Skk {
                 return true;
             }
             else if (command == "commit-unhandled" &&
-                     (state.kuten.len == 4 || state.kuten.len == 6)) {
+                     (state.kuten.len == 4 || state.kuten.len == 5)) {
                 if (converter != null) {
-                    var euc = parse_hex (state.kuten.str);
-                    try {
-                        state.output.append (converter.decode (euc));
-                    } catch (GLib.Error e) {
-                        warning ("can't decode %s in EUC-JP: %s",
-                                 euc, e.message);
+                    var euc = parse_kuten_to_euc (state.kuten.str);
+                    if (euc != null) {
+                        try {
+                            state.output.append (converter.decode (euc));
+                        } catch (GLib.Error e) {
+                            warning ("can't decode %s in EUC-JP: %s",
+                                     euc, e.message);
+                        }
                     }
                 }
                 state.reset ();
@@ -729,10 +761,8 @@ namespace Skk {
                 return true;
             }
             else if (key.modifiers == 0 &&
-                       (('a' <= key.code && key.code <= 'f') ||
-                        ('A' <= key.code && key.code <= 'F') ||
-                        ('0' <= key.code && key.code <= '9')) &&
-                       state.kuten.len < 6) {
+                     ('0' <= key.code && key.code <= '9') &&
+                     state.kuten.len < 5) {
                 state.kuten.append_unichar (key.code);
                 return true;
             }
@@ -743,7 +773,7 @@ namespace Skk {
                                               out uint underline_offset,
                                               out uint underline_nchars) {
             underline_offset = underline_nchars = 0;
-            return _("Kuten([MM]KKTT) ") + state.kuten.str;
+            return _("Kuten([M]KKTT) ") + state.kuten.str;
         }
     }
 
