@@ -680,6 +680,53 @@ namespace Skk {
             }
         }
 
+        internal bool is_committable (string kuten) {
+            // committable formats:
+            //  * [D]DDDD
+            // where D is a decimal.
+            unichar c;
+            if (kuten.length == 4 || kuten.length == 5) {
+                // format: [D]DDDD
+                for (int i = 0; i < kuten.length; i++) {
+                    if (!kuten[i].isdigit ()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        internal bool is_next_acceptable (string kuten, unichar next) {
+            unichar c;
+            if (kuten.length < 5) {
+                // format: [D]DDDD
+                for (int i = 0; i < kuten.length; i++) {
+                    if (!kuten[i].isdigit ()) {
+                        return false;
+                    }
+                }
+                return next.isdigit ();
+            }
+            return false;
+        }
+
+        internal string? parse_kuten (string kuten) {
+            if (converter != null) {
+                // format: [D]DDDD
+                var euc = parse_kuten_to_euc (kuten);
+                if (euc != null) {
+                    try {
+                        return converter.decode (euc);
+                    } catch (GLib.Error e) {
+                        warning ("can't decode %s in EUC-JP: %s",
+                                 euc, e.message);
+                    }
+                }
+            }
+            return null;
+        }
+
         int hex_char_to_int (char hex) {
             if ('0' <= hex && hex <= '9') {
                 return hex - '0';
@@ -740,17 +787,10 @@ namespace Skk {
                 return true;
             }
             else if (command == "commit-unhandled" &&
-                     (state.kuten.len == 4 || state.kuten.len == 5)) {
-                if (converter != null) {
-                    var euc = parse_kuten_to_euc (state.kuten.str);
-                    if (euc != null) {
-                        try {
-                            state.output.append (converter.decode (euc));
-                        } catch (GLib.Error e) {
-                            warning ("can't decode %s in EUC-JP: %s",
-                                     euc, e.message);
-                        }
-                    }
+                     is_committable (state.kuten.str)) {
+                var parsed = parse_kuten(state.kuten.str);
+                if (parsed != null) {
+                    state.output.append (parsed);
                 }
                 state.reset ();
                 return true;
@@ -761,8 +801,7 @@ namespace Skk {
                 return true;
             }
             else if (key.modifiers == 0 &&
-                     ('0' <= key.code && key.code <= '9') &&
-                     state.kuten.len < 5) {
+                     is_next_acceptable (state.kuten.str, key.code)) {
                 state.kuten.append_unichar (key.code);
                 return true;
             }
