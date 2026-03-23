@@ -134,6 +134,7 @@ namespace Skk {
 
         Regex numeric_regex;
         Regex numeric_ref_regex;
+        internal Regex kuten_regex;
 
         internal State (Gee.List<Dict> dictionaries) {
             this.dictionaries = dictionaries;
@@ -158,6 +159,12 @@ namespace Skk {
 
             try {
                 numeric_ref_regex = new Regex ("#([0-9])");
+            } catch (GLib.RegexError e) {
+                assert_not_reached ();
+            }
+
+            try {
+                kuten_regex = new Regex ("""^\d{4,5}$""");
             } catch (GLib.RegexError e) {
                 assert_not_reached ();
             }
@@ -680,35 +687,28 @@ namespace Skk {
             }
         }
 
-        internal bool is_committable (string kuten) {
+        internal bool is_committable (State state) {
             // committable formats:
             //  * [D]DDDD
             // where D is a decimal.
-            unichar c;
-            if (kuten.length == 4 || kuten.length == 5) {
-                // format: [D]DDDD
-                for (int i = 0; i < kuten.length; i++) {
-                    if (!kuten[i].isdigit ()) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return false;
+            return state.kuten_regex.match (state.kuten.str);
         }
 
-        internal bool is_next_acceptable (string kuten, unichar next) {
-            unichar c;
-            if (kuten.length < 5) {
-                // format: [D]DDDD
-                for (int i = 0; i < kuten.length; i++) {
-                    if (!kuten[i].isdigit ()) {
-                        return false;
-                    }
-                }
-                return next.isdigit ();
+        internal bool append_if_acceptable (State state, unichar next) {
+            size_t old_len = state.kuten.len;
+            state.kuten.append_unichar (next);
+
+            MatchInfo match_info;
+            bool matched = state.kuten_regex.match (
+                state.kuten.str,
+                RegexMatchFlags.PARTIAL_HARD,
+                out match_info);
+            bool acceptable = matched || match_info.is_partial_match ();
+            if (!acceptable) {
+                // restore the original kuten content.
+                state.kuten.truncate (old_len);
             }
-            return false;
+            return acceptable;
         }
 
         internal string? parse_kuten (string kuten) {
@@ -787,7 +787,7 @@ namespace Skk {
                 return true;
             }
             else if (command == "commit-unhandled" &&
-                     is_committable (state.kuten.str)) {
+                     is_committable (state)) {
                 var parsed = parse_kuten(state.kuten.str);
                 if (parsed != null) {
                     state.output.append (parsed);
@@ -801,8 +801,7 @@ namespace Skk {
                 return true;
             }
             else if (key.modifiers == 0 &&
-                     is_next_acceptable (state.kuten.str, key.code)) {
-                state.kuten.append_unichar (key.code);
+                     append_if_acceptable (state, key.code)) {
                 return true;
             }
             return true;
