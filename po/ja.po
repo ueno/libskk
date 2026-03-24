@@ -18,7 +18,7 @@ msgstr ""
 
 #: ../libskk/state.vala:649
 msgid "Kuten([MM]KKTT) "
-msgstr "区点([MM]KKTT)"
+msgstr "区点([MM]KKTT) "
 
 #: ../tools/skk.vala:28 ../tools/fep.vala:35
 msgid "Path to a file dictionary"
