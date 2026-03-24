@@ -168,8 +168,11 @@ namespace Skk {
                     """
                     # [D]DDDD ([M]KKTT)
                     ^(?P<men>\d)?(?P<ku>\d{2})(?P<ten>\d{2})$
+                    |
+                    # [D-][D]D-[D]D ([M-][K]K-[T]T)
+                    ^(?:(?P<men>\d)-)?(?P<ku>\d{1,2})-(?P<ten>\d{1,2})$
                     """,
-                    RegexCompileFlags.EXTENDED);
+                    RegexCompileFlags.EXTENDED | RegexCompileFlags.DUPNAMES);
             } catch (GLib.RegexError e) {
                 assert_not_reached ();
             }
@@ -826,7 +829,13 @@ namespace Skk {
                                               out uint underline_offset,
                                               out uint underline_nchars) {
             underline_offset = underline_nchars = 0;
-            return _("Kuten([M]KKTT) ") + state.kuten.str;
+            if ((state.kuten.len >= 2 && state.kuten.str[1] == '-') ||
+                (state.kuten.len >= 3 && state.kuten.str[2] == '-')) {
+                return _("Kuten([M-][K]K-[T]T) ") + state.kuten.str;
+            }
+            else {
+                return _("Kuten([M]KKTT) ") + state.kuten.str;
+            }
         }
     }
 

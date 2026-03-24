@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libskk 0.0.1\n"
 "Report-Msgid-Bugs-To: ueno@gnu.org\n"
-"POT-Creation-Date: 2026-03-24 09:37+0900\n"
+"POT-Creation-Date: 2026-03-24 09:39+0900\n"
 "PO-Revision-Date: 2014-03-06 18:39+0900\n"
 "Last-Translator: Daiki Ueno <ueno@unixuser.org>\n"
 "Language-Team: Japanese\n"
@@ -16,7 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: libskk/state.vala:776
+#: libskk/state.vala:834
+msgid "Kuten([M-][K]K-[T]T) "
+msgstr "区点([M-][K]K-[T]T) "
+
+#: libskk/state.vala:837
 msgid "Kuten([M]KKTT) "
 msgstr "区点([M]KKTT) "
 
