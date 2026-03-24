@@ -134,6 +134,7 @@ namespace Skk {
 
         Regex numeric_regex;
         Regex numeric_ref_regex;
+        internal Regex kuten_regex;
 
         internal State (Gee.List<Dict> dictionaries) {
             this.dictionaries = dictionaries;
@@ -158,6 +159,20 @@ namespace Skk {
 
             try {
                 numeric_ref_regex = new Regex ("#([0-9])");
+            } catch (GLib.RegexError e) {
+                assert_not_reached ();
+            }
+
+            try {
+                kuten_regex = new Regex (
+                    """
+                    # [D]DDDD ([M]KKTT)
+                    ^(?P<men>\d)?(?P<ku>\d{2})(?P<ten>\d{2})$
+                    |
+                    # [D-][D]D-[D]D ([M-][K]K-[T]T)
+                    ^(?:(?P<men>\d)-)?(?P<ku>\d{1,2})-(?P<ten>\d{1,2})$
+                    """,
+                    RegexCompileFlags.EXTENDED | RegexCompileFlags.DUPNAMES);
             } catch (GLib.RegexError e) {
                 assert_not_reached ();
             }
@@ -668,16 +683,92 @@ namespace Skk {
 
         internal KutenStateHandler () {
             try {
-                // use EUC-JP to get JISX0208 characters by code
+                // use EUC-JISX0213 to get JISX0213 characters by code
                 // point, this works because EUC-JP maps JISX0208
                 // characters to equivalent bytes.  See:
                 // https://en.wikipedia.org/wiki/EUC-JP
                 // this is generally a wrong approach though
-                converter = new EncodingConverter ("EUC-JP");
+                converter = new EncodingConverter ("EUC-JISX0213");
             } catch (GLib.Error e) {
                 converter = null;
                 assert_not_reached ();
             }
+        }
+
+        internal bool is_committable (State state, out MatchInfo match_info) {
+            return state.kuten_regex.match (state.kuten.str, 0, out match_info);
+        }
+
+        internal bool append_if_acceptable (State state, unichar next) {
+            size_t old_len = state.kuten.len;
+            state.kuten.append_unichar (next);
+
+            MatchInfo info;
+            bool matched = state.kuten_regex.match (
+                state.kuten.str,
+                RegexMatchFlags.PARTIAL_HARD,
+                out info);
+            bool acceptable = matched || info.is_partial_match ();
+            if (!acceptable) {
+                // restore the original kuten content.
+                state.kuten.truncate (old_len);
+            }
+            return acceptable;
+        }
+
+        internal string? parse_kuten (State state, MatchInfo info) {
+            assert (converter != null);
+
+            int start_pos = 0, end_pos = 0;
+            info.fetch_named_pos ("ku", out start_pos, out end_pos);
+            if (start_pos >= 0) {
+                // format:
+                //  * [M]KKTT
+                //  * [M-][K]K-[T]T
+                int ku = state.kuten.str[start_pos].digit_value ();
+                if (end_pos - start_pos == 2) {
+                    ku = 10 * ku +
+                        state.kuten.str[start_pos + 1].digit_value ();
+                }
+
+                info.fetch_named_pos ("ten", out start_pos, out end_pos);
+                assert(start_pos >= 0);
+                int ten = state.kuten.str[start_pos].digit_value ();
+                if (end_pos - start_pos == 2) {
+                    ten = 10 * ten +
+                        state.kuten.str[start_pos + 1].digit_value ();
+                }
+
+                info.fetch_named_pos ("men", out start_pos, out end_pos);
+                int men = 1;
+                if (start_pos >= 0) {
+                    warn_if_fail (end_pos - start_pos == 1);
+                    men = state.kuten.str[start_pos].digit_value ();
+                }
+
+                // validate range roughly
+                if (!(1 <= men && men <= 2 && 1 <= ku && ku <= 94 &&
+                      1 <= ten && ten <= 94)) {
+                    warning ("invalid kuten %d-%d-%d", men, ku, ten);
+                    return null;
+                }
+
+                // build a character through EUC-JP encoding
+                var euc_builder = new StringBuilder ();
+                if (men == 2) {
+                    euc_builder.append_c (0x8F);
+                }
+                // map 1--94 to 0xA1--0xFE.
+                euc_builder.append_c ((char)ku + 0xA0);
+                euc_builder.append_c ((char)ten + 0xA0);
+                try {
+                    return converter.decode (euc_builder.str);
+                } catch (GLib.Error e) {
+                    warning ("can't decode %s in EUC-JP: %s",
+                             euc_builder.str, e.message);
+                }
+            }
+            return null;
         }
 
         int hex_char_to_int (char hex) {
@@ -702,6 +793,7 @@ namespace Skk {
         internal override bool process_key_event (State state,
                                                   ref KeyEvent key)
         {
+            MatchInfo kuten_match_info = null;
             var command = state.lookup_key (key);
             if (command == "abort" ||
                 command == "abort-to-latin" ||
@@ -710,15 +802,13 @@ namespace Skk {
                 return true;
             }
             else if (command == "commit-unhandled" &&
-                     (state.kuten.len == 4 || state.kuten.len == 6)) {
-                if (converter != null) {
-                    var euc = parse_hex (state.kuten.str);
-                    try {
-                        state.output.append (converter.decode (euc));
-                    } catch (GLib.Error e) {
-                        warning ("can't decode %s in EUC-JP: %s",
-                                 euc, e.message);
-                    }
+                     is_committable (state, out kuten_match_info)) {
+                // if committable, `is_committable()` returns the match info.
+                assert(kuten_match_info != null);
+
+                var parsed = parse_kuten(state, kuten_match_info);
+                if (parsed != null) {
+                    state.output.append (parsed);
                 }
                 state.reset ();
                 return true;
@@ -729,11 +819,7 @@ namespace Skk {
                 return true;
             }
             else if (key.modifiers == 0 &&
-                       (('a' <= key.code && key.code <= 'f') ||
-                        ('A' <= key.code && key.code <= 'F') ||
-                        ('0' <= key.code && key.code <= '9')) &&
-                       state.kuten.len < 6) {
-                state.kuten.append_unichar (key.code);
+                     append_if_acceptable (state, key.code)) {
                 return true;
             }
             return true;
@@ -743,7 +829,13 @@ namespace Skk {
                                               out uint underline_offset,
                                               out uint underline_nchars) {
             underline_offset = underline_nchars = 0;
-            return _("Kuten([MM]KKTT) ") + state.kuten.str;
+            if ((state.kuten.len >= 2 && state.kuten.str[1] == '-') ||
+                (state.kuten.len >= 3 && state.kuten.str[2] == '-')) {
+                return _("Kuten([M-][K]K-[T]T) ") + state.kuten.str;
+            }
+            else {
+                return _("Kuten([M]KKTT) ") + state.kuten.str;
+            }
         }
     }
 

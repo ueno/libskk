@@ -262,9 +262,22 @@ static SkkTransition dict_edit_transitions[] =
 
 static SkkTransition kuten_transitions[] =
   {
-    { SKK_INPUT_MODE_HIRAGANA, "\\\\", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "\\\\ a DEL", "Kuten([MM]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
-    { SKK_INPUT_MODE_HIRAGANA, "\\\\ a 1 a 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\", "Kuten([M]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1", "Kuten([M]KKTT) 1", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 DEL", "Kuten([M]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 0 1 0 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
+    /* Explicit plane 1 (men) */
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 0 1 0 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
+    /* Plane 2 */
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 2 0 1 0 3 \n", "", "丏", SKK_INPUT_MODE_HIRAGANA },
+    /* Hyphenated kuten */
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 -", "Kuten([M-][K]K-[T]T) 1-", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 2 -", "Kuten([M-][K]K-[T]T) 12-", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 - DEL DEL", "Kuten([M]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 - 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 - 1 - 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 - 0 1 - 0 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ 2 - 1 - 3 \n", "", "丏", SKK_INPUT_MODE_HIRAGANA },
     /* Don't start KUTEN input on latin input modes. */
     { SKK_INPUT_MODE_LATIN, "\\\\", "", "\\", SKK_INPUT_MODE_LATIN },
     { SKK_INPUT_MODE_WIDE_LATIN, "\\\\", "", "＼", SKK_INPUT_MODE_WIDE_LATIN },
