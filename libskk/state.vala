@@ -171,6 +171,9 @@ namespace Skk {
                     |
                     # [D-][D]D-[D]D ([M-][K]K-[T]T)
                     ^(?:(?P<men>\d)-)?(?P<ku>\d{1,2})-(?P<ten>\d{1,2})$
+                    |
+                    # u[HHHHH]H (u<Unicode_Scalar_Value>)
+                    ^u(?P<usv>[0-9A-Fa-f]{1,6})$
                     """,
                     RegexCompileFlags.EXTENDED | RegexCompileFlags.DUPNAMES);
             } catch (GLib.RegexError e) {
@@ -767,8 +770,31 @@ namespace Skk {
                     warning ("can't decode %s in EUC-JP: %s",
                              euc_builder.str, e.message);
                 }
+                return null;
             }
-            return null;
+
+            info.fetch_named_pos ("usv",
+                                  out start_pos,
+                                  out end_pos);
+            if (start_pos >= 0) {
+                // format:
+                //  * u[HHHHH]H
+                unichar uc = 0;
+                for (int i = start_pos; i < end_pos; i++) {
+                    uc = uc * 16 + state.kuten.str[i].xdigit_value ();
+                }
+                if (uc.validate ()) {
+                    var builder = new StringBuilder ();
+                    builder.append_unichar (uc);
+                    return builder.str;
+                }
+                else {
+                    warning ("invalid Unicode character U+%04X", uc);
+                    return null;
+                }
+            }
+
+            assert_not_reached ();
         }
 
         int hex_char_to_int (char hex) {
@@ -829,7 +855,10 @@ namespace Skk {
                                               out uint underline_offset,
                                               out uint underline_nchars) {
             underline_offset = underline_nchars = 0;
-            if ((state.kuten.len >= 2 && state.kuten.str[1] == '-') ||
+            if (state.kuten.len >= 1 && state.kuten.str[0] == 'u') {
+                return _("Unicode(u[HHHHH]H) ") + state.kuten.str;
+            }
+            else if ((state.kuten.len >= 2 && state.kuten.str[1] == '-') ||
                 (state.kuten.len >= 3 && state.kuten.str[2] == '-')) {
                 return _("Kuten([M-][K]K-[T]T) ") + state.kuten.str;
             }

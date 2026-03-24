@@ -263,14 +263,15 @@ static SkkTransition dict_edit_transitions[] =
 static SkkTransition kuten_transitions[] =
   {
     { SKK_INPUT_MODE_HIRAGANA, "\\\\", "Kuten([M]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
+    /* JIS kuten */
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1", "Kuten([M]KKTT) 1", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 DEL", "Kuten([M]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 0 1 0 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
-    /* Explicit plane 1 (men) */
+    /* JIS kuten, explicit plane 1 (men) */
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 0 1 0 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
-    /* Plane 2 */
+    /* JIS kuten, plane 2 */
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 2 0 1 0 3 \n", "", "丏", SKK_INPUT_MODE_HIRAGANA },
-    /* Hyphenated kuten */
+    /* JIS kuten, hyphenated */
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 -", "Kuten([M-][K]K-[T]T) 1-", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 2 -", "Kuten([M-][K]K-[T]T) 12-", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 - DEL DEL", "Kuten([M]KKTT) ", "", SKK_INPUT_MODE_HIRAGANA },
@@ -278,6 +279,13 @@ static SkkTransition kuten_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 - 1 - 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 1 - 0 1 - 0 2 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "\\\\ 2 - 1 - 3 \n", "", "丏", SKK_INPUT_MODE_HIRAGANA },
+    /* Unicode Scalar Value */
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ u", "Unicode(u[HHHHH]H) u", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ u F", "Unicode(u[HHHHH]H) uF", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ u f", "Unicode(u[HHHHH]H) uf", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ u f DEL", "Unicode(u[HHHHH]H) u", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ u 3 0 0 1 \n", "", "、", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "\\\\ u 1 f 3 7 A \n", "", "🍺", SKK_INPUT_MODE_HIRAGANA },
     /* Don't start KUTEN input on latin input modes. */
     { SKK_INPUT_MODE_LATIN, "\\\\", "", "\\", SKK_INPUT_MODE_LATIN },
     { SKK_INPUT_MODE_WIDE_LATIN, "\\\\", "", "＼", SKK_INPUT_MODE_WIDE_LATIN },
