@@ -289,6 +289,10 @@ static SkkTransition auto_conversion_transitions[] = {
     { SKK_INPUT_MODE_HIRAGANA, "A i , SPC", "▼哀、", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A i w o", "▼愛を", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "A i SPC \\(", "", "愛(", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A i , C-g", "▽あい", "", SKK_INPUT_MODE_HIRAGANA },
+    /* Abort command should discard the previous auto conversion starter */
+    { SKK_INPUT_MODE_HIRAGANA, "A i , C-g SPC", "▼愛", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A i , C-g SPC a", "", "愛あ", SKK_INPUT_MODE_HIRAGANA },
     { 0, NULL }
   };
 

@@ -1218,6 +1218,7 @@ namespace Skk {
                      command == "abort-to-latin-unhandled") {
                 state.candidates.clear ();
                 state.cancel_okuri ();
+                state.auto_start_henkan_keyword = null;
                 if (state.abbrev.len > 0) {
                     state.handler_type = typeof (AbbrevStateHandler);
                 } else {
