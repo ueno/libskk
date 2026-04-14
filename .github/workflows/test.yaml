@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 
 env:
+  BUILDDIR: "builddir"
   INSTALLDIR: "installdir"
   RUNUSER: "user"
   PROFILE: "testable"
@@ -16,26 +17,24 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     env:
-      BUILD_OPTS: --enable-docs --enable-fep
-      DISTCHECK: true
+      MESON_BUILD_OPTS: -Ddocs=enabled -Dfep=enabled
     container:
       image: ghcr.io/ueno/libskk:master
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/basic-autotools
+      - uses: ./.github/actions/basic-meson
 
   abi:
     runs-on: ubuntu-latest
     env:
-      BUILD_OPTS: --enable-docs --enable-fep
-      DISTCHECK: true
+      MESON_BUILD_OPTS: -Ddocs=disabled -Dfep=enabled
     container:
       image: ghcr.io/ueno/libskk:master
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: ./.github/actions/basic-autotools
+      - uses: ./.github/actions/basic-meson
       - name: Check out fedora/43/x86_64
         run: |
           git config --global --add safe.directory /__w/libskk/libskk
@@ -43,32 +42,24 @@ jobs:
       - name: Check ABI compatibility
         run: |
           git worktree add abi fedora/43/x86_64
-          abidiff --no-added-syms abi/usr/lib64/libskk.so.0/*.xml libskk/.libs/libskk.so.0
+          abidiff --no-added-syms abi/usr/lib64/libskk.so.0/*.xml $GITHUB_WORKSPACE/$INSTALLDIR/lib/libskk.so.0
     
   asan:
     runs-on: ubuntu-latest
     env:
-      BUILD_OPTS: --disable-fep
-      CFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
-      CXXFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
-      LDFLAGS: -fsanitize=address -g -fno-common -U_FORTIFY_SOURCE
-      LIBS: -ldl -lpthread
+      MESON_BUILD_OPTS: -Ddocs=disabled -Dfep=enabled -Db_sanitize=address
     container:
       image: ghcr.io/ueno/libskk:master
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/basic-autotools
+      - uses: ./.github/actions/basic-meson
 
   ubsan:
     runs-on: ubuntu-latest
     env:
-      BUILD_OPTS: --disable-fep
-      CFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
-      CXXFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
-      LDFLAGS: -fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE
-      LIBS: -ldl -lpthread
+      MESON_BUILD_OPTS: -Ddocs=disabled -Dfep=enabled -Db_sanitize=undefined
     container:
       image: ghcr.io/ueno/libskk:master
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/basic-autotools
+      - uses: ./.github/actions/basic-meson
