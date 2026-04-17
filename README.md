@@ -27,7 +27,21 @@ Documentation
 * [Vala binding reference](https://ueno.github.io/libskk/vala/)
 * [C binding reference](https://ueno.github.io/libskk/c/)
 
-Test
+Compiling
+------
+```
+$ meson setup _build
+$ meson compile -C _build
+$ meson test -C _build
+```
+
+Installation
+------
+```
+$ meson install -C _build
+```
+
+Testing basic interaction with `skk` command
 ------
 ```
 $ echo "A i SPC" | skk
