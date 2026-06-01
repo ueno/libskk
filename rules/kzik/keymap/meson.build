@@ -1,0 +1,11 @@
+keymap_files = [
+  'common.json',
+  'default.json',
+  'hankaku-katakana.json',
+  'hiragana.json',
+  'katakana.json',
+  'latin.json',
+  'wide-latin.json',
+]
+
+install_data(keymap_files, install_dir: rules_dir / 'kzik' / 'keymap')

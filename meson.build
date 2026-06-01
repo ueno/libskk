@@ -96,6 +96,8 @@ subdir('po')
 
 subdir('tests')
 
+subdir('rules')
+
 if get_option('docs').enabled()
   subdir('docs')
 endif
