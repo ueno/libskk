@@ -213,9 +213,7 @@ namespace Skk {
             okuri_rom_kana_converter.reset ();
             okuri = false;
             _typing_rule.get_filter ().reset ();
-            completion_iterator = null;
-            completion_set.clear ();
-            completion.clear ();
+            clear_completion ();
             candidates.clear ();
             abbrev.erase ();
             kuten.erase ();
@@ -223,6 +221,12 @@ namespace Skk {
             auto_start_henkan_keyword = null;
             surrounding_text = null;
             surrounding_end = 0;
+        }
+
+        internal void clear_completion () {
+            completion_iterator = null;
+            completion_set.clear ();
+            completion.clear ();
         }
 
         internal void cancel_okuri () {
@@ -891,6 +895,7 @@ namespace Skk {
                 return true;
             }
             else if (command == "delete") {
+                state.clear_completion ();
                 if (state.abbrev.len > 0) {
                     state.abbrev.truncate (state.abbrev.len - 1);
                 } else {
@@ -909,6 +914,7 @@ namespace Skk {
                 return state.egg_like_newline;
             }
             else if (command == "register") {
+                state.clear_completion ();
                 state.request_selection_text();
                 state.abbrev.append(state.selection.str);
                 state.selection.erase();
@@ -928,6 +934,7 @@ namespace Skk {
             }
             else if (key.modifiers == 0 &&
                      0x20 <= key.code && key.code <= 0x7E) {
+                state.clear_completion ();
                 state.abbrev.append_unichar (key.code);
                 return true;
             }
@@ -1015,6 +1022,7 @@ namespace Skk {
                 return state.egg_like_newline;
             }
             else if (command == "delete") {
+                state.clear_completion ();
                 if (state.okuri_rom_kana_converter.delete ()) {
                     if (state.okuri_rom_kana_converter.preedit.length == 0) {
                         state.okuri = false;
@@ -1048,6 +1056,7 @@ namespace Skk {
                 return true;
             }
             else if (command == "special-midasi") {
+                state.clear_completion ();
                 if (state.rom_kana_converter.output.length > 0) {
                     state.rom_kana_converter.append (key.code.tolower ());
                     state.handler_type = typeof (SelectStateHandler);
@@ -1060,6 +1069,7 @@ namespace Skk {
                 }
             }
             else if (command != null && command.has_prefix ("insert-kana-")) {
+                state.clear_completion ();
                 var kana = Util.convert_by_input_mode (
                     command["insert-kana-".length:command.length],
                     state.input_mode);
@@ -1086,6 +1096,7 @@ namespace Skk {
             else if (command == "expand-preedit") {
                 if (state.surrounding_text != null &&
                     state.surrounding_end < state.surrounding_text.length) {
+                    state.clear_completion ();
                     state.surrounding_end++;
                     state.rom_kana_converter.output =
                         state.surrounding_text.substring (
@@ -1096,6 +1107,7 @@ namespace Skk {
             else if (command == "shrink-preedit") {
                 if (state.surrounding_text != null &&
                     state.surrounding_end > 0) {
+                    state.clear_completion ();
                     state.surrounding_end--;
                     state.rom_kana_converter.output =
                         state.surrounding_text.substring (
@@ -1104,6 +1116,7 @@ namespace Skk {
                 }
             }
             else if (command == "register") {
+                state.clear_completion ();
                 state.request_selection_text();
                 state.rom_kana_converter.output += state.selection.str;
                 state.selection.erase();
@@ -1120,6 +1133,7 @@ namespace Skk {
                      state.rom_kana_converter.output.length > 0 &&
                      !state.rom_kana_converter.can_consume (
                          lower_code, true))) {
+                    state.clear_completion ();
                     if (!state.okuri &&
                         state.rom_kana_converter.can_consume (
                             lower_code, true, false)) {
@@ -1139,6 +1153,7 @@ namespace Skk {
                     return true;
                 }
                 else {
+                    state.clear_completion ();
                     state.rom_kana_converter.append (lower_code);
                     if (check_auto_conversion (state, key)) {
                         state.handler_type = typeof (SelectStateHandler);
@@ -1149,6 +1164,7 @@ namespace Skk {
                 }
             }
             else if (key.modifiers == 0) {
+                state.clear_completion ();
                 state.rom_kana_converter.append (lower_code);
                 if (check_auto_conversion (state, key)) {
                     state.handler_type = typeof (SelectStateHandler);
