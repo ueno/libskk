@@ -289,23 +289,22 @@ namespace Skk {
             }
         }
 
-        static string get_kanji_numeric (int numeric,
+        static string get_kanji_numeric (string numeric,
                                          string[] num_table,
                                          string[]? num_pos_table = null)
         {
             var builder = new StringBuilder ();
-            var str = numeric.to_string ();
             unichar uc;
             if (num_pos_table == null) {
-                for (var index = 0; str.get_next_char (ref index, out uc); ) {
+                for (var index = 0; numeric.get_next_char (ref index, out uc); ) {
                     builder.append (num_table[uc - '0']);
                 }
                 return builder.str;
             }
             else {
-                for (var index = 0; str.get_next_char (ref index, out uc); ) {
+                for (var index = 0; numeric.get_next_char (ref index, out uc); ) {
                     if (uc > '0') {
-                        int pos_index = str.length - index;
+                        int pos_index = numeric.length - index;
                         if (uc != '1' || pos_index % 4 == 0)
                             builder.append (KanjiNumericTable[uc - '0']);
                         var pos = num_pos_table[pos_index];
@@ -320,14 +319,14 @@ namespace Skk {
             }
         }
 
-        internal static string get_numeric (int numeric,
+        internal static string get_numeric (string numeric,
                                             NumericConversionType type)
         {
             switch (type) {
             case NumericConversionType.LATIN:
-                return numeric.to_string ();
+                return numeric;
             case NumericConversionType.WIDE_LATIN:
-                return get_wide_latin (numeric.to_string ());
+                return get_wide_latin (numeric);
             case NumericConversionType.KANJI_NUMERAL:
                 return get_kanji_numeric (numeric, KanjiNumericTable);
             case NumericConversionType.KANJI:

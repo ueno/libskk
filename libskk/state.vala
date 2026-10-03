@@ -231,10 +231,10 @@ namespace Skk {
             okuri = false;
         }
 
-        string extract_numerics (string midasi, out int[] numerics) {
+        string extract_numerics (string midasi, out string[] numerics) {
             MatchInfo info = null;
             int start_pos = 0;
-            int[] _numerics = {};
+            string[] _numerics = {};
             var builder = new StringBuilder ();
             while (true) {
                 try {
@@ -254,7 +254,7 @@ namespace Skk {
                 info.fetch_pos (0,
                                 out match_start_pos,
                                 out match_end_pos);
-                _numerics += int.parse (numeric);
+                _numerics += numeric;
                 builder.append (midasi[start_pos:match_start_pos]);
                 builder.append ("#");
                 start_pos = match_end_pos;
@@ -278,7 +278,7 @@ namespace Skk {
             return text;
         }
 
-        string expand_numeric_references (string text, int[] numerics) {
+        string expand_numeric_references (string text, string[] numerics) {
             var builder = new StringBuilder ();
             MatchInfo info = null;
             int start_pos = 0;
@@ -333,7 +333,7 @@ namespace Skk {
 
         internal void lookup (string midasi, bool okuri = false) {
             candidates.clear ();
-            int[] numerics = new int[0];
+            string[] numerics = new string[0];
             lookup_internal (midasi, numerics, okuri);
             var numeric_midasi = extract_numerics (midasi, out numerics);
             if (numeric_midasi != midasi) {
@@ -343,7 +343,7 @@ namespace Skk {
         }
 
         void lookup_internal (string midasi,
-                              int[] numerics,
+                              string[] numerics,
                               bool okuri = false)
         {
             foreach (var dict in dictionaries) {
