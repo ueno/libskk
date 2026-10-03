@@ -146,12 +146,14 @@ namespace Skk {
 
         const string?[] KanjiNumericalPositionTable = {
             null, "十", "百", "千", "万", null, null, null, "億",
-            null, null, null, "兆", null, null, null, null, "京"
+            null, null, null, "兆", null, null, null, "京",
+            null, null, null, "垓"
         };
 
         const string?[] DaijiNumericalPositionTable = {
             null, "拾", "百", "阡", "萬", null, null, null, "億",
-            null, null, null, "兆", null, null, null, null, "京"
+            null, null, null, "兆", null, null, null, "京",
+            null, null, null, "垓"
         };
 
         // katakana to hiragana
