@@ -189,12 +189,18 @@ static SkkTransition completion_transitions[] =
     { SKK_INPUT_MODE_HIRAGANA, "A p a \t", "▽あぱ", "", SKK_INPUT_MODE_HIRAGANA },
     /* file dict has midasi word (= あい) while user dict does not */
     { SKK_INPUT_MODE_HIRAGANA, "A i SPC C-j A \t \t", "▽あいさつ", "愛", SKK_INPUT_MODE_HIRAGANA },
+    /* completion state is discarded after deleting a completed preedit */
+    { SKK_INPUT_MODE_HIRAGANA, "A \t C-h \t", "▽あい", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "A \t C-h C-h K o u k o \t", "▽こうこう", "", SKK_INPUT_MODE_HIRAGANA },
+    /* completion state is discarded after editing a completed preedit */
+    { SKK_INPUT_MODE_HIRAGANA, "A \t k a \t", "▽あいか", "", SKK_INPUT_MODE_HIRAGANA },
 
     /* Abbrev mode */
     /* midasi "mail" exists */
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i \t", "▽mail", "",  SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i l \t", "▽mailer", "", SKK_INPUT_MODE_HIRAGANA },
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i l \t \t", "▽mailing", "", SKK_INPUT_MODE_HIRAGANA },
+    { SKK_INPUT_MODE_HIRAGANA, "/ m a i \t l \t", "▽maill", "", SKK_INPUT_MODE_HIRAGANA },
     /* no more match for "mail" */
     { SKK_INPUT_MODE_HIRAGANA, "/ m a i l \t \t \t ", "▽mailing", "", SKK_INPUT_MODE_HIRAGANA },
     /* no match for midasi "mailingl" */
