@@ -27,9 +27,11 @@ libskk_tests = [
 
 libskk_file_dict = meson.project_source_root() / 'tests' / 'file-dict.dat'
 libskk_cdb_dict = meson.project_source_root() / 'tests' / 'cdb-dict.dat'
+libskk_file_dict_minimal = meson.project_source_root() / 'tests' / 'file-dict-minimal.dat'
 
 tests_c_args = [
   '-DLIBSKK_FILE_DICT="@0@"'.format(libskk_file_dict),
+  '-DLIBSKK_FILE_DICT_MINIMAL="@0@"'.format(libskk_file_dict_minimal),
   '-DLIBSKK_CDB_DICT="@0@"'.format(libskk_cdb_dict),
 ]
 

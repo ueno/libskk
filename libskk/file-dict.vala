@@ -68,14 +68,31 @@ namespace Skk {
         }
 
         // Skip until the first occurrence of line.  This moves offset
-        // at the beginning of the next line.
+        // at the ending line-break of the found line.
+        //
+        // Precondition: `line` should contain the trailing line-break, and
+        // should not be an empty line.
         bool read_until (ref long offset, string line) {
+            assert (line.has_suffix ("\n") && line.length > 1);
             return_val_if_fail (offset < mmap.length, false);
             while (offset + line.length < mmap.length) {
                 char *p = ((char *)mmap.memory + offset);
-                if (*p == '\n' &&
-                    Memory.cmp (p + 1, (void *)line, line.length) == 0) {
+                char *next_line = null;
+                // By testing `*p` first then `offset`, the first line will be
+                // skipped if empty. However, this function won't be used to
+                // find an empty line, so this is fine.
+                if (*p == '\n') {
+                    next_line = p + 1;
+                }
+                else if (offset == 0) {
+                    next_line = p;
+                }
+                if (next_line != null &&
+                    Memory.cmp (next_line, (void *)line, line.length) == 0) {
                     offset += line.length;
+                    if (offset == line.length) {
+                        offset -= 1;
+                    }
                     return true;
                 }
                 offset++;
@@ -113,12 +130,13 @@ namespace Skk {
                     "no okuri-ari boundary");
             }
             okuri_ari_offset = offset;
-            
+
             if (!read_until (ref offset, ";; okuri-nasi entries.\n")) {
-                throw new SkkDictError.MALFORMED_INPUT (
-                    "no okuri-nasi boundary");
+                // No okuri-nasi boundary.
+                okuri_nasi_offset = (long) mmap.length;
+            } else {
+                okuri_nasi_offset = offset;
             }
-            okuri_nasi_offset = offset;
         }
 
         /**
